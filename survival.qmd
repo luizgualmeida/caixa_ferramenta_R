@@ -1,5 +1,35 @@
 # SURVIVAL
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(tm)
+library(ggplot2)
+library(forcats)
+library(rempsyc)
+library(easystats)
+library(kableExtra)
+library(gtsummary)
+
+#Específicos para survival
+library(survival)
+library(ggsurvfit)
+library(survminer)
+library(broom)
+library(survMisc)
+library(PHInfiniteEstimates)
+library(coin)
+library(condSURV)
+
+
+```
+
 A análise de sobrevida é uma técnica estatística utilizada para investigar o tempo até a ocorrência de um evento, como a falha de um dispositivo, o desenvolvimento de uma doença ou a morte. 
 
 No contexto da análise de sobrevida, a regressão de Cox, também conhecida como modelo de riscos proporcionais de Cox, é uma ferramenta essencial. Essa abordagem, desenvolvida por David R. Cox, permite avaliar a influência de variáveis independentes no tempo até o evento de interesse, mantendo a suposição de proporções constantes de risco ao longo do tempo. No ambiente estatístico R, a implementação da análise de sobrevida e da Cox regression é amplamente realizada por meio de pacotes como "survival" e "survminer".
@@ -19,6 +49,8 @@ db <- original %>%
   )
 
 surv_obj <- Surv(time = db$t_seg, event = db$obito)
+cox_res <- coxph(Surv(time = db$t_seg, event = db$obito) ~ tx, data = db)
+
 ```
 
 ```{r}

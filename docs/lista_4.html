@@ -586,7 +586,7 @@ Exercício
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">REML =</span> <span class="cn">TRUE</span>) <span class="co"># Método de estimação dos parâmetros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Importante notar em nosso modelo que os efeitos fixos estão fora dos parênteses, ao passo que os efeitos aleatórios (SchooID e ClassID) estão contidos dentro dos parênteses. Essa estrutura informa à função lmer quais variáveis têm efeitos fixos e quais têm efeitos aleatórios.</p>
-<p>Quanto os métodos de estimação dos parâmetros, não deixe de ler a seção “<a href="#sec-extras"><span>Section&nbsp;4.7</span></a>”</p>
+<p>Quanto os métodos de estimação dos parâmetros, não deixe de ler a seção “<a href="#sec-extras"><span class="quarto-unresolved-ref">sec-extras</span></a>”</p>
 <p>O primeiro passo para mostrar os componentes da variância é extrair os valores do modelo utilizando a função <code>VarCorr</code>. Vamos guardar a saída da função em um data-frame, tornando a visualização mais acessível. Em seguida, utilizaremos os estimadores de variância desejados no cálculo do ICC.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>var_modelo_1 <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_1))</span>
