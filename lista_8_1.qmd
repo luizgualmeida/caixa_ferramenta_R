@@ -1,0 +1,462 @@
+# Lista 8.1 - Moderação e Mediação
+
+Veja o banco de dados DADOSPATH.sav. Nele temos as variáveis Idade, IMC, Sociabilidade (medida por um questionário) e número de treinos realizados em uma academia. Temos uma hipótese teórica de que SOCIABILIDADE é uma variável preditora (X) do número de TREINOS (Y) que a pessoa realiza na academia. No entanto, o IMC (M) é uma variável mediadora desse efeito, não apenas moderadora. Ou seja, a relação entre sociabilidade e treinos só aparece na presença do IMC ou quando ele é conhecido.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+library(foreign)
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+library(performance)
+library(easystats)
+library(semPlot)
+library(semTools)
+library(flexplot)
+library(mediation)
+library(kableExtra)
+
+```
+## a) Modelo causal teórico
+
+::: callout-note
+#### Exercício
+
+Verifique esse modelo causal teórico e veja se ele faz sentido, utilizando um modelo SEM com mediação. Avalie os efeitos diretos e indiretos e decida se esse modelo teórico faz sentido, utilizando o AMOS e o Process.
+:::
+
+Resolução do exercício foi baseada no vídeo "Simple Mediation using lavaan package of R" <https://www.youtube.com/watch?v=nfQOCy9xMnk>
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+original = read.spss("DADOS PATH.sav", to.data.frame=TRUE)
+glimpse(original)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+modelo_1 = "Treinos ~ c_*Sociabilidade + b*IMC1 
+            IMC1 ~ a*Sociabilidade
+            Indireto := a*b
+            Total_direto_C := a*b + c_"
+
+```
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+fit_1 = sem(modelo_1, original, se = "bootstrap", bootstrap = 500)
+```
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+#summary(fit_1) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) 
+
+kable(parameterEstimates(fit_1))
+
+```
+
+### Resultados
+
+1.  **Regressões:**
+
+-   O coeficiente estimado para a relação entre Sociabilidae e Treinos é 0.605, mas não é estatisticamente significativo (p = 0.360).
+
+-   O coeficiente estimado para a relação entre IMC e Treinos é -1.650, indicando uma relação negativa. No entanto, esse coeficiente também não é estatisticamente significativo (p = 0.100).
+
+-   O coeficiente estimado para a relação entre Sociabilidae e IMC é 0.019 e não é estatisticamente significativo (p = 0.693).
+
+2.  **Parâmetros Definidos:**
+
+-   O efeito indireto é estimado como -0.031, mas não é estatisticamente significativo (p = 0.717). Isso sugere que a variável IMC não medeia significativamente a relação entre Sociabilidae e Treinos.
+
+-   O efeito direto da Sociabilidade no Treino é estimado como 0.574 e também não é estatisticamente significativo (p = 0.386).
+
+Com base nos resultados, podemos concluir que o modelo teórico não se sustenta, pois não há evidência estatística significativa para sugerir relações entre as variáveis Sociabilidae , IMC e Treinos.
+
+## b) Mediação vs Regressões lineares
+
+::: callout-note
+#### Exercício
+
+Compare os dados encontrados com aqueles realizados por um conjunto de regressões lineares (OLS). Fazer esta análise de mediação por regressão linear e utilizando o AMOS+Process é a mesma coisa? Coloque também o diagrama gerado aqui.
+:::
+
+### Valor de "c"
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+soc_treinos = lm(Treinos ~ Sociabilidade, data = original) #valor de c
+kable(summary(soc_treinos)$coef)
+```
+
+### Valor de a
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+soc_imc = lm(IMC1 ~ Sociabilidade, data = original) 
+kable(summary(soc_imc)$coef)
+
+```
+
+### valor de b e de c'
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+soc_E_imc_treinos = lm(Treinos ~ IMC1 + Sociabilidade, data = original) 
+kable(summary(soc_E_imc_treinos)$coef)
+
+```
+
+Os resultados são diferentes. As mediações apenas por regressão linear não apresentam o resultado do efeito indireto, mostrado no resultado do exercício anterior
+
+### Diagrama do modelo
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+diagrama_1 <- semPaths(
+          object = fit_1,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+## Modelo 2 (Opcional 1)
+
+Refaça o modelo tendo a variável Idade como mediador.
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+modelo_2 = "Treinos ~ c_*Sociabilidade + b*Idade 
+            Idade ~ a*Sociabilidade
+            Indireto := a*b
+            Total_direto_C := a*b + c_"
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+fit_2 = sem(modelo_2, original, se = "bootstrap", bootstrap = 500)
+
+kable(parameterEstimates(fit_2)) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) 
+
+```
+
+### Resultados
+
+1.  **Regressões:**
+
+    -   A relação estimada entre `Sociabilidade` e `Treinos` é 0.485, mas não é estatisticamente significativa (p = 0.384).
+
+    -   A relação estimada entre `Idade` e `Treinos` é 1.543, indicando uma relação positiva e significativa (p = 0.001).
+
+    -   A relação estimada entre `Sociabldd` e `Idade` é 0.057 e não é estatisticamente significativa (p = 0.592).
+
+2.  **Parâmetros Definidos:**
+
+    -   O efeito `Indireto` é estimado como 0.088, mas não é estatisticamente significativo (p = 0.605). Isso sugere que a variável `Idade` não medeia significativamente a relação entre `Sociabilidade` e `Treinos`.
+
+    -   O efeito total direto da Sociabilidae nos Treinos é estimado como 0.574 e não é estatisticamente significativo (p = 0.345).
+
+Os resultados sugerem que a variável `Idade` está significativamente relacionada à variável `Treinos`, enquanto a variável `Sociabilidade` não tem uma relação significativa com `Treinos`. O efeito indireto através de `Idade` não é estatisticamente significativo, e o efeito total direto também não é significativo.
+
+### Diagrama do modelo 2
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+diagrama_2 <- semPaths(
+          object = fit_2,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+mediation_model_2 = lm(Idade ~ Sociabilidade, data = original)
+kable(summary(mediation_model_2)$coef)
+
+# library(flexplot)
+# visualize(mediation_model_2) análise gráfica do modelo
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+full_model_2 = lm(Treinos ~ Idade + Sociabilidade, data = original)
+kable(summary(full_model_2)$coef)
+#visualize(full_model_2) análise gráfica do modelo
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+results_2 = mediate(mediation_model_2, full_model_2,
+                  treat = "Sociabilidade",
+                  mediator = "Idade",
+                  boot = TRUE,
+                  sims = 500)
+
+summary(results_2)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+mediate_plot(Treinos ~ Idade  + Sociabilidade  , data = original)
+```
+
+## Modelo 3 (Opcional 2)
+
+Testando outros modelos, foi possível observar que o efeito do IMC sobre o treinamento é mediado pela Idade
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+modelo_3 = "Treinos ~ c_*IMC1 + b*Idade 
+            Idade ~ a*IMC1
+            Indireto := a*b
+            Total_direto_C := a*b + c_"
+
+```
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+fit_3 = sem(modelo_3, original, se = "bootstrap", bootstrap = 500) #demora um tempo para executar
+```
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+kable(parameterEstimates(fit_3)) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE)
+```
+
+### Resultados
+
+1.  **Regressões:**
+
+    -   A relação estimada entre `IMC1` (Índice de Massa Corporal) e `Treinos` é -2.778, indicando uma relação negativa e significativa (p = 0.006).
+
+    -   A relação estimada entre `Idade` e `Treinos` é 1.928, indicando uma relação positiva e significativa (p = 0.000).
+
+    -   A relação estimada entre `IMC` e `Idade` é 0.608 e é estatisticamente significativa (p = 0.005).
+
+2.  **Parâmetros Definidos:**
+
+    -   O efeito `Indireto` é estimado como 1.171 e é estatisticamente significativo (p = 0.030). Isso sugere que a variável `Idade` medeia significativamente a relação entre `IMC` e `Treinos`.
+
+    -   O efeito total direto de IMC nos Treinos é estimado como -1.607, mas não é estatisticamente significativo (p = 0.114).
+
+Os resultados indicam que a variável `IMC` está significativamente relacionada negativamente à variável `Treinos`. A variável `Idade` atua como mediadora nessa relação. O efeito indireto é estimado como 1.171 (p = 0.030), indicando que a inclusão de `Idade` no modelo altera a relação entre `IMC1` e `Treinos`, tornando-a mais negativa do que a relação direta.
+
+## Diagrama do modelo 3
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+
+diagrama_3 <- semPaths(
+          object = fit_3,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+mediation_model_3 = lm(Idade ~ IMC1, data = original)
+summary(mediation_model_3)$coef
+visualize(mediation_model_3) 
+
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+full_model_3 = lm(Treinos ~ Idade + IMC1, data = original)
+summary(full_model_3)$coef
+visualize(full_model_3)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+results_3 = mediate(mediation_model_3, full_model_3,
+                  treat = "IMC1",
+                  mediator = "Idade",
+                  boot = TRUE,
+                  sims = 500)
+
+summary(results_3)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+mediate_plot(Treinos ~ Idade  + IMC1  , data = original)
+
+```
+
+## Lista 8.1 resolvida no SPSS
+
+{{< video https://www.youtube.com/watch?v=NstttDePtcM title='Structural Equation Modeling (SEM) - Moderação e Mediação - Aula Prática #8.1' >}}
+
+
+## Extras!
+Outro tipo de resolução baseada no vídeo do Dustin Fife (How to do a mediation analysis in R...with visuals!)
+
+```{r }
+#| echo: true
+#| message: false
+#| warning: false
+# Mediação com visualização
+library(mediation)
+library(flexplot)
+
+
+mediation_model = lm(IMC1 ~ Sociabilidade, data = original)
+summary(mediation_model)
+
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+visualize(mediation_model, plot = "model")
+
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+full_model = lm(Treinos ~ IMC1 + Sociabilidade, data = original)
+summary(full_model)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+visualize(full_model)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+results = mediate(mediation_model, full_model,
+                  treat = "Sociabilidade",
+                  mediator = "IMC1",
+                  boot = TRUE,
+                  sims = 500)
+```
+
+```{r  }
+summary(results)
+```
+
+```{r  }
+#| echo: true
+#| message: false
+#| warning: false
+
+mediate_plot(Treinos ~ IMC1 +  Sociabilidade, data = original) # Ordem em que aparece as variáveis é muito importante. A última variável será sempre a variável DEPENDENTE (X). Todas as outras que vierem antes dela, serão tratadas como MEDIADORAS (no caso IMC1) 
+```
+
+## Referências
+
+
+<https://www.youtube.com/watch?v=_4Fu8SZID2k>
+
+## Versões dos pacotes
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+report(sessionInfo())
+```

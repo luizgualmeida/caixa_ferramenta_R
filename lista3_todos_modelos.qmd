@@ -1,0 +1,480 @@
+# Lista 3 - Matriz de Covariância
+
+## Pacotes que vamos utilizar
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(emmeans)
+library(nlme)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(multcomp)
+library(effects)
+```
+
+## Carregando o banco de dados
+
+Vamos utilizar um GMM para verificar o efeito de tempo e grupo sobre os resultados de resp e pulse (o banco já está no formato correto). Porém, antes disso vamos avaliar qual a melhor matriz de covariância que o modelo deve aplicar aos dados.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+dataset = read.spss("bd_New drug_respiratory&pulseRESHAPE.sav", to.data.frame=TRUE)
+```
+
+::: callout-important
+#### Muito importante!
+
+SEMPRE verifique o tipo das variáveis no banco de dados. Elas podem ser fatores, números íntegros, números decimais, etc. As análises mudam MUITO dependendo do tipo de variável que utilizamos no modelo de regressão linear!
+:::
+
+Para verificar o tipo das variáveis podemos utilizar a função `glimpse()`.
+
+```{r}
+
+glimpse(dataset)
+
+```
+
+Notem que a variável `Tempo` está como `<dbl>`, indicando que é uma variável contínua. Vejam a aula prática em que o Altay explica que os tempos de coleta na verdade são fatores e não indicam uma ordem ou um contínuo. Seria como dizer que as amostras foram coletadas nos Tempos "X", "Y" e "Z".
+
+Para transformar a variável tempo em um fator podemos utilizar o seguinte código:
+
+```{r}
+dataset$Tempo = as.factor(dataset$Tempo)
+```
+
+Rodando novamente a função `glimpse()` é possível observar que agora sim temos a variável `Tempo` como `<fct>`, indicando que ela é do tipo fator .
+
+```{r}
+glimpse(dataset)
+```
+
+::: callout-tip
+#### Dica
+
+Faça os modelos antes e depois de transformar a variável Tempo em um fator e compare os resultados.
+:::
+
+Agora sim podemos realizar nossas análises e comparar com os resultados do SPSS.
+
+## Criando os modelos para a variável Resp
+
+### Matriz simétrica
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_1 = lme(
+  fixed = resp ~ 1 + drug + Tempo + drug * Tempo, 
+  random =~ 1|Sujeito, 
+  correlation = corCompSymm(form = ~1|Sujeito), 
+  data = dataset)
+```
+
+## AIC e BIC
+
+## Resultado do modelo escolhido
+
+```{r}
+
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_1 = summary(model_resp_1)
+CIs_model_resp_1 = data.frame(AIC = resumo_model_resp_1$AIC, BIC = resumo_model_resp_1$BIC)
+#emm_resp1 <- emmeans(model_resp_1, pairwise ~ drug + Index1)
+
+
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_1
+# emm_resp1 não precisa do post hoc uma vez que as alterações das medidas de resp 
+# ao longo do tempo não foram significativas.
+```
+
+Há diferença significativa apenas entre a medida de resp do grupo que recebeu a droga em releação ao grupo que recebeu o placebo em todo o período avaliado. O valor de resp é, em média, 0.12 unidades menor no grupo placebo em comparação ao grupo que recebeu a droga (p = 0,0107).
+
+### Variável dependente: Pulse
+
+```{r model_pulse}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_pulse = lme(
+  fixed = pulse ~ 1 + drug + Tempo + drug * Tempo, 
+  random = ~1|Sujeito, 
+  correlation = corCompSymm(form = ~1|Sujeito), 
+  data = dataset)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse = summary(model_pulse)
+CIs_model_pulse = data.frame(AIC = resumo_model_pulse$AIC, BIC = resumo_model_pulse$BIC)
+emm_pulse1 <- emmeans(model_pulse, pairwise ~ drug + Tempo)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse
+emm_pulse1$contrasts
+```
+
+Existem diferenças significativas na medida de pulso entre o grupo que recebeu a droga e o grupo que recebeu o placebo durante todo o período de avaliação. Em média, a medida de pulso é 0,46 unidades menor no grupo que recebeu a droga em comparação com o grupo do placebo (p \< 0,0001).
+
+2.  Faça o mesmo modelo com base na matriz **Ar(1)** e descreva os resultados das duas variáveis (pulse e resp).
+
+## Modelo com base na matriz Ar(1)
+
+### Variável dependente: Resp
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_2 = lme(
+  fixed = resp ~ Tempo + drug + Tempo * drug,
+  random = ~1|Sujeito,
+  correlation = corAR1(form = ~ 1|Sujeito),
+  data = dataset
+)
+
+
+ar1_spss <- geeglm(resp ~ drug + Tempo + drug*Tempo, 
+                   data = dataset,         
+                   id = Sujeito,                 
+                   family = Gamma(link = "identity"), #Distribuição Gamma      
+                   corstr = "ar1")
+
+fit.ar1 <- geese(resp ~ drug + Tempo + drug*Tempo,  
+                 id=Sujeito, 
+                 data=dataset,
+                 family = gaussian,
+                 corstr="ar1", scale.fix=TRUE)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_2 = summary(model_resp_2)
+CIs_model_resp_2 = data.frame(AIC = resumo_model_resp_2$AIC, BIC = resumo_model_resp_2$BIC)
+#emm_model_resp_2 = emmeans(model_resp_2, pairwise ~ drug + Index1)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_2
+#emm_model_resp_2$contrasts  não precisa do post hoc uma vez que as alterações das medidas de resp ao longo do tempo não foram significativas.
+```
+
+Há diferença significativa apenas entre a medida de resp do grupo que recebeu a droga em releação ao grupo que recebeu o placebo em todo o período avaliado. O valor de resp é, em média, 0.11 unidades maior no grupo que recebeu a droga em comparação ao grupo placebo (p = 0,0039).
+
+#### Mudando a referência
+
+```{r}
+levels(dataset$drug)
+dataset$drug <- relevel(dataset$drug, ref = "Placebo")
+
+```
+
+### Variável dependente: Pulse
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_pulse_2 = lme(
+  fixed = pulse ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corAR1(form = ~ 1|Sujeito),
+  data = dataset
+)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse_2 = summary(model_pulse_2)
+CIs_model_pulse_2 = data.frame(AIC = resumo_model_pulse_2$AIC, BIC = resumo_model_pulse_2$BIC)
+emm_pulse_2 = emmeans(model_pulse_2, pairwise ~ drug + Tempo )
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse_2
+emm_pulse_2$contrasts
+```
+
+Existem diferenças significativas na medida de pulso entre o grupo que recebeu a droga e o grupo que recebeu o placebo durante todo o período de avaliação. Em média, a medida de pulso é 0,46 unidades menor no grupo que recebeu a droga em comparação com o grupo do placebo (p \< 0,0001).
+
+Além disso, quando consideramos as diferenças ao longo do tempo, observamos diferenças significativas (p = 0.0003) na medida de pulso. No tempo 1, o grupo do placebo apresentou uma medida de pulso significativamente maior em comparação com o tempo 2 do grupo que recebeu a droga, com uma média de diferença de 0,45 unidades a favor do grupo do placebo.\
+\
+Também foi observada uma diferença significativa (p = \< 0.0001) na medida de pulso entre o tempo "resp1" do grupo que recebeu a droga e o tempo "resp2" do grupo do placebo, com uma média de diferença de 0,61 unidades a favor do grupo que recebeu o placebo.
+
+## Modelo com base na matriz Diagonal (identidade)
+
+### Variável dependente: Resp
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_3 = lme(
+  fixed = resp ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corIdent(form = ~ 1|Sujeito),
+  data = dataset
+)
+summary(model_resp_3)
+emmeans(model_resp_3, pairwise ~ drug + Tempo)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_3 = summary(model_resp_3)
+CIs_model_resp_3 = data.frame(AIC = resumo_model_resp_3$AIC, BIC = resumo_model_resp_3$BIC)
+emm_resp_3 = emmeans(model_resp_3, pairwise ~ drug + Tempo)
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_3
+#emm_resp_3$contrasts
+```
+
+Há diferença significativa apenas entre a medida de resp do grupo que recebeu a droga em releação ao grupo que recebeu o placebo em todo o período avaliado. O valor de resp é, em média, 0.11 unidades maior no grupo que recebeu a droga em comparação ao grupo placebo (p = 0,0039).
+
+### Variável dependente: Pulse
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_pulse_3 = lme(
+  fixed = pulse ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corIdent(form = ~ 1|Sujeito),
+  data = dataset
+)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse_3 = summary(model_pulse_3)
+CIs_model_pulse_3 = data.frame(AIC = resumo_model_pulse_3$AIC, BIC = resumo_model_pulse_3$BIC)
+emm_pulse_3 = emmeans(model_pulse_3, pairwise ~ drug + Tempo )
+```
+
+```{r}
+resumo_model_pulse_3
+emm_pulse_3$contrasts
+```
+
+Existem diferenças significativas na medida de pulso entre o grupo que recebeu a droga e o grupo que recebeu o placebo durante todo o período de avaliação. Em média, a medida de pulso é 0,46 unidades menor no grupo que recebeu a droga em comparação com o grupo do placebo (p \< 0,0001).
+
+Além disso, quando consideramos as diferenças ao longo do tempo, observamos diferenças significativas (p = 0.0003) na medida de pulso. No tempo 1, o grupo do placebo apresentou uma medida de pulso significativamente maior em comparação com o tempo 2 do grupo que recebeu a droga, com uma média de diferença de 0,45 unidades a favor do grupo do placebo.\
+\
+Também foi observada uma diferença significativa (p = \< 0.0001) na medida de pulso entre o tempo "resp1" do grupo que recebeu a droga e o tempo "resp2" do grupo do placebo, com uma média de diferença de 0,61 unidades a favor do grupo que recebeu o placebo.
+
+## Modelo com base na Matriz Não estruturada (Unstructured)
+
+### Variável dependente: Resp
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_4 = lme(
+  fixed = resp ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corSymm(form = ~ 1|Sujeito),
+  data = dataset
+)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_4 = summary(model_resp_4)
+CIs_model_resp_4 = data.frame(AIC = resumo_model_resp_4$AIC, BIC = resumo_model_resp_4$BIC)
+#emm_resp_4 = emmeans(model_resp_4, pairwise ~ drug + Index1)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_resp_4
+#emm_resp_4$contrasts
+```
+
+Há diferença significativa apenas entre a medida de resp do grupo que recebeu a droga em releação ao grupo que recebeu o placebo em todo o período avaliado. O valor de resp é, em média, 0.11 unidades maior no grupo que recebeu a droga em comparação ao grupo placebo (p = 0,01).
+
+### Variável dependente: Pulse
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_pulse_4 = lme(
+  fixed = pulse ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corSymm(form = ~ 1|Sujeito),
+  data = dataset
+)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse_4 = summary(model_pulse_4)
+CIs_model_pulse_4 = data.frame(AIC = resumo_model_pulse_4$AIC, BIC = resumo_model_pulse_4$BIC)
+emm_pulse_4 = emmeans(model_pulse_4, pairwise ~ drug + Tempo )
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+resumo_model_pulse_4
+emm_pulse_4$contrasts
+```
+
+Existem diferenças significativas na medida de pulso entre o grupo que recebeu a droga e o grupo que recebeu o placebo durante todo o período de avaliação. Em média, a medida de pulso é 0,46 unidades menor no grupo que recebeu a droga em comparação com o grupo do placebo (p \< 0,0001).
+
+Além disso, quando consideramos as diferenças ao longo do tempo, observamos diferenças significativas (p = 0.0003) na medida de pulso. No tempo 1, o grupo do placebo apresentou uma medida de pulso significativamente maior em comparação com o tempo 2 do grupo que recebeu a droga, com uma média de diferença de 0,45 unidades a favor do grupo do placebo.\
+\
+Também foi observada uma diferença significativa (p = \< 0.0001) na medida de pulso entre o tempo "resp1" do grupo que recebeu a droga e o tempo "resp2" do grupo do placebo, com uma média de diferença de 0,61 unidades a favor do grupo que recebeu o placebo.
+
+## 2 - Os resultados deram iguais para as 4 matrizes? Se não, porque? Qual modelo será o escolhido. Descreva 3 critérios diferentes para a escolha do modelo mais adequado (Parcimônia, AIC/BIC e Sentido Teórico) e veja se eles concordam entre si.
+
+### AIC/BIC Resp
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+CIs_model_resp_1 #Matriz simétrica
+CIs_model_resp_2 # Matriz Ar(1)
+CIs_model_resp_3 # matriz Diagonal (identidade)
+CIs_model_resp_4 # Matriz Não estruturada (Unstructured)
+```
+
+### AIC/BIC Pulse
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+CIs_model_pulse # Matriz simétrica 
+CIs_model_pulse_2 # Matriz Ar(1) 
+CIs_model_pulse_3 # matriz Diagonal (identidade)
+CIs_model_pulse_4 # Matriz Não estruturada (Unstructured)
+```
+
+Todos os resultados foram iguais.
+
+Para a variável dependente "resp", optou-se por empregar uma matriz de covariância AR(1), e todos os modelos convergiram, o que elimina a necessidade de aplicar o critério de parcimônia. É importante notar que o valor de AIC do modelo com a matriz AR(1) é o menor registrado (-54.30036), indicando uma melhor aderência do modelo aos dados.
+
+Em relação à variável dependente "pulse", a matriz de covariância não estruturada foi a escolhida, também com a convergência de todos os modelos e, portanto, sem a aplicação do critério de parcimônia. Notavelmente, o valor de AIC do modelo com a matriz não estruturada é o menor observado (-27.77617), ressaltando a melhor aderência aos dados.
+
+A constante diferença observada entre o grupo de pacientes que recebeu a droga e o grupo que recebeu o placebo pode ser elucidada através da hipótese teórica de que a substância ativa da droga está desencadeando uma resposta farmacológica específica no organismo. Esse fenômeno resulta em efeitos mensuráveis que se mantêm consistentes ao longo do tempo. A persistência dessa diferença sugere que a droga exerce uma influência significativa sobre a variável dependente em análise, em nítido contraste com o grupo placebo, onde não há intervenção farmacológica em curso.
+
+## 3 - Agora com o modelo escolhido, faça a descrição do modelo final. Tente fazer um parágrafo justificando a escolha pela matriz de covariancia além da descrição dos resultados propriamente (isso vai ser muito útil quando você estiver escrevendo seu artigo!)
+
+### Variável dependente "resp"
+
+<!-- A matriz de covariância AR(1) é uma matriz que assume uma estrutura de autocorrelação de primeira ordem, onde os elementos da matriz têm uma relação linear com seus vizinhos imediatos na matriz, formando uma espécie de decaimento exponencial da autocorrelação à medida que nos afastamos da diagonal principal. No contexto do exemplo hipotético da droga e do placebo, a matriz de covariância AR(1) é uma escolha adequada por diversas razões. Primeiramente, essa matriz captura a ideia de que as observações em um estudo longitudinal, onde os pacientes são avaliados ao longo do tempo, podem estar correlacionadas de forma mais forte entre observações próximas no tempo e de forma mais fraca à medida que as observações se distanciam. Isso é consistente com a ideia de que os efeitos da droga, se presentes, podem persistir ao longo do tempo, mas sua influência diminui com o passar do tempo após a administração. Além disso, a matriz de covariância AR(1) oferece uma maneira de modelar e considerar a variação temporal nas respostas dos pacientes, o que é especialmente relevante quando se avaliam os efeitos de uma droga ao longo de um período de tempo. A estrutura de autocorrelação embutida na matriz AR(1) permite a captura de dependências temporais nas respostas dos pacientes, tornando a análise mais robusta e informativa. -->
+
+A matriz de covariância AR(1) é uma escolha adequada para o exemplo da droga e do placebo devido à sua capacidade de capturar a dependência temporal nas respostas dos pacientes em estudos longitudinais. Essa matriz reflete a ideia de que as observações próximas no tempo têm uma correlação mais forte, enquanto as observações mais distantes têm uma correlação mais fraca. Isso é consistente com a possibilidade de que os efeitos da droga persistam ao longo do tempo, mas diminuam com o passar dos dias após a administração. A estrutura de autocorrelação da matriz AR(1) também ajuda a modelar a variação temporal das respostas dos pacientes, tornando a análise mais robusta e informativa.
+
+O gráfico abaixo mostra esta tendência.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+# Gráfico de Efeitos Aleatórios:
+plot(allEffects(model_resp_2))
+```
+
+### Variável dependente pulse
+
+A matriz de covariância não estruturada, também conhecida como matriz de covariância completa ou matriz de covariância livre, é uma matriz que não impõe nenhuma estrutura específica às covariâncias entre as variáveis. Cada elemento da matriz representa a covariância entre duas variáveis distintas, e esses elementos podem ser diferentes uns dos outros. Em outras palavras, não há suposições predefinidas sobre como as variáveis estão relacionadas entre si, permitindo que todas as covariâncias sejam estimadas independentemente.
+
+A matriz de covariância não estruturada é capaz de capturar correlações complexas e não lineares entre as variáveis, o que pode ser relevante quando se consideram diferentes respostas de pacientes a tratamentos variados. Ela não restringe as correlações a serem lineares ou seguir qualquer padrão específico, o que é valioso em situações em que as relações podem ser sutis ou variáveis, como pode ser observada no gráfico a seguir.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+
+# Gráfico de Efeitos Aleatórios:
+plot(allEffects(model_pulse_4))
+
+```
+
+{{< video https://youtu.be/gYWld1qSh9c?si=VJdZsrSYAE-2BJpA title='GMM - General Mixed Models - Aula Prática #3 (SPSS)' >}}
+
+## Referências
+
+https://bcheggeseth.github.io/CorrelatedData/marginal-models.html

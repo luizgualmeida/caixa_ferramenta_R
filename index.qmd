@@ -1,0 +1,135 @@
+# Introdução {.unnumbered}
+
+Tutorial produzido com base nas [aulas práticas](https://www.youtube.com/watch?v=_KtjZcaMYhk&list=PLZjaOxYREinslupYDLvknGMB-U-Kl8G7k) da disciplina "[Estatística Aplicada a Psicobiologia II - 2023](https://www.youtube.com/watch?v=IsrBkJKcLwo&list=PLZjaOxYREinv_M_2nc-BIwptMbfIFipQj&pp=iAQB)", ministrada pelo Professor Altay Lino de Souza e oferecida pelo Departamento de Psicobiologia da UNIFESP.
+
+## Sobre as aulas
+
+As aulas são gravadas e disponibilizadas gratuitamente por meio de lives no canal [Cientística & Podcast Naruhodo](www.youtube.com/cientistica) do YouTube. Destacando aqui o agradecimento mais do que especial para a Maria Lucia Oliveira De Souza Formigoni, por tornar possível a disciplina.
+
+## Sobre o tutorial
+
+Este tutorial tem como objetivo oferecer uma introdução prática à análise estatística de dados no R, utilizando diversos bancos de dados para cada tipo de anáise. O público-alvo abrange estudantes de [Estatística Aplicada a Psicobiologia II](#0), pós-graduandos e pesquisadores que buscam aprimorar suas habilidades em análise de dados. É recomendado ter conhecimento básico em estatística, particularmente [Estatística Aplicada a Psicobiologia I](#0), e alguma familiaridade com o ambiente R para acompanhar este tutorial. Abordaremos as seguintes análises:
+
+-   Transformação de dados para análises
+
+-   Modelos lineares:
+
+    -   Modelo linear geral (GLM ) de medidas repetidas
+
+    -   Generalized Estimated Equations (GEE)
+
+    -   Modelos mistos e hierárquicos (GMM)
+
+    -   Generalized linear models (GzLM)
+
+<!-- -->
+
+-   Análise de sobrevida
+
+    -   Kaplan-Meier
+
+    -   Regressão de Cox
+
+    -   Cox Tempo dependente
+
+<!-- -->
+
+-   Séries temporais (ARIMA)
+
+-   Modelagem de Equação Estrutural (SEM)
+
+    -   Path analysis
+
+    -   Confrmatory Factor Analysis (CFA)
+
+    -   Moderação e mediação
+    
+Ao fim de cada capítulos, nas seções intituladas "Extras", vamos mostrar dicas sobre pacotes que podem ser úteis para suas análises, mas que não estão disponíveis no SPSS ou no Jamovi.
+    
+
+::: {.callout-important}
+#### Importante!
+O material apresentado aqui é **complementar** às aulas teóricas e práticas. É imprescindível que você assista às aulas antes de resolver os exercícios no R.
+:::
+
+## R e Rstudio
+
+Embora as aulas práticas tenham sido gravadas utilizando o SPSS, o intuito do tutorial é replicar as análises no R, que é gratuito! Portanto você precisa baixar o R e o Rstudio.
+
+[Download do R](https://cran.r-project.org/bin/windows/base/)\
+[Download do Rstudio](https://posit.co/downloads/)
+
+## Aulas práticas gravadas
+
+Os vídeos das aulas práticas no SPSS foram anexados ao fim de cada capítulo para que você possa ter uma referência do tipo de análise realizada. Em alguns casos você notarão que os resultados não serão idênticos no SPSS e no R. Isso ocorre devido aos diferentes algorítimos de estimação de coeficientes utilizados nos programas. O importante é você sempre reportar como a análise foi feita, quais programas e sempre que possível, disponibilizar o código ou o passo-a-passo utilizado para realizar a análise.
+
+## Boas práticas no Rstudio
+
+Criar um projeto separado para cada tipo de análise no R é uma prática recomendada porque mantém o ambiente organizado, evita conflitos entre projetos, facilita a colaboração e torna a reprodução e compartilhamento de trabalho mais eficientes.
+
+### Criando o projeto e alocando os arquivos
+
+Para criar um novo projeto no R, siga estes passos simples:
+
+1.  Abra o RStudio.
+
+2.  Vá até a guia "File" (Arquivo) e selecione "New Project" (Novo Projeto).
+
+3.  Escolha um diretório para o seu projeto, onde todas as pastas e arquivos relacionados a ele serão armazenados. Isso ajudará na organização.
+
+4.  Clique em "Create Project" (Criar Projeto).
+
+Feito isso você terá um novo projeto configurado. Qualquer arquivo que você deseje usar para o tutorial deve ser colocado dentro da pasta desse projeto. Isso garantirá que todos os caminhos e referências aos arquivos sejam relativos ao diretório do projeto, facilitando a portabilidade e compartilhamento do tutorial.
+
+Com esses passos, você terá um ambiente de projeto limpo e organizado para trabalhar com seus arquivos e conduzir seu tutorial no R.
+
+## Instalando e carregando os pacotes
+
+No início de cada capítulo, você encontrará uma lista completa dos pacotes necessários para reproduzir as análises correspondentes.
+
+Para instalar um pacote, basta executar o comando `install.packages("nome_do_pacote")` uma única vez.
+
+Por exemplo: `install.packages("effects")`. Este comando instalará o pacote "effects", que contém funções para calcular os estimadores de modelos lineares. É importante colocar o nome do pacote entre aspas (" ")
+
+Após a instalação do pacote, será necessário carregá-lo sempre que desejar utilizar alguma função associada a ele. Para isso basta executar o comando library(nome_do_pacote). Note que aqui não há a necessidade de colocar o nome do pacote entre aspas.
+
+Exemplo: library(effects).
+
+Pronto! Agora você está familiarizado com o processo de instalação e carregamento dos pacotes que serão utilizados ao longo deste tutorial. Pode-se fazer uma analogia com uma biblioteca: adquirir os livros seria como instalar os pacotes (`install.packages`), e retirar um livro da prateleira seria como carregar o pacote (`library`) quando necessário.
+
+
+
+<!-- ```{r} -->
+<!-- install.packages("A3") -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- library(emmeans)   # Cálculo de médias estimadas após análises estatísticas. -->
+<!-- library(lme4)      # Ajuste de modelos lineares mistos. -->
+<!-- library(nlme)      # Ajuste de modelos mistos não lineares. -->
+<!-- library(flexplot)  # Criação de gráficos flexíveis e personalizados. -->
+<!-- library(foreign)   # Importação/exportação de dados de outros formatos. -->
+<!-- library(tidyr)     # Manipulação de dados. -->
+<!-- library(dplyr)     # Manipulação e transformação de dados de maneira eficiente. -->
+<!-- library(multcomp)  # Correção de múltiplas comparações pós-teste. -->
+<!-- library(effects)   # Visualização de efeitos de modelos estatísticos. -->
+<!-- library(sjstats)   # Estatísticas descritivas e sumarização de modelos. -->
+<!-- library(tm)        # Análise de texto e mineração de texto. -->
+<!-- library(car)       # Análise de regressão e diagnóstico de regressão. -->
+<!-- library(pwr)       # Cálculo do poder estatístico em estudos de amostragem. -->
+<!-- library(rstatix)   # Análise estatística simplificada. -->
+<!-- library(geepack)   # Ajuste de modelos de equações de estimação generalizadas. -->
+<!-- library(htmltools) # Ferramentas para trabalhar com HTML. -->
+<!-- library(mime)      # Ferramentas para manipulação de tipos MIME. -->
+<!-- library(performance) # Avaliação e melhoria do desempenho do modelo linear -->
+<!-- library(see) # Simplificar a exploração de dados -->
+<!-- library(rempsyc) # Métodos psicométricos e estatísticas relacionadas à psicometria -->
+<!-- library(easystats) # Simplifica a análise estatística -->
+<!-- ``` -->
+
+## Referências
+<!-- <https://quarto.org/docs/authoring/videos.html> -->
+
+<https://r4ds.hadley.nz/>

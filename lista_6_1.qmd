@@ -1,0 +1,679 @@
+# Lista 6.1 - Cox tempo dependente
+
+O banco de dados Cox_tempo_dependente1.sav apresenta os dados de 628 pacientes de um serviço de nefrologia. Os pacientes foram acompanhados por pouco mais de 1000 dias e durante este período alguns pacientes fizeram transplante renal (treat=1). Gostariamos de saber se a realização de transplante aumenta significativamente a sobrevida destes pacientes em relação àqueles que não fizeram. Com base nestas informações, responda as questões abaixo
+
+## Carregando pacotes
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(tm)
+library(ggplot2)
+library(forcats)
+library(rempsyc)
+library(easystats)
+library(kableExtra)
+library(gtsummary)
+
+#Específicos para survival
+library(survival)
+library(ggsurvfit)
+library(survminer)
+library(broom)
+library(survMisc)
+library(PHInfiniteEstimates)
+library(coin)
+library(condSURV)
+```
+
+```{r}
+#| include: false
+# ---------------------- #
+# KM_curve_tutorial.R
+# ---------------------- #
+
+# Setting up environment ===================================================
+# Clean environment
+rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
+gc() # free up memory and report the memory usage
+options(max.print = .Machine$integer.max, scipen = 999, stringsAsFactors = F, dplyr.summarise.inform = F) # avoid truncated output in R console and scientific notation
+
+# Set seed
+set.seed(42)
+
+# Theme ====================================================================
+biostatsquid_theme <- theme(plot.title = element_text(size = rel(2)),
+                            panel.grid.major.y = element_line(colour = 'gray'),
+                            panel.grid.minor.y = element_line(colour = 'gray'),
+                            panel.grid.major.x = element_blank(),
+                            panel.grid.minor.x = element_blank(),
+                            plot.background = element_rect(fill = NULL, colour = 'white'),
+                            panel.background = element_rect(fill = 'white'),
+                            # Axis stuff
+                            axis.line = element_line(colour = 'black', linewidth = 1),
+                            axis.text = element_text(colour = "black", face = 'bold'),
+                            axis.text.x = element_text(size = rel(1)),
+                            axis.text.y = element_text(size = rel(1)),
+                            axis.title = element_text(size = rel(1.2)),
+                            axis.ticks = element_line(colour = 'black', linewidth = 1.2),
+                            # Legend stuff
+                            legend.position = "bottom",
+                            #legend.margin = margin(6, 6, 6, 6),
+                            legend.title = element_text(face = 'bold'),
+                            legend.background = element_blank(),
+                            legend.box.background = element_rect(colour = "black"))
+```
+
+## Carregando os dados e modificando o tipo de variável
+
+Mantendo as boas práticas das análises, logo após carregar os dados em uma variável, vamos verificar os tipos de variávels que temos em nosso banco.
+
+```{r}
+original = read.spss("Cox tempo dependente 2_1.sav", to.data.frame=TRUE)
+glimpse(original)
+```
+
+Novamente podemos observar que o evento de interesse (morte) está como um fator. Vamos modificar como já fizemos a lista 6 e também já vamos ajustar a variável "treat" para que ela seja um fator e não um número.
+
+```{r}
+db <- original %>%
+  mutate(
+    morte = as.integer(morte == "Sim"), # para transformar sim e não em 1 e 0, respectivamente
+    treat = as.factor(treat)
+  )
+glimpse(db)
+```
+
+Feito! Vamos também verificar se há presença de dados faltantes e em quais variáveis.
+
+```{r}
+# Verificando NAs
+resumo_nas <- db %>%
+  summarise(
+    nas_age = sum(is.na(age)),
+    nas_race = sum(is.na(race)),
+    nas_treat = sum(is.na(treat)),
+    nas_t_dialise = sum(is.na(Tempo_dialise)),
+    nas_time = sum(is.na(time)),
+    nas_morte = sum(is.na(morte)),
+  )
+kable(resumo_nas)
+
+
+```
+
+Até chegar na Cox tempo dependente, vamos repetir basicamente o que já fizemos no [Capítulo @sec-lista-6]
+
+## Criando a estrutura de dados
+
+```{r}
+# Create a survival object
+surv_obj <- Surv(time = db$time, event = db$morte)
+```
+
+### Tábua de vida
+
+```{r}
+# Create survival curve
+fit1 <- survfit(surv_obj ~ treat, data = db)
+kable(head(tidy(fit1)))
+```
+
+### Gráfico Kaplan-Meir
+
+```{r}
+
+km_plot = survfit2(surv_obj ~ treat, data = db) %>%
+  tidy_survfit() %>%
+  ggplot(aes(x = time, y = estimate,
+             min = conf.low, ymax = conf.low,
+             color = strata, fill = strata)) +
+  geom_step()
+km_plot
+```
+
+Podemos ajustar as configurações do eixo X para exibir uma escala temporal com intervalos de 50 unidades.
+
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+
+# km_plot2 = fit1 %>%
+#   tidy_survfit() %>%
+#   ggplot(aes(x = time, y = estimate,
+#              min = conf.low, ymax = conf.low,
+#              color = strata, fill = strata)) +
+#   geom_step()
+
+km_plot2 = fit1 %>%
+  tidy_survfit() %>%
+  ggplot(aes(x = time, y = estimate,
+             min = conf.low, ymax = conf.low,
+             color = strata, fill = strata)) +
+  geom_step() +
+  scale_x_continuous(breaks = seq(0, max(fit1$time), by = 50))
+
+
+km_plot2
+
+
+```
+
+### Tabela com Sobrevida em tempos espcíficos.
+
+```{r}
+tbl_survfit_ex3 <-
+  list(
+    survfit(surv_obj ~ 1, db),
+    survfit(surv_obj ~ treat, db)
+  ) %>%
+  tbl_survfit(times = c(100, 600))
+tbl_survfit_ex3
+```
+
+### Log-rank
+
+```{r}
+coin::logrank_test(surv_obj ~ treat, data = db, type = "logrank" ) # padrão é o log-rank
+```
+
+### Gehan-Breslow
+
+```{r}
+coin::logrank_test(surv_obj ~ treat ,data = db, type = "Gehan-Breslow")
+```
+
+### Tarone-Ware
+
+```{r}
+coin::logrank_test(surv_obj ~ treat ,data = db, type = "Tarone-Ware")
+```
+
+### Peto-Peto
+
+```{r}
+coin::logrank_test(surv_obj ~ treat ,data = db, type = "Peto-Peto")
+
+```
+
+## Cox regression
+
+```{r}
+# Cox regression ======================================================
+# Fit the model
+
+cox_res <- coxph(Surv(time = db$time, event = db$morte) ~ treat, data = db)
+### Para testar todas as variáveis
+#cox_res <- coxph(Surv(time = db$time, event = db$morte2) ~ treat + age + Tempo_dialise, data = db)
+
+tbl_regression(cox_res, exponentiate = TRUE)
+
+```
+
+### Verificando os pressupostos da Cox regression
+
+Relembrando a análise dos riscos proporcionais com base nos resíduos de Schoenfeld:
+
+-   p-val \< 0,05: há evidências **contra** a pressuposto de riscos proporcionais, os HRs **não** são constantes ao longo do tempo
+
+-   chisq: quanto maior o valor, mais forte a violação dos pressupostos
+
+## Plot dos resíduos de Schoenfeld
+
+```{r}
+# Plot the Schoenfeld residuals over time for each covariate
+survminer::ggcoxzph(cox.zph(cox_res), point.size = 0.1)
+
+```
+
+Se os resíduos mostrarem um padrão claro ao longo do tempo, isso pode indicar uma violação da suposição de riscos proporcionais.
+
+Algumas dicas para ajudar na interpretação:
+
+-   Sem Padrão (Resíduos Constantes): Se os resíduos aparecerem aleatoriamente espalhados em torno de zero, sem nenhuma tendência ou padrão claro, isso sugere que a suposição de riscos proporcionais é razoável.
+
+-   Tendência Linear: Uma tendência linear (aumentando ou diminuindo) nos resíduos ao longo do tempo pode sugerir uma violação da suposição de riscos proporcionais. Por exemplo, se os resíduos forem consistentemente positivos ou negativos ao longo do tempo, isso indica um efeito dependente do tempo.
+
+-   Padrão Não Linear: Se os resíduos exibirem um padrão não linear ou formatos específicos (por exemplo, formato de U, formato de V), isso pode indicar desvios dos riscos proporcionais.
+
+-   Paralelismo: Paralelismo significa que a propagação e distribuição dos resíduos são relativamente constantes ao longo do tempo. Se os resíduos aumentarem ou diminuirem ao longo do tempo, isso pode sugerir uma violação da suposição.
+
+```{r}
+ggcoxdiagnostics(cox_res, type = "dfbeta", linear.predictions = FALSE)
+```
+
+```{r}
+# Não é importante para variáveis categóricas, mas fica o código para eventual consulta.
+ggcoxdiagnostics(cox_res, type = "deviance", linear.predictions = FALSE)
+```
+
+## Plots do modelo
+
+### Forest plot
+
+```{r}
+# Forest plots ================================================================
+# Visualise your Cox model results
+ggforest(cox_res, data = db)
+
+```
+
+### Gráfico de sobrevida
+
+Assim como fizemos no exercício anterior, precisamos criar um novo banco de dados para visualizar o gráfico da Regressão de Cox:
+
+```{r}
+# Precisa ser feito apenas com uma variável
+cox_res2 <- coxph(Surv(time = db$time, event = db$morte) ~ treat, data = db)
+
+# Criando o novo banco de dados
+new_df <- with(db,
+               data.frame(treat = c("0", "1"))
+)
+```
+
+E precisamos transformar a variável `treat` em um fator.
+
+```{r}
+#| fig-width: 2
+#| fig-height: 2
+new_df$treat = as.factor(new_df$treat)
+kable(new_df)
+```
+
+Criando os dados com base no modelo e plotando o gráfico.
+
+```{r}
+fit_cox <- survfit(cox_res2, newdata = new_df)
+
+J = ggsurvplot(fit_cox, conf.int = TRUE, legend.labs=c("tx=sim", "tx=não"),
+           ggtheme = theme_minimal(),
+           data = db)
+
+J$plot = J$plot +
+  scale_x_continuous(breaks = seq(0, 900, 20))
+
+J
+```
+
+Reparem na distorção do gráfico em relação à Kaplan-Meir
+
+```{r}
+km_plot
+```
+
+## Cox tempo-dependente
+
+Já vimos que os riscos não são proporcionais neste caso. Porém, nem tudo está perdido. Podemos finalmente agora falar da Cox Tempo-dependente.
+
+O primeiro passo é identificar um possível fator que esteja afetando a proporcionalidade dos riscos no estudo. Pela literatura tempos que o tempo em diálise afeta os riscos entre pessoas que fizeram ou não o transplante de rim. Daí a importância de entender bem o fenômeno que estamos estudando. Como bons pesquisadores, também coletamos o tempo em diálise e esses dados estão no banco de dados
+
+```{r}
+glimpse(db$Tempo_dialise)
+```
+
+A variável é numérica e contínua, logo ela já está formatada para continuarmos com a análise.
+
+Não existe regras escritas na pedra para contornar o problema de não proporcionalidade. Vamos mostrar uma abordagem aqui. Não deixe de ver as referências para outros casos.
+
+### Covariáveis tempo dependente
+
+No R, há diversas formas de indicar uma variável como tempo-dependente. A escolha do método dependerá da natureza da variável independente e da sua relação teórica com o evento em estudo. A função `coxph()` oferece a opção de utilizar o argumento `tt()`, o qual especifica qual variável independente será considerada uma covariável tempo-dependente e como o coeficiente associado a ela deve ser modificado ao longo do tempo.
+
+O modelo deve seguir a seguinte estrutura
+
+`coxph(Surv(time, event) ~ covariavel1 + covariavel2 + tt(covariavel2), data, tt=function(x,t,…) x*t)`
+
+Podemos substituir o `Surv(time, event)` pela variável que salvamos com o objeto survival, `surv_obj`.
+
+A função tt (`function(x,t,…)___)` pode assumir alguns modelos. A seguir trazemos três exemplos mais utilizados em diversas análises:
+
+-   x\*t permitirá que o coeficiente mude linearmente com o tempo
+
+-   x\*log(t) permite que o coeficiente mude com o log do tempo
+
+-   x\*(t\>tempo) permite que o coeficiente assuma 2 valores diferentes, um valor quando t\<=tempo e outro valor t\>tempo
+
+Vamos gerar vários modelos e avaliá-los comparando os índices de ajuste e os resultados obtidos.
+
+### Sem variável tempo dependente
+
+```{r}
+dialise <- coxph(surv_obj ~ treat + Tempo_dialise, 
+                          data=db) # corte no 660
+
+summary(dialise)
+```
+
+### Mudança linear
+
+```{r}
+dialise_linear <- coxph(surv_obj ~ treat + Tempo_dialise + tt(Tempo_dialise),
+                        data=db,
+                          tt=function(x,t,...) x*t) 
+summary(dialise_linear)
+
+
+```
+
+### Modelo log
+
+```{r}
+dialise_log <- coxph(surv_obj ~ treat + Tempo_dialise + tt(Tempo_dialise),
+                          data=db,
+                          tt=function(x,t,...) x*log(t)) 
+
+summary(dialise_log)
+```
+
+### Modelo temporal
+
+```{r}
+dialise_tempo_650 <- coxph(surv_obj ~ treat + Tempo_dialise + tt(Tempo_dialise),
+                          data=db,
+                          tt=function(x,t,...) x*(t>650))
+
+summary(dialise_tempo_650)
+```
+
+### Índices de aderência (AIC e BIC)
+
+Podemos comparar os modelos computando os valores de AIC e BIC
+
+```{r}
+combined_df <- data.frame(
+  Model = c("dialise", "dialise_linear", "dialise_log", "dialise_tempo_650"),
+  AIC = c(AIC(dialise), AIC(dialise_linear), AIC(dialise_log), AIC(dialise_tempo_650)),
+  BIC = c(BIC(dialise), BIC(dialise_linear), BIC(dialise_log), BIC(dialise_tempo_650))
+)
+
+kable(combined_df)
+
+
+```
+
+Por esse critério, temos que o melhor modelo é o log em seguida o linear.
+
+### Resíduos de Schoenfeld
+
+Agora vamos analisar mais uma vez os resíduos de Schoenfeld, mas agora variando pelo "Tempo em Diálise".
+
+```{r}
+cox_res_T_Cov <- coxph(Surv(time = db$time, event = db$morte) ~ treat + Tempo_dialise, data = db)  
+ggcoxzph(cox.zph(cox_res_T_Cov), var ="Tempo_dialise") 
+```
+
+Podemos observar que o Beta do tempo em diálise tem um aumento linear conforme maior o tempo. O resultado pode indicar que o efeito do tempo sobre a o tempo em diálise pode ser linear.
+
+### Interpretando os resultados.
+
+A interpretação dos coeficientes da Cox Tempo-dependente é diferente das outras regressõs.
+
+Vamos interpretar o valor do modelo com mudança linear.
+
+```{r}
+summary(dialise_linear)
+```
+
+O coeficiente Tempo_dialise = -0.023, deve ser interpretado como o efeito do tempo de diálise no tempo zero. Já o coeficiente tt(Tempo_dialise) = deve ser interpretado como o a mudança do efeito do tempo em diálise a cada unidade de tempo a mais.
+
+### Observações SPSS e R
+
+Na aula prática o modelo não é feito com o Tempo em Diálise fora da variável tempo dependente. Já na aula teórica do curso II de 2023, o modelo é escrito como foi feito aqui no R, levando em conta o Tempo em Diálise como uma variável tempo dependente e também como covariável no modelo.
+
+## Covariando para idade e raça
+
+O conjunto de dados ainda possui duas variáveis que não foram incluídas no modelo: idade e raça. Conforme o procedimento padrão, vamos examinar a natureza dessas variáveis. Começando com a idade.
+
+```{r}
+glimpse(db)
+```
+
+Ótimo, idade já está como uma variável numérica e contínua e raça está como um fator. Por fim, vamos verificar qual o nível de referência da variável "race".
+
+```{r}
+levels(db$race)
+```
+
+O nível "branco" está como referência, logo, os resultados do modelo mostrarão os valores dos coeficientes do nível "negro/pardo" em relação ao nível "branco".
+
+Vamos ao modelo completo.
+
+### Modelo completo Cox tempo dependente
+
+```{r}
+cox_full_model <- coxph(surv_obj ~ age + race + treat + Tempo_dialise + tt(Tempo_dialise),
+                        data=db,
+                          tt=function(x,t,...) x*t) 
+summary(cox_full_model)
+```
+
+Agora temos que a raça tem um efeito significativo no modelo. Seguindo o vídeo da aula prática, podemos segmentar o banco de dados para as duas raças que temos no banco de dados.
+
+### Segmentando o banco de dados por raça
+
+```{r}
+
+db_branco = db %>%
+  filter(race == "branco")
+
+db_pardo_negro = db %>% 
+  filter(race == "negro/pardo")
+
+```
+
+### KM por raça = Branco
+
+```{r}
+# Criando um novo objeto Surv
+surv_obj_branco <- Surv(time = db_branco$time, event = db_branco$morte)
+
+fit_br = survfit(surv_obj_branco ~ treat, data = db_branco)
+ggsurvfit(fit_br)
+
+ggsurvfit(fit_br, linewidth = 1) +
+  labs(x = 'Dias', y = 'Overall survival') +
+  add_confidence_interval() +
+ # add_risktable() +
+  scale_ggsurvfit() + 
+  biostatsquid_theme #+  coord_cartesian(xlim = c(0, 8))
+
+
+```
+
+### Modelo completo para brancos
+
+```{r}
+
+
+# Escrevendo o modelo
+
+cox_full_model_branco <- coxph(surv_obj_branco ~ age + treat + Tempo_dialise + tt(Tempo_dialise),
+                        data=db_branco,
+                          tt=function(x,t,...) x*t) 
+
+summary(cox_full_model_branco)
+
+```
+
+### KM por raça = negro/pardo
+
+```{r}
+# Criando um novo objeto Surv
+
+surv_obj_pardo_negro<- Surv(time = db_pardo_negro$time, event = db_pardo_negro$morte)
+
+fit_pn = survfit(surv_obj_pardo_negro ~ treat, data = db_pardo_negro)
+
+ggsurvfit(fit_pn, linewidth = 1) +
+  labs(x = 'Dias', y = 'Overall survival') +
+  add_confidence_interval() +
+ # add_risktable() +
+  scale_ggsurvfit() + 
+  biostatsquid_theme #+  coord_cartesian(xlim = c(0, 8))
+
+
+```
+
+### Modelo completo para pardo/negro
+
+```{r}
+
+# Escrevendo o modelo
+
+cox_full_model_pardo_negro <- coxph(surv_obj_pardo_negro ~ age + treat + Tempo_dialise + tt(Tempo_dialise),
+                        data=db_pardo_negro,
+                          tt=function(x,t,...) x*t) 
+
+summary(cox_full_model_pardo_negro)
+
+```
+
+## Lista 6.1 resolvida no SPSS
+
+{{< video https://www.youtube.com/watch?v=6FvdrOpz0XU title='Análise Sobrevida II - Cox tempo dependente - Aula Prática #6.1' >}}
+
+## Extras
+
+### Mais gráficos
+
+E utilizar nosso tema para personalizar e padronizar.
+
+```{r}
+fit2_km <- ggsurvfit(fit1, linewidth = 1) +
+  labs(x = 'Dias', y = 'Porcentagem de sobrevida') +
+  add_confidence_interval() +
+ # add_risktable() +
+  scale_ggsurvfit() + 
+  biostatsquid_theme #+  coord_cartesian(xlim = c(0, 8))
+
+fit2_km
+```
+
+**Cuidado** com o p-value do gráfico a seguir, ele se refere apenas ao Log-rank
+
+```{r}
+
+ggsurvplot(fit1, data = db,
+           size = 1,
+           palette = c('#E7B800', '#2e9fdf'),
+           censor.shape = '|', censor.size = 4,
+           conf.int = TRUE,
+           pval = TRUE, # CUIDADO, apenas log-rank
+          # risk.table = TRUE,
+         #  risk.table.col = 'strata',
+           legend.labs = list('0' = 'Transplante = sim', '1' = 'Transplante = não'),
+           risk.table.height = 0.25,
+           ggtheme = theme_bw())
+```
+
+### Cox tempo dependente log
+
+```{r}
+cox_full_model_2 <- coxph(surv_obj ~ age + race + treat + Tempo_dialise + tt(Tempo_dialise),
+                        data=db,
+                          tt=function(x,t,...) x*log(t)) 
+summary(cox_full_model_2)
+AIC(cox_full_model_2)
+```
+
+## Referencias
+
+<https://stats.oarc.ucla.edu/wp-content/uploads/2022/05/survival_r.html#(48)>
+
+<https://www.youtube.com/watch?v=Y_83HXuHMdc>
+
+<https://youtu.be/Y_83HXuHMdc?t=9151>
+
+## Códigos não utilizados
+
+```{r}
+
+# Ajustando o banco de dados
+
+db3 = db
+
+
+# db3$time = pmax(0.5, db3$time - 0) caso eu tenha zeros no tempo de morte
+# db3$time660 = as.integer(db3$time660)
+# head(db3)
+
+# db3$time660 = as.integer(db3$time660)
+
+db3 <- tmerge(
+  data1 = db3,
+  data2 = db3,
+  id = ID,
+ # death = event(T1, delta1), caso tenha dois eventos de morte independentes. Duas doenças diferentes, por exemplo
+  death = event(time, morte),
+  T_Cov = tdc(Tempo_dialise) # indicando a covariavel tempo-dependente
+)
+
+head(db3)
+
+```
+
+```{r}
+
+# Duvida para Altay - colocar o evento como morte2 ou death
+cox_model_T_Cov <- coxph(Surv(time = tstart, time2 = tstop, event = morte) ~ treat + T_Cov, data = db3)
+
+summary(cox_model_T_Cov)
+
+
+
+db3 %>% 
+  coxph(Surv(time = tstart, time2 = tstop, event = death) ~ treat + age + race + T_Cov, data = .) %>% 
+  gtsummary::tbl_regression(exp = TRUE)
+
+```
+
+### Tempo em diálise como covariante tempo-dependente
+
+```{r}
+
+# Ajustando o banco de dados
+
+db2 = db
+
+
+#db2$time = pmax(0.5, db2$time - 0)
+
+
+db2 <- tmerge(
+  data1 = db,
+  data2 = db,
+  id = ID,
+ # death = event(T1, delta1), caso tenha dois eventos de morte independentes. Duas doenças diferentes, por exemplo
+  death = event(time, morte),
+  T_Tempo_dialise = tdc(Tempo_dialise) # indicando a covariavel tempo-dependente
+)
+head(db2)
+```
+
+```{r}
+
+
+cox_model_time_dependent <- coxph(Surv(time = tstart, time2 = tstop, event = death) ~ T_Tempo_dialise + treat, data = db2)
+
+summary(cox_model_time_dependent)
+
+
+
+db2 %>% 
+  coxph(Surv(time = tstart, time2 = tstop, event = death) ~ T_Tempo_dialise * treat, data = .) %>% 
+  gtsummary::tbl_regression(exp = TRUE)
+
+```
+
+## Versões dos pacotes
+
+```{r}
+report(sessionInfo())
+```

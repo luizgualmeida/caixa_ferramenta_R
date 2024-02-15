@@ -1,0 +1,234 @@
+# Lista 3 - Matriz de Covariância {#sec-lista-3}
+
+## Pacotes que vamos utilizar
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(emmeans)
+library(nlme)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(multcomp)
+library(effects)
+library(performance)
+library(easystats)
+```
+
+## Instruções e carregando o banco de dados
+
+Vamos utilizar um GMM para verificar o efeito de tempo e grupo sobre os resultados de resp ([o banco já está no formato correto](https://drive.google.com/file/d/17ViQJy-w50z6vm6VdZ1A1lbeTmUuIviB/view?usp=sharing)). Porém, antes disso vamos avaliar qual a melhor matriz de covariância que o modelo deve aplicar aos dados.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+dataset = read.spss("bd_New drug_respiratory&pulseRESHAPE.sav", to.data.frame=TRUE)
+```
+
+::: callout-important
+#### Muito importante!
+
+SEMPRE verifique o tipo das variáveis no banco de dados. Elas podem ser fatores, números íntegros, números decimais, etc. As análises mudam MUITO dependendo do tipo de variável que utilizamos no modelo de regressão linear!
+:::
+
+Para verificar o tipo das variáveis podemos utilizar a função `glimpse()`.
+
+```{r}
+
+glimpse(dataset)
+
+```
+
+Notem que a variável `Tempo` está como `<dbl>`, indicando que é uma variável contínua. Vejam a aula prática em que o Altay explica que os tempos de coleta na verdade são fatores e não indicam uma ordem ou um contínuo. Seria como dizer que as amostras foram coletadas nos Tempos "X", "Y" e "Z".
+
+Para transformar a variável `Tempo` em um fator podemos utilizar o seguinte código:
+
+```{r}
+dataset$Tempo = as.factor(dataset$Tempo)
+```
+
+Rodando novamente a função `glimpse()` é possível observar que agora sim temos a variável `Tempo` como `<fct>`, indicando que ela é do tipo fator .
+
+```{r}
+glimpse(dataset)
+```
+
+::: callout-tip
+#### Dica
+
+Faça os modelos antes e depois de transformar a variável `Tempo` em um fator e compare os resultados.
+:::
+
+Agora sim podemos realizar nossas análises e comparar com os resultados do SPSS.
+
+## a) Criando os modelos para a variável Resp
+
+Há diversos pacotes no R que podemos alterar a matriz de covariância do modelo. Optamos por escolher a função `lme()` do pacote `nlme` por ela ter de forma bem direta todas as matrizes escolhidas na aula prática utilizando o SPSS. Recomendamos também o pacote `geepack`para outras matrizes.
+
+### Matriz simétrica
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_sim = lme(
+  fixed = resp ~ 1 + drug + Tempo + drug * Tempo, 
+  random =~ 1|Sujeito, 
+  correlation = corCompSymm(form = ~1|Sujeito), # Aqui definimos a matriz
+  data = dataset)
+```
+
+### Matriz Ar(1)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_AR1 = lme(
+  fixed = resp ~ Tempo + drug + Tempo * drug,
+  random = ~1|Sujeito,
+  correlation = corAR1(form = ~ 1|Sujeito), # Aqui definimos a matriz
+  data = dataset)
+```
+
+### Matriz Diagonal (identidade)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_Iden = lme(
+  fixed = resp ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corIdent(form = ~ 1|Sujeito), # Aqui definimos a matriz
+  data = dataset)
+
+```
+
+### Matriz Não estruturada (Unstructured)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_Uns = lme(
+  fixed = resp ~ drug + Tempo + drug * Tempo,
+  random = ~1|Sujeito,
+  correlation = corSymm(form = ~ 1|Sujeito), # Aqui definimos a matriz
+  data = dataset)
+```
+
+## b) Comparando os valores de AIC e BIC
+
+Podemos colocar os resultados dos valores de AIC e BIC dos modelos em um dataframe para poder compará-los.
+
+```{r}
+# Crie um dataframe
+df_aderencia <- data.frame(
+  Modelo = c("model_resp_sim", "model_resp_AR1", "model_resp_Iden", "model_resp_Uns"),
+  AIC = c(AIC(model_resp_sim), AIC(model_resp_AR1), AIC(model_resp_Iden), AIC(model_resp_Uns)),
+  BIC = c(BIC(model_resp_sim), BIC(model_resp_AR1), BIC(model_resp_Iden), BIC(model_resp_Uns))
+)
+
+# Arredonde os valores para 3 casas decimais
+df_aderencia$AIC <- round(df_aderencia$AIC, 3)
+df_aderencia$BIC <- round(df_aderencia$BIC, 3)
+
+# Adicione um asterisco às células correspondentes aos menores valores de AIC e BIC
+df_aderencia$AIC <- ifelse(df_aderencia$AIC == min(df_aderencia$AIC), paste0(df_aderencia$AIC, "*"), df_aderencia$AIC)
+df_aderencia$BIC <- ifelse(df_aderencia$BIC == min(df_aderencia$BIC), paste0(df_aderencia$BIC, "*"), df_aderencia$BIC)
+
+
+# Exiba o dataframe
+print(df_aderencia)
+
+
+```
+
+::: callout-tip
+#### Dica!
+
+Podemos utilizar a função `compare_performance` para comparar diversos valores de aderência dos modelos!
+:::
+
+```{r}
+compare_performance(model_resp_sim,
+                    model_resp_AR1,
+                    model_resp_Iden,
+                    model_resp_Uns,
+                    metrics = c("AIC","BIC"),
+                    rank = TRUE)
+
+```
+
+Das duas formas constatamos que o modelo com a matriz de covariância AR1 apresentou os melhores índices de aderência. Note que os valores de AIC e BIC apresentados na saída da função `compare_factors` aparecem ponderados. Os valores são calculados dividindo o peso AIC/BIC de um modelo pelo peso AIC/BIC dos outros modelos ajustados.
+
+## c) Resultado do modelo escolhido - AR1
+
+A matriz de covariância AR(1) é uma escolha adequada para o exemplo da droga e do placebo devido à sua capacidade de capturar a dependência temporal nas respostas dos pacientes em estudos longitudinais. Essa matriz reflete a ideia de que as observações próximas no tempo têm uma correlação mais forte, enquanto as observações mais distantes têm uma correlação mais fraca. Isso é consistente com a possibilidade de que os efeitos da droga persistam ao longo do tempo, mas diminuam com o passar dos dias após a administração.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+report(model_resp_AR1)
+```
+
+Faça as análises para a variável Pulse! Lembre-se de não ficar apenas copiando e colando os scripts e mude os nomes das variáveis!
+
+## Extras!
+
+### Gráfico do modelo em uma linha
+
+Já vimos algumas formas de apresentar os gráficos dos modelos. A ideia ao longo destes tutoriais é oferecer várias ferramentas para você poder escolher a mais adequada para seus objetivos. Vamos ver uma forma bem prática de criar um gráfico do nosso modelo escolhido com a função `plot()` em conjunto com a função `allEffects()`!
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+plot(allEffects(model_resp_AR1))
+```
+
+### Mudando a referência de um fator
+
+Na análise dos modelos observamos que o grupo "New Drug" foi escolhido como referência. Isso é evidenciado pelo fato de que apenas os valores dos estimadores para o grupo "Placebo" são apresentados nos resultados. O R escolhe, por padrão, o valor de referência inicial com base na ordem alfabética dos níveis da variável categórica. Nesse caso, "New Drug" é escolhido como referência por ser o primeiro nível alfabeticamente.
+
+Caso queira confirmar qual é o valor de referência de uma variável, basta utiliza a função `levels()`, que já vem instalada com o R.
+
+```{r}
+levels(dataset$drug)
+```
+
+Podemos alterar facilmente qual será o grupo de referência de nossas análises utilizando a função `relevel()`, que também já vem instalada no pacote base do R.
+
+```{r}
+dataset$drug <- relevel(dataset$drug, ref = "Placebo")
+levels(dataset$drug)
+```
+
+Note agora que "Placebo" aparece em primeiro lugar, indicando o novo valor de referência. Escreva um novo modelo e compare os resultados com os anteriores.
+
+## Lista 2 resolvida no SPSS
+
+{{< video https://youtu.be/gYWld1qSh9c?si=VJdZsrSYAE-2BJpA title='GMM - General Mixed Models - Aula Prática #3 (SPSS)' >}}
+
+## Referências
+
+https://bcheggeseth.github.io/CorrelatedData/marginal-models.html
+
+## Versões dos pacotes
+
+```{r}
+report(sessionInfo())
+```

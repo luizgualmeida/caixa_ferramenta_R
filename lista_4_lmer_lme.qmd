@@ -1,0 +1,1063 @@
+# Lista 4 com modleos utilizando lmer() e lme()
+
+# Lista 4 - GMM e ICC
+
+Para resolver a lista de exercícios 4 vamos utilizar o [banco de dados THKS2](https://drive.google.com/file/d/1GVse4Sq6B66Cs9qeyA5BJwv2SxgYrip-/view?usp=sharing). O banco apresenta dados do programa "Television, School and Family Smoking Prevention and Cessation Project (TVSFP)", que avaliou a eficácia de um programa presencial para parar de fumar (Currículo) em conjunto com um programa em vídeo (TV) para prevenir o início do tabagismo e fortalecer a resiliência daqueles que deixaram de fumar.
+
+O estudo adotou um delineamento 2x2 com quatro grupos distintos, considerando a presença do "school-based social-resistance curriculum (CC)" e do "television-based prevention program (TV)". Esses grupos foram categorizados como "Curriculum & TV", "Curriculum", "TV" e "Neither". Este último indicando que as pessoas do grupo não participaram de nenhuma intervenção.
+
+A randomização da amostra ocorreu em dois níveis: por escolas e por salas de aula. O banco de dados inclui informações de 1600 alunos de 135 classes distintas em 28 escolas localizadas em Los Angeles. A variável dependente, a Escala de Conhecimento em Tabaco e Saúde (THKS), foi avaliada antes da randomização e após a implementação dos efeitos de cada grupo.
+
+Com base nestes dados, por favor, apresente as questões específicas e descreva os resultados utilizando as notações apropriadas.
+
+## Pacotes que vamos utilizar
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+# Seu código R aqui
+library(emmeans)
+library(lme4)
+library(nlme)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(multcomp)
+library(effects)
+library(sjstats)
+library(tm)
+library(report)
+library(ggplot2)
+library(forcats)
+library(performance)
+library(rempsyc)
+library(easystats)
+library(fitdistrplus)
+library(sjPlot)
+library(kableExtra)
+library(psychometric)
+library(misty)
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+dataset = read.spss("THKS2.sav", to.data.frame=TRUE)
+```
+
+Como já mencionado no capítulo anterior, é muito importante averiguar os tipos de variáveis antes de começar as análises. Para isso vamos utilizar a função `glimpse()`.
+
+```{r}
+glimpse(dataset)
+```
+
+Ao analisar os arquivos provenientes de outros programas, percebe-se que todas as variáveis numéricas são tratadas como contínuas. No entanto, todas as variáveis no banco de dados são, na verdade, categóricas. Portanto, é necessário modificar o tipo das variáveis antes de iniciar as análises. Para isso vamos utilizar a função `as.factor()` nas 4 variáveis contínuas.
+
+```{r}
+dataset$SchoolID = as.factor(dataset$SchoolID)
+dataset$ClassID = as.factor(dataset$ClassID)
+dataset$PreTHKS = as.integer(dataset$PreTHKS)
+dataset$PosTHKS = as.integer(dataset$PosTHKS)
+
+```
+
+Rodando novamente a função `glimpse()` podemos verificar se a mudança aconteceu.
+
+```{r}
+glimpse(dataset)
+```
+
+## a) Modelos hierárquicos
+
+::: callout-note
+#### Exercício
+
+Com base no desenho apresentado, qual é a pergunta que este estudo quer responder?
+:::
+
+Para abordar as questões específicas relacionadas ao banco de dados THKS2 utilizando um modelo linear GMM hierárquico, precisamos formular perguntas específicas que desejamos responder com a análise. Dado que o THKS é a variável dependente e foi avaliado antes e depois da implementação dos diferentes grupos de intervenção, podemos considerar algumas perguntas relevantes:
+
+-   Efeito geral da intervenção: Como a média da escala THKS varia entre os grupos "Curriculum & TV", "Curriculum", "TV" e "Neither" após a implementação das intervenções?
+
+-   Diferenças entre grupos específicos: Há diferenças significativas nas mudanças médias da escala THKS entre os grupos "Curriculum & TV", "Curriculum", "TV" e "Neither"?
+
+-   Variação entre escolas e salas de aula: A variação nas médias da escala THKS é significativa entre as escolas ou entre as salas de aula, considerando o efeito das intervenções?
+
+A análise gráfica pode ser fundamental para avaliar a validade da escolha de um modelo hierárquico. Ao comparar as médias do PreTHKS e do PosTHKS para diferentes escolas e salas de aula, os gráficos podem revelar padrões ou tendências que indicam se há variação sistemática ou não nas médias entre esses níveis hierárquicos. A identificação de padrões específicos pode orientar a decisão de usar um modelo hierárquico para capturar a estrutura aninhada dos dados.
+
+Vamos criar um gráfico das médias de THKS entre as escolas antes e depois das intervenções.
+
+### Média por Escola
+
+```{r}
+# Instale o pacote ggplot2 se ainda não o tiver instalado
+# install.packages("ggplot2")
+
+
+# Crie um novo dataframe para armazenar a média das notas por escola
+media_por_escola <- aggregate(cbind(PosTHKS, PreTHKS) ~ SchoolID, data = dataset, FUN = mean)
+
+# Transforme os dados em formato longo (tidy)
+media_por_escola_long <- tidyr::pivot_longer(media_por_escola, cols = c("PreTHKS", "PosTHKS"), names_to = "tempo", values_to = "media")
+
+# Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas
+ggplot(data = media_por_escola_long, aes(x = forcats::fct_rev(tempo), y = media, color = SchoolID, group = SchoolID)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Médias por Escola",
+       x = "",
+       y = "Valores das médias de THKS") +
+  theme_minimal() +
+  theme(legend.position = "right")  # Posição da leg
+
+```
+
+Observe no gráfico que o efeito da intervenção é basicamente constante. Antes da intervenção a média de THKS era menor e após a intervenção a média aumentou em praticamente todas as escolas analisadas.
+
+Vamos fazer o mesmo mas separando as médias por classes.
+
+### Média por classe
+
+```{r}
+# Instale o pacote ggplot2 se ainda não o tiver instalado
+# install.packages("ggplot2")
+
+
+# Crie um novo dataframe para armazenar a média das notas por escola
+media_por_classe <- aggregate(cbind(PreTHKS, PosTHKS) ~ ClassID, data = dataset, FUN = mean)
+
+# Transforme os dados em formato longo (tidy)
+media_por_classe_long <- tidyr::pivot_longer(media_por_classe, cols = c("PreTHKS", "PosTHKS"), names_to = "tempo", values_to = "media")
+
+# Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas
+ggplot(data = media_por_classe_long, aes(x = forcats::fct_rev(tempo), y = media, color = ClassID, group = ClassID)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Médias por Classe",
+       x = "",
+       y = "Média de Notas") +
+  #scale_color_manual(values = rainbow(length(top_50_escolas))) +  # Ajuste as cores manualmente
+  theme_minimal() +
+  theme(legend.position = "none")  # Posição da legenda
+
+```
+
+Observamos que, em alguns casos, a média de THKS diminui após a intervenção, enquanto em outros ocorre um aumento. A falta de um padrão claro sugere que a classe também desempenha um papel na resposta à intervenção, indicando a necessidade de utilizar modelos hierárquicos com fatores aleatórios nessa variável.
+
+### Média por Grupo
+
+```{r}
+# Instale o pacote ggplot2 se ainda não o tiver instalado
+# install.packages("ggplot2")
+head(dataset)
+
+# Crie um novo dataframe para armazenar a média das notas por escola
+media_por_grupo <- aggregate(cbind(PosTHKS, PreTHKS) ~ Group, data = dataset, FUN = mean)
+
+# Transforme os dados em formato longo (tidy)
+media_por_grupo_long <- tidyr::pivot_longer(media_por_grupo, cols = c("PreTHKS", "PosTHKS"), names_to = "tempo", values_to = "media")
+
+# Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas
+ggplot(data = media_por_grupo_long, aes(x = forcats::fct_rev(tempo), y = media, color = Group, group = Group)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Médias por Grupo",
+       x = "",
+       y = "Valores das médias de THKS") +
+  theme_minimal() +
+  theme(legend.position = "right")  # Posição da leg
+
+```
+
+Os grupos também parecem ter um padrão constante de aumento na média de THKS após a intervenção, indicano que não há necessidade de colocar essa variável como efeito aleatório.
+
+## b) Efeitos fixos e aleatórios
+
+::: callout-note
+#### Exercício
+
+Dentre os efeitos observados -- Grupo, Classe e Escola -- quais são efeitos fixos e aleatórios pelo menos do ponto de vista teórico?
+:::
+
+os gráficos são apenas uma das diversas maneiras de verificar a necessidade ou não de efeitos aleatórios. Mais a frente vamos ver outras métricas que podemos nos ajudar com a decisão.
+
+Com base nos gráficos anteriores, podemos inferir que a classe é um efeito aleatório, enquanto a escola e o grupo são efeitos fixos. Para seguir a abordagem prática exemplificada durante a aula no SPSS, iremos construir vários modelos considerando efeitos fixos e aleatórios. Posteriormente, compararemos os índices de aderência e os resultados obtidos, com o intuito de selecionar o modelo mais adequado para os nossos dados.
+
+## c) GLM univariado
+
+::: callout-note
+#### Exercício
+
+Faça um GLM univariado tendo o THKS pós como VD e os grupos, escolas e classes como variáveis independentes. Coloque as variáveis como efeitos fixos e aleatórios adequadamente conforme a questão anterior. Descreva os resultados encontrados.
+:::
+
+Caso queira repetir o modelo que o Altay apresentou no vídeo, execute o código abaixo. Assim como no SPSS, no R os valores serão calculados por muito tempo e o modelo não vai convergir.
+
+::: {.callout-caution collapse="true"}
+#### Por conta e risco!
+
+`modelo1 <- lm(PosTHKS ~ Group * SchoolID * ClassID * PreTHKS, data=dataset)`
+:::
+
+## d) Componentes da variância e ICC
+
+::: callout-note
+#### Exercício
+
+Utilizando o "Variance Components", verifique se Classe e Escola podem ser considerados fatores aleatórios. Utilize o ICC (Coeficiente de Correlação Intraclasse) como critério para decidir.
+:::
+
+Vamos utilizar a função `lmer()` do pacote `lme4` para criar nossos primeiro modelo com efeitos fixos e aleatórios **(modelo 1)**. Em seguida vamos extrair os componentes da variância dos resultados.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+modelo_1 = lmer(PosTHKS ~ 1 + Group * PreTHKS + (1|SchoolID/ClassID), # Modelo
+                data = dataset, 
+                REML = TRUE) # Método de estimação dos parâmetros
+
+icc(modelo_1)
+estimates(modelo_1)
+performance(modelo_1)
+```
+
+Importante notar em nosso modelo que os efeitos fixos estão fora dos parênteres, ao passo que os efeitos aleatórios (SchooID e ClassID) estão contidos dentro dos parênteses. Essa estrutura informa à função lmer quais variáveis têm efeitos fixos e quais têm efeitos aleatórios.
+
+Quanto os métodos de estimação dos parâmetros, não deixe de ler a seção "@sec-extras"
+
+O primeiro passo para mostrar os componentes da variância é extrair os valores do modelo utilizando a função `VarCorr`. Vamos guardar a saída da função em um data-frame, tornando a visualização mais acessível. Em seguida, utilizaremos os estimadores de variância desejados no cálculo do ICC.
+
+```{r}
+var_modelo_1 = as.data.frame(VarCorr(modelo_1))
+var_modelo_1
+```
+
+Os valores que precisamos para calcular o ICC estão na coluna `vcov`.
+
+vamos agora armazenar os valores desejados em outras variáveis.
+
+```{r}
+var_classe_1 = var_modelo_1$vcov[1] # classe
+var_escola_1 = var_modelo_1$vcov[2] # school
+var_erro_1 = var_modelo_1$vcov[3] # total
+
+```
+
+O que fizemos aqui foi acessar o data-frame (comp_var_modelo_1), indicar a coluna que queremos acessar O cifrão (`$vcoc`) e a linha em que se encontra o valor, indicada pelo número dentra das chaves `[]`.
+
+Tudo o que precisamos fazer agora é calcular o ICC, que se dá pela seguinte fórmula:
+
+$$
+ICC = \frac{\sigma^2_{\text{entre grupos}}}{\sigma^2_{\text{entre grupos}} + \sigma^2_{\text{do erro}}}
+$$
+
+### ICC Escola (modelo 1)
+
+Vamos primeiro calcular o ICC da Escola.
+
+```{r}
+
+# ICC Escola
+icc_escola_1 = var_escola_1 / (var_escola_1 + var_erro_1)
+round(icc_escola_1, 3)
+```
+
+Arredondando o valor do cálculo temos que o valor do ICC da escola é de 0,023, ou de aproximadamente 2,3%. Se um valor de 5% fosse estabelecido para considerar uma variabilidade significativa entre os grupos, o ICC de 0,023 seria bastante baixo em relação a esse limiar.
+
+### ICC Classe (modelo 1)
+
+Para calcular o ICC da classe temos:
+
+```{r}
+
+# ICC Classe
+icc_class_1 = var_classe_1 / (var_classe_1 + var_erro_1)
+round(icc_class_1, 3)
+```
+
+Aqui também temos um valor de ICC abaixo dos 5%, indicando que, por esse critério, a Classe também não deveria ser considerada como um fator aletaório.
+
+Uma manipulação viável para avaliar o ICC exclusivamente a partir das variáveis que você considera como aleatórias é incluir apenas essas variáveis no modelo, excluindo todas as outras que tenham efeito fixo. Vamos refazer todos os passos anteriores, apenas mudando o modelo **(modelo 2)**.
+
+```{r}
+modelo_2 = lmer(PosTHKS ~ 1 + PreTHKS + (1|SchoolID/ClassID), # Modelo
+                data = dataset, 
+                REML = TRUE) # Método de estimação dos parâmetros
+
+```
+
+```{r}
+var_modelo_2 = as.data.frame(VarCorr(modelo_2))
+var_modelo_2
+```
+
+```{r}
+var_classe_2 = var_modelo_2$vcov[1] # classe
+var_escola_2 = var_modelo_2$vcov[2] # escola
+var_erro_2 = var_modelo_2$vcov[3] # total
+
+```
+
+### ICC Escola (modelo 2)
+
+Calculando o ICC da escola para o modelo 2 temos
+
+```{r}
+# ICC escola
+
+icc_school_2 = var_escola_2 / (var_escola_2 + var_erro_2)
+round(icc_school_2, 3)
+```
+
+Agora temos que o ICC da escola é maior que 5%, indicando que a variável é uma boa candidata para ser designada tendo efeito aleatório.
+
+### ICC Classe (modelo 2)
+
+```{r}
+# ICC classe
+
+icc_class_2 = var_classe_2 / (var_classe_2 + var_erro_2)
+round(icc_class_2, 3)
+```
+
+Já a classe continua com um valor de ICC abaixo dos 5%
+
+::: callout-important
+#### Importante!
+
+Não existe um conceito fechado de como definir se uma variável deve ser considerada ou não como efeito aleatório. A teoria deve sempre prevalecer sobre os demais critérios.
+:::
+
+Pelo critério teórico, vamos assumir que tanto escola quanto classe terão efeito aleatório em nosso modelo final.
+
+::: callout-tip
+#### Dica!
+
+Veja na seção "@sec-extras" uma função específica no R para calcular o ICC sem precisa fazer as contas!
+:::
+
+## e) Interpretando os resultados
+
+::: callout-note
+#### Exercício
+
+Realize um Modelo Misto Hierárquico (caso os fatores aleatórios sejam relevantes com base em d). Descreva os resultados adequadamente e verifique qual combinação de fatores aleatórios é a mais adequada para explicar a variação dos resultados do THKS (com base no ICC).
+:::
+
+### Verificando a referência do Grupo
+
+Para seguir os passos do vídeo feito pelo Altay no SPSS primeiro temos que ajustar o nível de referência da variável Grupo. No SPSS a referência é o grupo que não fez nada (Neither). Para verificar qual o nível de referência aqui no R vamos utilizar a função `levels()`.
+
+```{r}
+levels(dataset$Group)
+```
+
+O nível de referência é sempre primeiro que aparece na lista, no caso "Curriculum & TV".
+
+Vamos mudar para que a referência seja "Neither", utilizando a função relevel.
+
+```{r}
+dataset$Group <- relevel(dataset$Group, ref = "Neither")
+levels(dataset$Group)
+```
+
+Agora sim podemos seguir com nossa análise.
+
+### Criando o modelo
+
+Como queremos mudar a matriz de covariância do modelo, vamos utilizar a função `lme()` neste caso, ao invés da `lmer()`, que utilizamos para resolver o exercício anterior. A forma de definir o modelo pelo lme é um pouco diferente, mas cada funcção tem suas vantagens e limitações. O importante é você ter um repertório de ferramentas para poder ajustar o melhor modelo aos seus dados.
+
+Vamos ao modelo:
+
+```{r}
+
+modelo_3 = lme(
+  fixed = PosTHKS ~ 1 + PreTHKS + Group, 
+  random =~ 1|SchoolID/ClassID,
+  correlation = corCompSymm(form = ~1|SchoolID/ClassID), # Aqui definimos a matriz
+  data = dataset, 
+  method = "REML")
+# Posso definir as variáveis aleatórias assim tb: random = list(GrupoAleatorio1 = ~1, GrupoAleatorio2 = ~1)
+
+
+
+
+summary(modelo_3)
+
+modelo_3b = lme(
+  fixed = PosTHKS ~ 1 + PreTHKS + Group, 
+  random =~ 1|SchoolID/ClassID,
+  data = dataset, 
+  method = "REML")
+# Posso definir as variáveis aleatórias assim tb: random = list(GrupoAleatorio1 = ~1, GrupoAleatorio2 = ~1)
+
+summary(modelo_3b)
+```
+
+Vamos primeiramente verificar se o efeito do grupo é significante, que é a principal variável dependente do nsso modelo. Para isso podemos utilizar a função `anova()` que é muito versátil para diversas ocasiões.
+
+```{r}
+kable(anova(modelo_3)) #função kable apenas para deixar mais bonita a tabela
+
+```
+
+Boa! Descobrimos que o efeito do grupo é significativo. Agora precisamos saber entre quais grupos está a diferença e de quanto ela é.
+
+Para tanto vamos utilizar mais uma vez a função `summary()`.
+
+```{r}
+summary(modelo_3)
+```
+
+Como vocês já podem ter percebido as saídas da função `summary()` no R não geram as saídas mais fáceis de interpretar, como podemos ver no exemplo abaixo.
+
+Agora que você enfrentou a busca nos detalhes desse fascinante output gerado pela função summary, é com satisfação que compartilhamos a boa notícia de que muitos desenvolvedores compartilham da sua experiência e criaram vários pacotes para aprimorar a visualização dos resultados. Ao longo dos exercícios, apresentaremos algumas abordagens para alcançar isso. No final da seção de modelos lineares, você encontrará um glossário que ajudará na geração de outputs mais amigáveis e formatados para publicações acadêmicas.
+
+Por hora, vamos compartilhar uma abordagem mais "na mão" para melhorar a visualização dos resultados, para caso algum pacote não atenda completamente às suas necessidades.
+
+```{r}
+# Resumo do modelo
+
+resumo_modelo <- summary(modelo_3)
+
+# Extração de estimadores, intervalos de confiança e p-valores
+
+coeficientes <- resumo_modelo$coefficients$fixed # essa linha varia muito dependendo do modelo
+intervalos_confianca <- intervals(modelo_3, which = "fixed") # Função `confint()` pode ser utilizadas para outros modelos
+p_valores <- resumo_modelo$tTable[, "p-value"]
+
+# Criar um data frame
+
+resultados_modelo <- data.frame(
+  Estimador = round(coeficientes, 3),
+  IC_Inf = round(intervalos_confianca$fixed[, 1], 3),
+  IC_Sup = round(intervalos_confianca$fixed[, 2], 3),
+  p = round(p_valores, 3)
+)
+
+# Apresentando os resultados
+kable(resultados_modelo)
+
+```
+
+------------------------------------------------------------------------
+
+Melhorou um pouco né? Vai ficar mais fácil também. Aguarde!
+
+```{r}
+summary(modelo_3)$coef
+summary(modelo_3)$sigma
+summary(modelo_3)$logLik
+summary(modelo_3)$AIC
+summary(modelo_3)$BIC
+
+```
+
+### ICC do modelo (o pesadelo)
+
+```{r}
+kable(VarCorr(modelo_3))
+VarCorr()
+
+summary(modelo_3)$sigma^2
+
+```
+
+```{r}
+VarCorr(modelo_3)[2] # Variancia da Escola
+
+VarCorr(modelo_3)[4] # Variancia da Classe
+
+VarCorr(modelo_3)[5] # Variancia do resíduo
+
+as.numeric(VarCorr(modelo_3)[2])/(as.numeric(VarCorr(modelo_3)[2])+as.numeric(VarCorr(modelo_3)[5])) #ICC da escola
+
+as.numeric(VarCorr(modelo_3)[4])/(as.numeric(VarCorr(modelo_3)[4])+as.numeric(VarCorr(modelo_3)[5])) #ICC da clase
+
+
+summary(modelo_3)$sigma^2
+```
+
+```{r}
+
+# Example 7a: ICC(1): Mostra quanto da variação ocorre entre os grupos (nível 2) e entre os grupos de grupos (nível 3).
+multilevel.icc(PosTHKS, data = dataset, cluster = c("SchoolID", "ClassID"))
+
+# Example 7b: ICC(1), Representa a correlação esperada entre dois elementos escolhidos aleatoriamente no mesmo grupo.
+multilevel.icc(PosTHKS, data = dataset, cluster = c("SchoolID", "ClassID"),
+               type = "1b")
+
+# Example 7c: ICC(2) Indica quão confiáveis são as médias dos grupos (nível 2 e 3). Ou seja, o quão representativas são as médias dos grupos em relação às diferenças individuais dentro desses grupos.
+multilevel.icc(PosTHKS, data = dataset, cluster = c("SchoolID", "ClassID"),
+type = "2")
+
+# https://search.r-project.org/CRAN/refmans/misty/html/multilevel.icc.html
+
+```
+
+```{r}
+# Criando minha própria função
+
+icc_lme <- function(modelo) {
+  # Extração da variância entre grupos e total
+  var_entre_grupos <- as.numeric(VarCorr(modelo_3)[2])
+  var_total <- var_entre_grupos + summary(modelo)$sigma^2
+
+  # Cálculo do ICC
+  icc <- var_entre_grupos / var_total
+  
+  # Retorna o valor do ICC
+  return(icc)
+}
+
+icc_lme(modelo_3)
+```
+
+```{r}
+# Calcule o ICC usando a função ICC1.lme
+ICC1.lme(PosTHKS, ClassID, data = dataset)
+
+# https://www.rdocumentation.org/packages/psychometric/versions/2.4/topics/ICC.lme
+```
+
+```{r}
+modelo_tres_niveis <- lme(
+  fixed = PosTHKS ~ 1 + PreTHKS,  
+  random = list(SchoolID =~ 1, ClassID =~ 1|SchoolID),  # Efeitos aleatórios para classes e escolas
+  data = dataset,  # Substitua 'seu_dataset' pelo nome do seu conjunto de dados
+  method = "REML"  # Método de estimação de parâmetros, pode ser "ML" ou "REML"
+)
+
+summary(modelo_tres_niveis)
+```
+
+```{r}
+modelo_tres_niveis_b <- lme(
+  fixed = PosTHKS ~ 1 + PreTHKS,  
+  random = ~ 1|SchoolID/ClassID,  # Efeitos aleatórios para classes e escolas
+  data = dataset,  # Substitua 'seu_dataset' pelo nome do seu conjunto de dados
+  method = "REML"  # Método de estimação de parâmetros, pode ser "ML" ou "REML"
+)
+
+
+summary(modelo_tres_niveis_b)
+```
+
+```{r}
+summary(modelo_tres_niveis_b)
+
+estimates(modelo_5)
+icc_lme(modelo_tres_niveis)
+```
+
+```{r}
+modelo_5 = lmer(PosTHKS ~ 1
+                + (1|ClassID),
+                dataset,
+                REML = TRUE)
+
+summary(modelo_5)
+```
+
+```{r}
+modelo_5b = lmer(PosTHKS ~ 1 + Group
+                 + (1|SchoolID:ClassID),
+                 dataset,
+                 REML = TRUE)
+
+summary(modelo_5b)
+report(modelo_5b)
+visualize(modelo)
+```
+
+```{r}
+modelo_5c = lmer(PosTHKS ~ 1
+                 + (1|SchoolID),
+                 dataset,
+                 REML = TRUE)
+
+summary(modelo_5c)
+
+```
+
+```{r}
+modelo_5d = lmer(PosTHKS ~ 1 
+                 + (1|SchoolID)
+                 + (1|SchoolID:ClassID),
+                 dataset,
+                 REML = TRUE)
+
+summary(modelo_5d)
+```
+
+```{r}
+modelo_6 = lme(fixed = PosTHKS ~ 1 + PreTHKS,
+               random =~ 1|SchoolID,
+               data = dataset,
+               method = "REML")
+
+calcular_icc(modelo_6)
+
+```
+
+Testar outro modo de gerar o modelo
+
+```{r}
+modelo_4 = lme(
+  fixed = PosTHKS ~ 1 + Group + PreTHKS, 
+  random = ~1|SchoolID, 
+  correlation = corCompSymm(form = ~1|SchoolID), # Aqui definimos a matriz
+  data = dataset, 
+  method = "REML")
+
+VarCorr(modelo_4)
+
+summary(modelo_4)
+```
+
+## Codigos antigos
+
+```{r}
+# var_classe_3 = var_modelo_3$vcov[1] # classe
+# var_escola_3 = var_modelo_3$vcov[2] # escola
+# var_erro_3 = var_modelo_3$vcov[3] # total
+
+```
+
+### ICC Escola (modelo 2)
+
+Calculando o ICC da escola para o modelo 2 temos
+
+```{r}
+# ICC escola
+# 
+# icc_school_3 = var_escola_2 / (var_escola_2 + var_erro_2)
+# round(icc_school_2, 3)
+```
+
+```{r}
+as.data.frame(coef(modelo_3))
+
+
+# modelo_1 = lmer(PosTHKS ~ 1 + Group + PreTHKS + (1|SchoolID),
+#                 data = dataset, REML = FALSE)
+
+
+
+tab_model(modelo_3) # Pacote sjPlot
+
+emmeans(modelo_3, pairwise ~ Group, adjust = "bonferroni")
+
+```
+
+```{r}
+AIC(modelo_3)
+logLik(modelo_3)*-2 # Valores de aderência
+
+icc(modelo_1)
+var_comps_modelo_1 = as.data.frame(VarCorr(modelo_1))
+var_comps_modelo_1$vcov[1] # school
+var_comps_modelo_1$vcov[2] # total
+
+resid(modelo_3) # Mostra os resíduos do modelo para cada entrada
+
+# Podemos analisar os resíduos utilizando o pacote fitdistrplus com a função fitdist
+descdist(resid(modelo_1), discrete = FALSE, boot=500)
+
+residuos_modelo_1 <- fitdist(resid(modelo_1), "norm")
+plot(residuos_modelo_1)
+```
+
+```{r}
+# Outra solução para analisar os resíduos é construir o modelo utilizando a função lme
+
+modelo_1b = lme(fixed = PosTHKS ~ 1 + Group + PreTHKS,
+                data = dataset,
+                random =~ 1|SchoolID,
+                method = "ML")
+logLik(modelo_1b)*-2
+
+check_model(modelo_1b)
+summary(modelo_1b)
+
+
+```
+
+```{r}
+####
+
+modelo_2 = lmer(PosTHKS ~ 1 + Group + PreTHKS + (1|ClassID),
+                data = dataset, REML = FALSE)
+
+
+AIC(modelo_2)
+icc(modelo_2)
+estimates(modelo_2)
+report(modelo_2)
+
+var_comps_modelo_2 = as.data.frame(VarCorr(modelo_2))
+var_comps_modelo_2$vcov[1] # classe
+var_comps_modelo_2$vcov[2] # total
+
+residuos_modelo_2 <- fitdist(resid(modelo_2), "norm")
+plot(residuos_modelo_2)
+```
+
+```{r}
+# Outra solução para analisar os resíduos é construir o modelo utilizando a função lme
+
+modelo_2b = lme(fixed = PosTHKS ~ 1 + Group + PreTHKS,
+                data = dataset,
+                random =~ 1|ClassID,
+                method = "ML")
+logLik(modelo_2b)*-2
+
+check_model(modelo_2b)
+summary(modelo_2b)
+
+```
+
+```{r}
+####
+
+modelo_3b = lmer(PosTHKS ~ 1 + PreTHKS + (1|SchoolID/ClassID),
+                data = dataset,
+                REML = TRUE)
+AIC(modelo_3b)
+icc(modelo_3b)
+report(modelo_3b)
+estimates(modelo_3b)
+
+
+var_comps_modelo_3b = as.data.frame(VarCorr(modelo_3b))
+vcov_class_mod_3b = var_comps_modelo_3b$vcov[1] # classe
+vcov_scholl_mod_3b = var_comps_modelo_3b$vcov[2] # school
+vcov_total_mod_3b = var_comps_modelo_3b$vcov[3] # total
+
+
+residuos_modelo_3b <- fitdist(resid(modelo_3b), "norm")
+plot(residuos_modelo_3b)
+```
+
+```{r}
+#Outra maneira de visualizar os pressupostos
+
+modelo_3b = lme(fixed =PosTHKS ~ 1 + Group + PreTHKS,
+                random =~ 1|SchoolID/ClassID,
+                data = dataset,
+                method = "ML")
+                
+AIC(modelo_3b)
+icc(modelo_3b)
+check_model(modelo_3b)
+
+
+```
+
+## Escolhendo o modelo
+
+```{r}
+# anova(modelo_0, modelo_1b) #Verificando se há necessidade de colocar o fator aleatório
+# anova(modelo_0, modelo_2b) #Verificando se há necessidade de colocar o fator aleatório
+# anova(modelo_0, modelo_3b) #não há mudança no grau de liberdade (df), por isso não calcula o p. Critério passa a ser o AIC e BIC, favorecendo o modelo 2b
+
+
+# nice_table(compare_performance(modelo_0, modelo_1, modelo_2, modelo_3, modelo_1b, modelo_2b, modelo_3b, rank = TRUE))
+# compare_performance(modelo_0, modelo_1, modelo_2, modelo_3, rank = TRUE)
+# 
+# # Modelo 2 foi o que apresentou melhor performance.
+
+```
+
+## Extras! {#sec-extras}
+
+### Métodos de estimação dos parâmetros do modelo
+
+O REML (Residual Maximum Likelihood) e o ML (Maximum Likelihood) são duas abordagens distintas para a estimação de parâmetros em modelos de regressão linear mista (ou modelos hierárquicos). Ambas são baseadas no método da máxima verossimilhança, mas diferem na maneira como tratam os graus de liberdade.
+
+**Maximum Likelihood (ML):**
+
+Na abordagem ML, o foco é maximizar a verossimilhança do modelo, considerando tanto os efeitos fixos quanto os efeitos aleatórios. O ML leva em conta todos os parâmetros do modelo para maximizar a probabilidade de observar os dados dados os parâmetros. É mais adequado quando o interesse principal é fazer inferências sobre os parâmetros fixos do modelo.
+
+**Residual Maximum Likelihood (REML):**
+
+A abordagem REML é uma variação do ML que remove os efeitos fixos do modelo antes de calcular a verossimilhança. O REML estima a verossimilhança condicional dos efeitos aleatórios, removendo a contribuição dos efeitos fixos. Ele tende a ser mais eficiente na estimação dos efeitos aleatórios, especialmente em amostras pequenas, e fornece estimativas menos enviesadas para a variância dos efeitos aleatórios. O REML é frequentemente preferido quando o foco está na estimação dos parâmetros aleatórios e quando a inferência sobre os parâmetros fixos não é o objetivo principal.
+
+## Utilizando o Flexplot
+
+```{r}
+model.comparison(modelo_2, modelo_3)
+# O modelo 2 também apresenta melhores resultados
+```
+
+```{r}
+emmeans(modelo_2, pairwise ~ Group)
+
+```
+
+```{r}
+# Com a correção de Bonferroni
+results_modelo_2 = emmeans(modelo_2, pairwise ~ Group, adjust = "bonferroni")
+```
+
+## Matrizes de covariância?
+
+```{r}
+
+
+check_model(modelo_2b)
+plot(results_modelo_2$emmeans)
+
+plot(allEffects(modelo_2))
+```
+
+## Plot mais bonito
+
+```{r}
+ggplot(as.data.frame(results_modelo_2$emmeans), aes(x = Group, y = emmean, color = Group)) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
+  geom_point(position = position_dodge(0.8), size = 3) +
+  labs(title = "Distribuição normal",
+       x = "Tratamento",
+       y = "THKS") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+
+```
+
+## Observações
+
+No modelo 3 a diferença entre Curriculum & TV - TV não é significativa. Já no modelo 2, que é o melhor modelo para os dados, essa diferença se torna significativa.
+
+## Lista 4 resolvida no SPSS
+
+{{< video https://www.youtube.com/watch?v=_1lUvEu8M9c title=’ HGMM - Hierarchical Generalized Mixed Models - Aula Prática #4 (SPSS)’ >}}
+
+## Referências
+
+https://lmudge13.github.io/sample_code/mixed_effects.html \# Tabelas e gráficos de modelos lme
+
+https://rpsychologist.com/r-guide-longitudinal-lme-lmer#three-level-models
+
+https://search.r-project.org/CRAN/refmans/misty/html/multilevel.icc.html
+
+https://www.rdocumentation.org/packages/psychometric/versions/2.4/topics/ICC.lme
+
+https://www.alexanderdemos.org/Mixed5.html
+
+
+### OLD
+
+
+```{r}
+modelo_5 = lmer(PosTHKS ~ 1
+                + (1|ClassID),
+                dataset,
+                REML = TRUE)
+
+summary(modelo_5)
+```
+
+```{r}
+modelo_5b = lmer(PosTHKS ~ 1 + Group
+                 + (1|SchoolID:ClassID),
+                 dataset,
+                 REML = TRUE)
+
+summary(modelo_5b)
+
+```
+
+```{r}
+modelo_5c = lmer(PosTHKS ~ 1
+                 + (1|SchoolID),
+                 dataset,
+                 REML = TRUE)
+
+summary(modelo_5c)
+
+```
+
+```{r}
+modelo_6 = lme(fixed = PosTHKS ~ 1 + PreTHKS,
+               random =~ 1|SchoolID,
+               data = dataset,
+               method = "REML")
+
+calcular_icc(modelo_6)
+
+```
+
+Testar outro modo de gerar o modelo
+
+```{r}
+modelo_4 = lme(
+  fixed = PosTHKS ~ 1 + Group + PreTHKS, 
+  random = ~1|SchoolID, 
+  data = dataset, 
+  method = "REML")
+
+anova(modelo_4)
+VarCorr(modelo_4)
+
+summary(modelo_4)
+```
+
+## Codigos antigos
+
+```{r}
+# var_classe_3 = var_modelo_3$vcov[1] # classe
+# var_escola_3 = var_modelo_3$vcov[2] # escola
+# var_erro_3 = var_modelo_3$vcov[3] # total
+
+```
+
+### ICC Escola (modelo 2)
+
+Calculando o ICC da escola para o modelo 2 temos
+
+```{r}
+# ICC escola
+# 
+# icc_school_3 = var_escola_2 / (var_escola_2 + var_erro_2)
+# round(icc_school_2, 3)
+```
+
+```{r}
+as.data.frame(coef(modelo_3))
+
+
+# modelo_1 = lmer(PosTHKS ~ 1 + Group + PreTHKS + (1|SchoolID),
+#                 data = dataset, REML = FALSE)
+
+
+
+tab_model(modelo_3) # Pacote sjPlot
+
+emmeans(modelo_3, pairwise ~ Group, adjust = "bonferroni")
+
+```
+
+```{r}
+AIC(modelo_3)
+logLik(modelo_3)*-2 # Valores de aderência
+
+icc(modelo_1)
+var_comps_modelo_1 = as.data.frame(VarCorr(modelo_1))
+var_comps_modelo_1$vcov[1] # school
+var_comps_modelo_1$vcov[2] # total
+
+resid(modelo_3) # Mostra os resíduos do modelo para cada entrada
+
+# Podemos analisar os resíduos utilizando o pacote fitdistrplus com a função fitdist
+descdist(resid(modelo_1), discrete = FALSE, boot=500)
+
+residuos_modelo_1 <- fitdist(resid(modelo_1), "norm")
+plot(residuos_modelo_1)
+```
+
+```{r}
+# Outra solução para analisar os resíduos é construir o modelo utilizando a função lme
+
+modelo_1b = lme(fixed = PosTHKS ~ 1 + Group + PreTHKS,
+                data = dataset,
+                random =~ 1|SchoolID,
+                method = "ML")
+logLik(modelo_1b)*-2
+
+check_model(modelo_1b)
+summary(modelo_1b)
+
+
+```
+
+```{r}
+####
+
+modelo_2 = lmer(PosTHKS ~ 1 + Group + PreTHKS + (1|ClassID),
+                data = dataset, REML = FALSE)
+
+
+AIC(modelo_2)
+icc(modelo_2)
+estimates(modelo_2)
+report(modelo_2)
+
+var_comps_modelo_2 = as.data.frame(VarCorr(modelo_2))
+var_comps_modelo_2$vcov[1] # classe
+var_comps_modelo_2$vcov[2] # total
+
+residuos_modelo_2 <- fitdist(resid(modelo_2), "norm")
+plot(residuos_modelo_2)
+```
+
+```{r}
+# Outra solução para analisar os resíduos é construir o modelo utilizando a função lme
+
+modelo_2b = lme(fixed = PosTHKS ~ 1 + Group + PreTHKS,
+                data = dataset,
+                random =~ 1|ClassID,
+                method = "ML")
+logLik(modelo_2b)*-2
+
+check_model(modelo_2b)
+summary(modelo_2b)
+
+```
+
+```{r}
+####
+
+modelo_3b = lmer(PosTHKS ~ 1 + PreTHKS + (1|SchoolID/ClassID),
+                data = dataset,
+                REML = TRUE)
+AIC(modelo_3b)
+icc(modelo_3b)
+report(modelo_3b)
+estimates(modelo_3b)
+
+
+var_comps_modelo_3b = as.data.frame(VarCorr(modelo_3b))
+vcov_class_mod_3b = var_comps_modelo_3b$vcov[1] # classe
+vcov_scholl_mod_3b = var_comps_modelo_3b$vcov[2] # school
+vcov_total_mod_3b = var_comps_modelo_3b$vcov[3] # total
+
+
+residuos_modelo_3b <- fitdist(resid(modelo_3b), "norm")
+plot(residuos_modelo_3b)
+```
+
+```{r}
+#Outra maneira de visualizar os pressupostos
+
+modelo_3b = lme(fixed =PosTHKS ~ 1 + Group + PreTHKS,
+                random =~ 1|SchoolID/ClassID,
+                data = dataset,
+                method = "ML")
+                
+AIC(modelo_3b)
+icc(modelo_3b)
+
+
+```
+
+## Escolhendo o modelo
+
+```{r}
+# anova(modelo_0, modelo_1b) #Verificando se há necessidade de colocar o fator aleatório
+# anova(modelo_0, modelo_2b) #Verificando se há necessidade de colocar o fator aleatório
+# anova(modelo_0, modelo_3b) #não há mudança no grau de liberdade (df), por isso não calcula o p. Critério passa a ser o AIC e BIC, favorecendo o modelo 2b
+
+
+# nice_table(compare_performance(modelo_0, modelo_1, modelo_2, modelo_3, modelo_1b, modelo_2b, modelo_3b, rank = TRUE))
+# compare_performance(modelo_0, modelo_1, modelo_2, modelo_3, rank = TRUE)
+# 
+# # Modelo 2 foi o que apresentou melhor performance.
+
+```

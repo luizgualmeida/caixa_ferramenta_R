@@ -1,0 +1,790 @@
+# Lista 7 - Séries Temporais (ARIMA)
+
+## Pacotes
+
+```{r}
+#| label: setup
+#| echo: true
+#| message: false
+#| warning: false
+library(tidyverse)
+library(flexplot)
+library(foreign)
+library(dplyr)
+library(tm)
+library(ggplot2)
+library(forcats)
+library(rempsyc)
+library(easystats)
+library(kableExtra)
+
+#Específicos para series temporais
+library(prophet)
+library(forecast)
+library(tseries)
+
+
+```
+
+## Limpando o ambiente
+
+```{r}
+#| include: false
+# ---------------------- #
+# KM_curve_tutorial.R
+# ---------------------- #
+
+# Setting up environment ===================================================
+# Clean environment
+rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
+gc() # free up memory and report the memory usage
+options(max.print = .Machine$integer.max, scipen = 999, stringsAsFactors = F, dplyr.summarise.inform = F) # avoid truncated output in R console and scientific notation
+
+# Set seed
+set.seed(42)
+
+# Theme ====================================================================
+biostatsquid_theme <- theme(plot.title = element_text(size = rel(2)),
+                            panel.grid.major.y = element_line(colour = 'gray'),
+                            panel.grid.minor.y = element_line(colour = 'gray'),
+                            panel.grid.major.x = element_blank(),
+                            panel.grid.minor.x = element_blank(),
+                            plot.background = element_rect(fill = NULL, colour = 'white'),
+                            panel.background = element_rect(fill = 'white'),
+                            # Axis stuff
+                            axis.line = element_line(colour = 'black', linewidth = 1),
+                            axis.text = element_text(colour = "black", face = 'bold'),
+                            axis.text.x = element_text(size = rel(1)),
+                            axis.text.y = element_text(size = rel(1)),
+                            axis.title = element_text(size = rel(1.2)),
+                            axis.ticks = element_line(colour = 'black', linewidth = 1.2),
+                            # Legend stuff
+                            legend.position = "bottom",
+                            legend.margin = margin(6, 6, 6, 6),
+                            legend.title = element_text(face = 'bold'),
+                            legend.background = element_blank(),
+                            legend.box.background = element_rect(colour = "black"))
+```
+
+# Cigarro
+
+## Carregando os dados e modificando o tipo de variável
+
+```{r}
+original = read.spss("CigarrosROD_1.sav", to.data.frame=TRUE)
+glimpse(original)
+
+db = original
+```
+
+## Verificando se os dados são estacionários
+
+Iniciaremos nossa primeira análise para verificar a estacionaridade dos dados por meio de uma abordagem gráfica. Este gráfico simples exibirá o número de cigarros consumidos ao longo do tempo, apresentando uma linha média que atravessa toda a linha temporal. A ideia é observar se os números de cigarros oscilam próximos à média, proporcionando uma visualização intuitiva da estacionariedade dos dados.
+
+```{r}
+# Plot estilizado
+# media_cigarros <- mean(db$cigarrosROD)
+# 
+# # Cria o gráfico com ggplot
+# ggplot(data = data.frame(cigarrosROD = db$cigarrosROD), aes(x = seq_along(cigarrosROD), y = cigarrosROD)) +
+#   geom_line(color = "black", size = 1) +
+#   geom_point(color = "black", size = 3) +
+#   geom_hline(yintercept = media_cigarros, linetype = "dashed", color = "blue", size = 1) +  # Adiciona a linha média
+#   labs(x = "Dias", y = "Cigarros por dia") +
+#   scale_x_continuous(breaks = seq_along(db$cigarrosROD), labels = seq_along(db$cigarrosROD)) +
+#   theme_minimal() +
+#   theme(panel.grid = element_blank(),
+#         axis.ticks = element_line())  # Adiciona ticks nos eixos x e y
+
+
+```
+
+### Plot simples
+
+```{r}
+media_cigarros <- mean(db$cigarrosROD)
+
+# plot mais simples
+plot.ts(db$cigarrosROD)
+abline(h = media_cigarros, col = "blue", lty = 2, lwd = 2)
+axis(1, at = db$Dia, labels = db$Dia)
+```
+
+Claramente os dados desviam bastante da média, logo essa não é uma série estacionária.
+
+### Adf teste
+
+Podemos também utilizar o Augmented Dickey-Fuller (ADF) Test para avaliar a estacionaridade em séries temporais. A função para realizar o teste é a `adf.test()`.
+
+Interpretação do Resultado:
+
+-   Se a estatística do teste for menor que o valor crítico (p \< 0.05), rejeitamos a hipótese nula e concluímos que a série **é estacionária**.
+-   Se a estatística do teste for maior que o valor crítico (p \> 0.05), falhamos em rejeitar a hipótese nula, sugerindo que a série é **não estacionária**.
+
+```{r}
+# Adf teste
+adf.test(db$cigarrosROD)
+
+```
+
+Corroborando a análise visual, falhamos em rejeitar a hipótese nula, logo podemos assumir que a série temporal em questão não é estacionária. Em seguida vamos ver como podemos ajustar os dados.
+
+### Autocorrelação
+
+A função `acf()` (AutoCorrelation Function) no R é utilizada para calcular e visualizar os coeficientes de autocorrelação em uma série temporal. A autocorrelação mede a correlação entre uma observação e suas observações anteriores em diferentes defasagens (lags de tempo).
+
+```{r}
+# Calcula as autocorrelações e cria o gráfico
+
+autocorrelacoes = acf(db$cigarrosROD, plot = FALSE)
+
+autoplot(autocorrelacoes)
+```
+
+```{r}
+ggtsdisplay(db$cigarrosROD)
+
+```
+
+Os valores de lag que tiveram um AFC além do intervalo de confiança (linha tracejada), são candidatos para utilizarmos em nosso modelo ARIMA. Portanto lag 2 e 4 são candidatos. Além disso podemos basear nossa decisão também o teste de Ljung-Box.
+
+### Teste Ljung-Box
+
+O Teste Ljung-Box avalia para cada lag se a séria é estacionária ou não. Podemos testar individualmente para cada lag.
+
+```{r}
+# Teste Ljung-Box com lag 2
+Box.test(autocorrelacoes$acf , lag = 3, type = "Ljung-Box")
+
+lag(db$cigarrosROD,1)
+
+```
+
+Uma outra forma é criar um dataframe com todos os valores de lags calculados na autocorrelação.
+
+```{r}
+# Obtém o número máximo de lags disponíveis
+max_lags <- length(autocorrelacoes$acf) - 1
+
+# Inicialize os vetores para armazenar os resultados
+lags <- numeric(max_lags)
+p_values <- numeric(max_lags)
+
+# Itere sobre os lags
+for (lag in 1:max_lags) {
+  # Execute o teste de Ljung-Box para o lag atual
+  resultado_teste <- Box.test(autocorrelacoes$acf, lag = lag, type = "Ljung-Box")
+  
+  # Armazene os resultados
+  lags[lag] <- lag
+  p_values[lag] <- resultado_teste$p.value
+}
+
+# Crie um dataframe com os resultados
+resultados_df <- data.frame(Lag = lags, P_Value = p_values)
+kable(resultados_df)
+
+```
+
+Ou ainda
+
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+
+tsdiag(auto.arima(db$cigarrosROD))
+
+```
+
+## Transformação variabilidade e estacionária
+
+Primeiro vamos modificar a série para que tenha variabilidade constante
+
+```{r}
+lambda = BoxCox.lambda(db$cigarrosROD)
+lambda
+
+var_const = BoxCox(db$cigarrosROD, lambda = lambda)
+
+ggtsdisplay(var_const)
+
+```
+
+E agora podemos ajustar a serie para que ela fique estacionária.
+
+```{r}
+ndiffs(var_const)
+
+```
+
+```{r}
+estacio = diff(var_const, 1)
+ggtsdisplay(estacio)
+```
+
+De acordo com os resultados, qualquer lag, a não ser o lag 1, poderá ser utilizado para transformar os dados.
+
+Para decidir devemos levar em conta tanto a análise gráfica da autocorrelação quanto o teste de Ljung-Box.
+
+Logo os lags 2 e 4 são bons candidatos. Por parcimônia e sem nenhum critério teórico, vamos optar pelo lag menor, ou seja, lag 2.
+
+## Transformando os dados para estacionários
+
+Para modificar nossa série temporal utilizando lag 2 vamos utilizar a função `diff()`.
+
+```{r}
+# Log
+lag_2 = diff(db$cigarrosROD, differences = 2) # posso colocar o log da diferença também caso os valores fiquem muito pequenos.
+```
+
+### Plot
+
+```{r}
+media_lag_2 = mean(lag_2)
+plot.ts(lag_2)
+abline(h = media_lag_2, col = "blue", lty = 2, lwd = 2)
+axis(1, at = db$Dia, labels = db$Dia)
+
+```
+
+Pronto! Agora os valores estão ocilando em torno da média. Apenas para confirmar que agora temos uma série temporal estacionária, podemos rodar novamente o adf.test.
+
+```{r}
+adf.test(lag_2) # testar com outros valores de K(lag) para verificar o p-value
+
+```
+
+Esse banco de dados era apenas para transformar os dados não estacionários para estacionários. Vamos agora carregar outro banco de dados e criar o modelo ARIMA.
+
+## Dados séries temporais
+
+```{r}
+original_ts = read.spss("dados series temporais.sav", to.data.frame=TRUE)
+db_ts = original_ts
+
+glimpse(db_ts)
+```
+
+### Plot simples
+
+```{r}
+media_sal_men <- mean(db_ts$men)
+db_season = ts(db_ts$men,
+               frequency = 12,
+               start = c(1989, 1))
+
+ts.plot(db_season)
+abline(h = media_sal_men, col = "blue", lty = 2, lwd = 2)
+```
+
+```{r}
+seasonplot(db_season,
+           col = rainbow(12),
+           year.labels = TRUE,
+           type = "o",
+           pch = 16)
+```
+
+```{r}
+ggtsdisplay(db_season)
+```
+
+Semelhante ao ARIMA (0,0,0)
+
+### Adf teste
+
+```{r}
+# Adf teste
+adf.test(db_ts$men, k =1) #já está no formato estacionário
+
+```
+
+### Ljung-Box
+
+Descrever
+
+```{r}
+
+# Teste Ljung-Box com lag 2
+Box.test(db_ts$men , lag = 1, type = "Ljung-Box")
+
+```
+
+## Modelo ARIMA (1,0,0)
+
+```{r}
+
+modelo_sal_men = Arima(db_ts$men, order = c(1,0,0))
+
+```
+
+#### Plot 1 do modelo (1,0,0)
+
+```{r}
+# Supondo que você tenha as séries temporais 'modelo_sal_men$fitted' e 'db_ts$men'
+
+# Cria o gráfico
+plot(modelo_sal_men$x, type = "l", col = "red", lty = 1, lwd = 2, xlab = "Tempo", ylab = "Salário")
+lines(modelo_sal_men$fitted, col = "blue", lty = 1, lwd = 2)
+
+# Adiciona uma legenda
+legend("topright", legend = c("Real", "Modelo"), col = c("red", "blue"), lty = c(1, 1), lwd = 2)
+
+# Adiciona um título ao gráfico
+title(main = "Valores e Reais e do Modelo ARIMA de Salário para Homens")
+
+```
+
+## Modelo ARIMA (0,1,0)
+
+```{r}
+
+modelo2_sal_men = Arima(db_ts$men, order = c(0,1,0))
+
+```
+
+#### Plot 1 do modelo (0,1,0)
+
+```{r}
+# Supondo que você tenha as séries temporais 'modelo2_sal_men$fitted' e 'db_ts$men'
+
+# Cria o gráfico
+plot(modelo2_sal_men$x, type = "l", col = "red", lty = 1, lwd = 2, xlab = "Tempo", ylab = "Salário")
+lines(modelo2_sal_men$fitted, col = "blue", lty = 1, lwd = 2)
+
+# Adiciona uma legenda
+legend("topright", legend = c("Real", "Modelo"), col = c("red", "blue"), lty = c(1, 1), lwd = 2)
+
+# Adiciona um título ao gráfico
+title(main = "Valores e Reais e do Modelo ARIMA de Salário para Homens")
+
+```
+
+## Modelo autoARIMA
+
+Assim como o SPSS o R também tem uma função que determina automaticamente os parâmetros p, d, q. Vamos verificar qual modelo a função `auto.arima()`sugere.
+
+```{r}
+# Para verificar qual o modelo sugerido pela função auto.arima
+auto.arima(db_ts$men, trace = TRUE)
+```
+
+A função sugeriu o modelo 1, 1, 1. Vamos verificar os resultados.
+
+```{r}
+modelo_auto_sal_men = Arima(db_ts$men, order = c(1,1,1))
+```
+
+#### Plot 1 do modelo (1,1,1)
+
+```{r}
+# Supondo que você tenha as séries temporais 'modelo_atuo_sal_men$fitted' e 'db_ts$men'
+
+# Cria o gráfico
+plot(modelo_auto_sal_men$x, type = "l", col = "red", lty = 1, lwd = 2, xlab = "Tempo", ylab = "Salário")
+lines(modelo_auto_sal_men$fitted, col = "blue", lty = 1, lwd = 2)
+
+# Adiciona uma legenda
+legend("topright", legend = c("Real", "Modelo"), col = c("red", "blue"), lty = c(1, 1), lwd = 2)
+
+# Adiciona um título ao gráfico
+title(main = "Valores e Reais e do Modelo ARIMA de Salário para Homens")
+
+```
+
+## Homens - Modelo com variáveis independentes
+
+::: callout-warning
+#### Atenção!
+
+Ainda falta modificar os índices p, d, q das variáveis indepentendes como foi feito no SPSS.
+:::
+
+### Auto arima
+
+```{r}
+
+# Defina as variáveis independentes originais
+nomes_variaveis <- c("horas", "divida", "idade", "propaganda", "escolaridade")
+
+# Crie a matriz de covariáveis
+covars <- as.matrix(db_ts[, nomes_variaveis, drop = FALSE])
+
+
+
+# Atribua os nomes diretamente à matriz de covariáveis
+colnames(covars) <- nomes_variaveis
+
+
+# 
+# covars <- cbind(
+#   db_ts$horas,
+#   db_ts$divida,
+#   db_ts$idade,
+#   db_ts$propaganda,
+#   db_ts$escolaridade
+# )
+
+auto.arima(db_ts$men, xreg = covars)
+
+```
+
+Modelo sugerido é o c(1,0,0)
+
+```{r}
+# Ajuste o modelo ARIMA com covariáveis
+modelo_completo = Arima(
+  db_ts$men,
+  order = c(1, 0, 0),
+  xreg = covars, 
+)
+```
+
+```{r}
+# Defina as variáveis independentes originais
+nomes_variaveis <- c("horas", "divida", "idade", "propaganda", "escolaridade")
+
+# Inicialize uma lista para armazenar os modelos ajustados para cada VI
+modelos_vi <- list()
+
+# Loop através das variáveis independentes
+for (variavel in nomes_variaveis) {
+  
+  # Selecione a VI específica
+  variavel_ts <- db_ts[, variavel, drop = FALSE]
+  
+  # Ajuste as ordens p, d, q para a VI específica
+  ordens_vi <- c(1, 0, 0)  # p, d, q
+  
+  # Ajuste o modelo ARIMA para a VI específica
+  modelo_vi <- Arima(
+    variavel_ts,
+    order = ordens_vi,
+    include.mean = TRUE,
+    transform.pars = TRUE,
+    fixed = NULL,
+    include.drift = FALSE,
+    method = "ML",  # Mude conforme necessário
+    optim.control = list(trace = FALSE, REPORT = 1),
+    kappa = 1
+  )
+  
+  # Adicione o modelo ao vetor de modelos
+  modelos_vi[[variavel]] <- modelo_vi
+}
+
+# Agora, você tem modelos ajustados para cada VI na lista modelos_vi
+
+# Combine os modelos ARIMA para as VI em uma única matriz
+covars <- cbind(
+  modelos_vi$horas$fitted, 
+  modelos_vi$divida$fitted, 
+  modelos_vi$idade$fitted, 
+  modelos_vi$propaganda$fitted, 
+  modelos_vi$escolaridade$fitted
+)
+
+# Ajuste o modelo ARIMA principal com as covariáveis
+modelo_completo <- Arima(
+  db_ts$men,
+  order = c(1, 0, 0),
+  xreg = covars,
+  seasonal = list(order = c(0, 0, 0)),  # Adapte conforme necessário
+  include.mean = TRUE,
+  transform.pars = TRUE,
+  fixed = NULL,
+  include.drift = FALSE,
+  method = "ML",  # Mude conforme necessário
+  optim.control = list(trace = FALSE, REPORT = 1),
+  kappa = 1
+)
+
+```
+
+### Plot do modelo com VIs
+
+```{r}
+# Criar um dataframe com as séries temporais
+df_full <- data.frame(
+  Tempo = seq_along(modelo_completo$fitted),
+  Ajustado = modelo_completo$fitted,
+  Real = modelo_completo$x
+)
+
+# Criar o gráfico com ggplot2
+ggplot(df_full, aes(x = Tempo)) +
+  geom_line(aes(y = Ajustado, color = "Ajustado"), size = 1) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  labs(x = "Tempo", y = "Salário", title = "Valores Ajustados e Reais de Salário para Homens ao Longo do Tempo") +
+  scale_color_manual(values = c("Ajustado" = "blue", "Real" = "red"), guide = "legend") +
+  theme_minimal()
+
+```
+
+### AIC, BIC e RMSE
+
+```{r}
+performance(modelo_completo)
+```
+
+### Resultados
+
+```{r}
+# Visualize o resumo do modelo
+summary(modelo_completo)
+
+# db_ts$horas,       xreg1    
+# db_ts$divida  ,    xreg2
+# db_ts$idade,       xreg3
+# db_ts$propaganda,  xreg4    
+# db_ts$escolaridade xreg5
+
+```
+
+#### Coeficientes e valores de p
+
+```{r}
+library(lmtest) # pacote para calcular os estimates e valores de p
+
+
+# Use a função coeftest para obter coeficientes e p-valores
+test_coef <- coeftest(modelo_completo)
+
+# Acesse os coeficientes estimados e os p-valores
+coeficientes <- round(test_coef[, "Estimate"], 3)
+p_valores <- round(test_coef[, "Pr(>|z|)"], 3)
+
+# Crie uma nova coluna com asteriscos para valores de p significativos
+test_coef$Significativo <- ifelse(p_valores < 0.05, "*", "")
+
+# Exiba os resultados
+resultados <- data.frame(Coeficientes = coeficientes, p_valores = paste0(format(p_valores, digits = 3), test_coef$Significativo))
+print(resultados)
+
+```
+
+### Mulheres - Modelo com variáveis independentes para
+
+#### Verificar qual o melhor modelo utilizando as VIs no auto.arima
+
+```{r}
+# Supondo que você tenha um dataframe 'db_ts' com as variáveis mencionadas
+
+# Defina as variáveis independentes originais
+nomes_variaveis <- c("horas", "divida", "idade", "propaganda", "escolaridade")
+
+# Crie a matriz de covariáveis
+covars <- as.matrix(db_ts[, nomes_variaveis, drop = FALSE])
+
+# Atribua os nomes diretamente à matriz de covariáveis
+colnames(covars) <- nomes_variaveis
+
+
+# 
+# covars <- cbind(
+#   db_ts$horas,
+#   db_ts$divida,
+#   db_ts$idade,
+#   db_ts$propaganda,
+#   db_ts$escolaridade
+# )
+
+auto.arima(db_ts$women, xreg = covars)
+```
+
+Modelo sugerido é o c(0,0,1)
+
+```{r}
+# Ajuste o modelo ARIMA com covariáveis
+modelo_completo_women = Arima(
+  db_ts$women,
+  order = c(0, 0, 1),
+  xreg = covars
+)
+
+
+
+# Visualize o resumo do modelo
+summary(modelo_completo_women)
+```
+
+```{r}
+# db_ts$horas,       xreg1    
+# db_ts$divida  ,    xreg2
+# db_ts$idade,       xreg3
+# db_ts$propaganda,  xreg4    
+# db_ts$escolaridade xreg5
+
+checkresiduals(modelo_completo_women)
+```
+
+#### Plot do modelo com VIs
+
+```{r}
+# Criar um dataframe com as séries temporais
+df_full_women <- data.frame(
+  Tempo = seq_along(modelo_completo_women$fitted),
+  Ajustado = modelo_completo_women$fitted,
+  Real = modelo_completo_women$x
+)
+
+# Criar o gráfico com ggplot2
+ggplot(df_full_women, aes(x = Tempo)) +
+  geom_line(aes(y = Ajustado, color = "Ajustado"), size = 1) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  labs(x = "Tempo", y = "Salário", title = "Valores Ajustados e Reais de Salário para Mulheres ao Longo do Tempo") +
+  scale_color_manual(values = c("Ajustado" = "red", "Real" = "blue"), guide = "legend") +
+  theme_minimal()
+
+```
+
+#### Coeficientes e valores de p
+
+```{r}
+library(lmtest) # pacote para calcular os estimates e valores de p
+
+
+# Use a função coeftest para obter coeficientes e p-valores
+test_coef_women <- coeftest(modelo_completo_women)
+
+# Acesse os coeficientes estimados e os p-valores
+coeficientes_women <- round(test_coef_women[, "Estimate"], 3)
+p_valores_women <- round(test_coef_women[, "Pr(>|z|)"], 3)
+
+# Crie uma nova coluna com asteriscos para valores de p significativos
+test_coef_women$Significativo <- ifelse(p_valores_women < 0.05, "*", "")
+
+# Exiba os resultados
+resultados_women <- data.frame(Coeficientes = coeficientes_women, Pvalores = paste0(format(p_valores_women, digits = 3), test_coef_women$Significativo))
+print(resultados_women)
+```
+
+## Forecast (previsões)
+
+### Mulheres - 50 anos
+
+```{r}
+women_salary_ts = ts(db_ts$women,
+               frequency = 12,
+               start = c(1989, 1))
+
+
+fit_arima_women = auto.arima(women_salary_ts)
+
+fcast_women = forecast(fit_arima_women, h=50)
+autoplot(fcast_women)
+
+```
+
+### Homens - 50 anos
+
+```{r}
+men_salary_ts = ts(db_ts$men,
+               frequency = 12,
+               start = c(1989, 1))
+
+
+fit_arima_men = auto.arima(men_salary_ts)
+
+fcast_men = forecast(fit_arima_men, h=50)
+autoplot(fcast_men)
+
+```
+
+## Extras
+
+### Mais gráficos
+
+#### Plot 2 do modelo (1,0,0)
+
+```{r}
+modelo_sal_men = Arima(db_ts$men, order = c(1,0,0))
+
+# Criar um dataframe com as séries temporais
+df_100 <- data.frame(
+  Tempo = seq_along(modelo_sal_men$fitted),
+  Ajustado = modelo_sal_men$fitted,
+  Real = modelo_sal_men$x
+)
+
+# Criar o gráfico com ggplot2
+ggplot(df_100, aes(x = Tempo)) +
+  geom_line(aes(y = Ajustado, color = "Ajustado"), size = 1) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  labs(x = "Tempo", y = "Salário", title = "Valores Ajustados e Reais de Salário para Homens ao Longo do Tempo") +
+  scale_color_manual(values = c("Ajustado" = "red", "Real" = "blue"), guide = "legend") +
+  theme_minimal()
+```
+
+#### Plot 2 do modelo (0,1,0)
+
+```{r}
+# Criar um dataframe com as séries temporais
+df_010 <- data.frame(
+  Tempo = seq_along(modelo2_sal_men$fitted),
+  Ajustado = modelo2_sal_men$fitted,
+  Real = modelo2_sal_men$x
+)
+
+# Criar o gráfico com ggplot2
+ggplot(df_010, aes(x = Tempo)) +
+  geom_line(aes(y = Ajustado, color = "Ajustado"), size = 1) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  labs(x = "Tempo", y = "Salário", title = "Valores Ajustados e Reais de Salário para Homens ao Longo do Tempo") +
+  scale_color_manual(values = c("Ajustado" = "red", "Real" = "blue"), guide = "legend") +
+  theme_minimal()
+
+```
+
+#### Plot 2 do modelo (1,1,1)
+
+```{r}
+
+modelo_atuo_sal_men = Arima(db_ts$men, order = c(1,1,1))
+
+# Criar um dataframe com as séries temporais
+df_111 <- data.frame(
+  Tempo = seq_along(modelo_atuo_sal_men$fitted),
+  Ajustado = modelo_atuo_sal_men$fitted,
+  Real = modelo_atuo_sal_men$x
+)
+
+# Criar o gráfico com ggplot2
+ggplot(df_111, aes(x = Tempo)) +
+  geom_line(aes(y = Ajustado, color = "Ajustado"), size = 1) +
+  geom_line(aes(y = Real, color = "Real"), size = 1) +
+  labs(x = "Tempo", y = "Salário", title = "Valores Ajustados e Reais de Salário para Homens ao Longo do Tempo") +
+  scale_color_manual(values = c("Ajustado" = "red", "Real" = "blue"), guide = "legend") +
+  theme_minimal()
+
+```
+
+## Verificando resíduos
+
+```{r}
+checkresiduals(modelo_auto_sal_men)
+
+summary(modelo_auto_sal_men)
+```
+
+## Lista 7 resolvida no SPSS
+
+{{< video https://www.youtube.com/watch?v=qTQ1YDgyByE title='Séries Temporais (ARIMA) - Aula Prática #7' >}}
+
+## Referências
+
+<https://facebook.github.io/prophet/docs/installation.html#r>
+
+<https://rpubs.com/mpleo/timeseries_prophet>
+
+<https://www.youtube.com/watch?v=ny3gRhfVsi4&t=10s>
+
+[https://www.youtube.com/watch?v=Txuo9JQjnKE ótima ref em PT-BR](https://www.youtube.com/watch?v=Txuo9JQjnKE%20ótima%20ref%20em%20PT-BR)
+
+<https://www.youtube.com/watch?v=RJzmHkGWCxs&list=PLEuzmtv9IuT_vg5oE0lQyZR-wgbVeGztt>
+
+## Versões dos pacotes
+
+```{r}
+report(sessionInfo())
+```

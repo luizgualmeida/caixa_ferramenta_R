@@ -1,0 +1,644 @@
+# Lista 8 - CFA e Path Analysis
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+library(foreign)
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+library(performance)
+library(easystats)
+library(kableExtra)
+
+```
+
+## a) Regressão linear
+
+::: callout-note
+#### Exercício
+
+Veja o banco de dados DADOSPATH.sav. Nele temos os dados de Idade, IMC, numero de treinos e sociabilidade (questionario) de um grupo de 94 pessoas. Faca um modelo de regressao linear tendo como variavel dependente o numero de Treinos e as demais variaveis como independentes.
+:::
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+original = read.spss("DADOS PATH.sav", to.data.frame=TRUE)
+modelo_1 = lm(Treinos ~ Idade + IMC1 + Sociabilidade, data = original)
+
+```
+
+Modelo:
+
+$$
+Y \sim \beta_0 + \beta_1*idade + \beta_2*IMC1 + \beta_3*Sociabilidade + \epsilon
+$$
+
+### Resultados
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+kable(summary(modelo_1)$coef)
+
+```
+
+Um modelo linear (estimado usando Mínimos Quadrados Ordinários - OLS) foi utilizado para prever a variável Treinos com base nas variáveis Idade, IMC1 e Sociabilidade. O modelo explica uma proporção estatisticamente significativa e moderada da variância (R² = 0,14, F(3, 90) = 5,06, p = 0,003, R² ajustado = 0,12). Dentro desse modelo: • O efeito da Idade é estatisticamente significativo e positivo (beta = 1,91, IC 95% \[0,82, 3,00\], t(90) = 3,48, p \< 0,001; Beta padronizado = 0,35, IC 95% \[0,15, 0,56\]) • O efeito do IMC1 é estatisticamente significativo e negativo (beta = -2,80, IC 95% \[-5,15, -0,46\], t(90) = -2,37, p = 0,020; Beta padronizado = -0,24, IC 95% \[-0,44, -0,04\]) • O efeito da Sociabilidade é estatisticamente não significativo e positivo (beta = 0,52, IC 95% \[-0,66, 1,69\], t(90) = 0,88, p = 0,383; Beta padronizado = 0,09, IC 95% \[-0,11, 0,28\]) Parâmetros padronizados foram obtidos ajustando o modelo a uma versão padronizada do conjunto de dados. Intervalos de Confiança (ICs) de 95% e valores-p foram calculados usando uma aproximação da distribuição t de Wald.
+
+## b) Path Analysis
+
+::: callout-note
+#### Exercício
+
+Com base no mesmo banco acima faça uma Path Analysis e monte um diagrama no ~~AMOS~~ R. Compare os resultados com os dados encontrados na regressão linear.
+:::
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| 
+path_1 = "Treinos ~ Idade + IMC1 + Sociabilidade"
+
+
+path_model_1 = sem(
+  model = path_1,
+  data = original,
+)
+```
+
+### Tabela com os resultados
+
+Como sempre, podemos utilizar a função `summary()` para retornar um resumo com os resultados do modelo
+
+```{r}
+summary(path_model_1) # posso colocar o parametro fit.measures = TRUE para obter os valores de aderência do modelo
+```
+
+
+No caso da path analisys recomendamos utilizar a função `parameterEstimates()` do pacote `lavaan` para ter uma tabela mais direta com os resultados dos estimadores.
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+kable(parameterEstimates(path_model_1))
+```
+
+Os resultados foram os mesmos obtidos tanto pela path analysis quanto pela regressão linear simples.
+
+### Indices de qualidade do modelo
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+model_performance(path_model_1, metrics = c("Chi2", "Chi2_df", "NFI", "NNFI", "CFI", "RMSEA", "AIC", "BIC"))
+
+AIC(path_model_1)
+
+```
+
+### Diagrama da path analysis
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+P <- semPaths(
+          object = path_model_1,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+
+<!-- ### Modelo path 2 -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- # Modelo com covariância entre os erros -->
+
+<!-- path_2 <- "Treinos ~ Idade + IMC1 + Sociabilidade -->
+<!--     Treinos ~~ Treinos -->
+<!--     Idade ~~ Idade -->
+<!--     IMC1 ~~ IMC1 -->
+<!--     Sociabilidade ~~ Sociabilidade -->
+<!--     Treinos ~~ Idade -->
+<!--     Treinos ~~ IMC1 -->
+<!--     Treinos ~~ Sociabilidade -->
+<!-- " -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- # Modelo com covariância entre os erros -->
+
+<!-- path_model_2 = sem( -->
+<!--   model = path_2, -->
+<!--   data = original -->
+<!-- ) -->
+
+<!-- summary(path_model_2, fit.measures = TRUE) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- P2 <- semPaths( -->
+<!--           object = path_model_2, -->
+<!--           what = "path", -->
+<!--           whatLabels = "par", -->
+<!--           style = "ram", -->
+<!--           layout = "tree", -->
+<!--           rotation = 2, -->
+<!--           sizeMan = 7, -->
+<!--           sizeLat = 7, -->
+<!--           color = "lightgray", -->
+<!--           edge.label.cex = 1.2, -->
+<!--           label.cex = 1.3 -->
+<!-- ) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- model_performance(path_model_2, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "AIC", "BIC")) -->
+
+<!-- ``` -->
+
+## c) CFA
+
+::: callout-note
+#### Exercício
+
+Veja o banco de dados Fatorial escala.sav. Faça uma Análise fatorial confirmatória (CFA) gerando os seguintes fatores com base no questionário de apego a amigos (IAA).
+:::
+
+Segundo a teoria esperada, os fatores teriam o seguinte agrupamento: a. Confianca -- Q13 Q14 Q15 b. Alienacao -- Q1 Q2 Q3 Monte o diagrama e discuta a qualidade do modelo e suas limitações caso existam.
+
+**Equação do Modelo 1:**
+
+`cfa_eq = " Alienação =~ IAa1 + IAa2 + IAa3 Confiança =~ IAa13 + IAa14 + IAa15  "`
+
+**Análise Fatorial Confirmatória do modelo 1**
+
+`cfa_modelo = cfa(   model = cfa_eq,   data = dados_CFA,   std.lv = TRUE  )`
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+dados_CFA = read.spss("fatorial CFA.sav", to.data.frame=TRUE)
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+cfa_eq = "
+Alienação =~ IAa1 + IAa2 + IAa3
+Confiança =~ IAa13 + IAa14 + IAa15
+
+"
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+cfa_modelo = cfa(
+  model = cfa_eq,
+  data = dados_CFA,
+  std.lv = TRUE #If TRUE, the metric of each latent variable is determined by fixing their (residual) variances to 1.0. If FALSE, the metric of each latent variable is determined by fixing the factor loading of the first indicator to 1.0.
+  
+)
+
+```
+
+### Resultados do modelo sem covariâncias entre os resíduos (modelo 1)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+summary(cfa_modelo) # posso colocar no summary o parametro fit.measures = TRUE
+
+```
+
+```{r}
+kable(parameterEstimates(cfa_modelo))
+```
+
+
+Os resultados da análise de equações estruturais indicam que o modelo ajustado apresenta um bom ajuste aos dados observados (χ² = 39,166, df = 8, p \< 0,001). O modelo envolve duas variáveis latentes, "Alienação" e "Confiança", e suas variáveis observadas.
+
+Os coeficientes de carga (estimates) indicam que as perguntas associadas a "Alienação" (IAa1, IAa2, IAa3) e "Confiança" (IAa13, IAa14, IAa15) têm influências positivas significativas em suas respectivas variáveis latentes.
+
+Além disso, a covariância entre "Alienação" e "Confiança" é estatisticamente significativa (estimate = 0,865, p \< 0,001), sugerindo uma relação entre essas duas dimensões.
+
+Esses resultados fornecem evidências de que o modelo proposto é estatisticamente significativo.
+
+### Índices de qualidade do modelo 1
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+model_performance(cfa_modelo, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI") )
+```
+
+Os resultados dos índices de qualidade indicam que o modelo apresenta uma adequada qualidade de aderência aos dados observados, conforme evidenciado pelos índices de ajuste (NFI, CFI) acima de 0.9. Apenas o NNFI (ou TFI) está abaixo de 0.9, indicando um bom ajuste relativo.
+
+No entanto, o valor do RMSEA é alto (10%), indicando que o modelo pode ser aprimorado.
+
+Os valores de AIC e BIC serão utilizados para efeito de comparação com os modelos a seguir.
+
+### Diagrama da CFA com o modelo 1
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+plot_CFA <- semPaths(
+          object = cfa_modelo,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+### Verificar os índices de modificações do modelo 1
+
+Os índices de modificação podem ser obtidos utilizando a função `modindices()`. Por padrão, os índices de modificação são impressos para cada parâmetro não livre (ou fixado como zero). Os índices de modificação são complementados pelos valores de mudança esperada nos parâmetros (EPC) (coluna epc). As últimas três colunas contêm os valores padronizados de EPC (sepc.lv: padronização apenas das variáveis latentes; sepc.all: padronização de todas as variáveis; sepc.nox: padronização de todas, exceto variáveis observadas exógenas).
+
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+kable(modificationindices(cfa_modelo, sort = TRUE, minimum.value = 5))
+```
+
+
+### Novo modelo com a covariância dos resíduos (modelo 2)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+cfa_eq_2 = "
+Alienação =~ IAa1 + IAa2 + IAa3
+Confiança =~ IAa13 + IAa14 + IAa15
+
+# Covariancia dos resíduos
+IAa1 ~~ IAa3
+IAa13 ~~ IAa14
+IAa13 ~~ IAa15
+
+"
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+cfa_modelo_2 = cfa(
+  model = cfa_eq_2,
+  data = dados_CFA,
+  std.lv = TRUE
+)
+
+```
+
+**Equação do Modelo 2:**
+
+`cfa_eq_2 = " Alienação =~ IAa1 + IAa2 + IAa3 Confiança =~ IAa13 + IAa14 + IAa15  # Covariancia dos resíduos IAa1 ~~ IAa3  IAa13 ~~ IAa14 IAa13 ~~ IAa15  "`
+
+**Análise Fatorial Confirmatória do modelo 2**
+
+`cfa_modelo_2 = cfa(   model = cfa_eq_2,   data = dados_CFA,   std.lv = TRUE    )`
+
+### Resultados modelo 2
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+summary(cfa_modelo_2) # posso colocar no summary o parametro fit.measures = TRUE
+
+```
+
+```{r}
+kable(parameterEstimates(cfa_modelo_2))
+
+```
+
+
+Os resultados da análise indicam que o modelo apresenta um razoável ajuste aos dados observados, conforme evidenciado pelos índices de ajuste, embora o teste qui-quadrado seja estatisticamente significativo (χ² = 14.194, df = 5, p = 0.014), indicando diferenças entre o modelo e os dados.
+
+As cargas fatoriais para os indicadores associados às variáveis latentes "Alienação" e "Confiança" são todas estatisticamente significativas (p \< 0.001), indicando que esses indicadores têm uma relação com suas respectivas variáveis latentes.
+
+### Índices de qualidade do modelo 2
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+model_performance(cfa_modelo_2, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"))
+```
+
+Os resultados dos índices de qualidade indicam que o modelo apresenta uma adequada qualidade de aderência aos dados observados, conforme evidenciado pelos índices de ajuste (NFI, CFI e NNFI) acima de 0.9.
+
+No entanto, o valor do RMSEA é moderado (7%), indicando que o modelo pode ser aprimorado.
+
+Os valores de AIC e BIC serão utilizados para efeito de comparação com os modelos a seguir.
+
+### Diagrama do modelo 2
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+plot_CFA <- semPaths(
+          object = cfa_modelo_2,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+### **Comparação entre os modelos**
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+compare_performance(cfa_modelo, cfa_modelo_2, 
+                    metrics = c("NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"),
+                    rank = TRUE, verbose = F)
+```
+
+O modelo_2 demonstra superioridade em relação ao modelo_1 com base nos critérios de ajuste avaliados.
+
+## Complementar: Modelo com apenas um fator latente (modelo 3)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+cfa_eq_3 = "
+F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
+"
+
+```
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| 
+cfa_modelo_3 = cfa(
+  model = cfa_eq_3,
+  data = dados_CFA,
+  std.lv = TRUE
+)
+
+```
+
+**Equação do modelo 3:**
+
+`cfa_eq_3 = " F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15 "`
+
+**Análise Fatorial Confirmatória do modelo 2**
+
+`cfa_modelo_3 = cfa(   model = cfa_eq_3,   data = dados_CFA,   std.lv = TRUE    )`
+
+### Resultados do modelo 3
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+kable(parameterEstimates(cfa_modelo_3))
+```
+
+
+O modelo de uma única variável latente "F1" apresenta um ajuste geral adequado aos dados, conforme indicado pelo teste qui-quadrado significativo (χ² = 45.034, df = 9, p = 0.000).
+
+As cargas fatoriais dos indicadores para "F1" são todas estatisticamente significativas (p \< 0.001), indicando que essas variáveis observadas têm uma relação com a variável latente "F1".
+
+### Índices de qualidade do modelo 3
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+model_performance(cfa_modelo_3, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI") )
+```
+
+### Diagrama do modelo 3
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+plot_CFA <- semPaths(
+          object = cfa_modelo_3,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+### **Índices de modificação para o modelo**
+
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+kable(modificationindices(cfa_modelo_3, standardized = FALSE, minimum.value = 5))
+```
+
+## Modelo 4 com covariância entre os resíduos
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+cfa_eq_4 = "
+F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
+
+#Covariância dos resíduos
+IAa2	~~	IAa14
+IAa13	~~	IAa14
+"
+
+```
+
+**Análise Fatorial Confirmatória do modelo 4**
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+cfa_modelo_4 = cfa(
+  model = cfa_eq_4,
+  data = dados_CFA,
+  std.lv = TRUE
+)
+
+```
+
+### Resultados do modelo 4
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+kable(parameterEstimates(cfa_modelo_4))
+
+```
+
+
+Os resultados do modelo sugerem que o ajuste do modelo aos dados é razoável, conforme indicado pelo teste qui-quadrado (χ² = 12.216, df = 7, p = 0.094). O modelo envolve uma única variável latente "F1," e por seis variáveis observadas (IAa1, IAa2, IAa3, IAa13, IAa14, IAa15). As cargas fatoriais associadas a cada indicador são todas estatisticamente significativas (p \< 0.001), indicando uma relação entre esses indicadores e a variável latente "F1". As variâncias dos indicadores também são significativas, sugerindo que cada indicador contribui para a variabilidade total da variável latente "F1".
+
+Além disso, há duas covariâncias estimadas entre os indicadores: uma entre IAa2 e IAa14, e outra entre IAa13 e IAa14. Essas covariâncias indicam associações adicionais entre os indicadores além daquelas explicadas pelas relações com a variável latente "F1".
+
+### Índices de qualidade do modelo 4
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+model_performance(cfa_modelo_4, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"))
+```
+
+O modelo apresenta índices NFI (0.974), CFI (0.989) e NNFI (0.976) próximos de 1, indicando um bom ajuste. O RMSEA (0.046) é baixo, sugerindo uma adequada aproximação do modelo aos dados.
+
+### Diagrama do modelo 4
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+plot_CFA <- semPaths(
+          object = cfa_modelo_4,
+          what = "path",
+          whatLabels = "par",
+          style = "ram",
+          layout = "tree",
+          rotation = 2,
+          sizeMan = 7,
+          sizeLat = 7,
+          color = "lightgray",
+          edge.label.cex = 1.2,
+          label.cex = 1.3
+)
+```
+
+### Comparação entre os modelos
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+compare_performance(cfa_modelo, cfa_modelo_2, cfa_modelo_3, cfa_modelo_4,
+                    metrics = c("NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"),
+                    rank = TRUE, verbose = F)
+```
+
+O modelo_4 demonstra superioridade em relação aos demais modelos com base nos critérios de ajuste avaliados.
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+# Links de referência
+
+# https://rdrr.io/cran/performance/man/model_performance.lavaan.html
+# https://methodenlehre.github.io/SGSCLM-R-course/cfa-and-sem-with-lavaan.html#structural-equation-modelling-sem
+```
+
+## Lista 8 resolvida no SPSS
+
+{{< video https://www.youtube.com/watch?v=f_fXWuCGssQ title='Structural Equation Modeling (SEM) - CFA e Path Analysis - Aula Prática #8' >}}
+
+## Extras!
+
+### Mais gráficos
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+semPaths(cfa_modelo, "std", weighted = FALSE, nCharNodes = 7, shapeMan = "rectangle",
+         sizeMan = 8, sizeMan2 = 5)
+```
+
+## Referências
+
+<https://www.jstatsoft.org/article/view/v048i02>
+
+<https://lavaan.ugent.be/tutorial/inspect.html>
+
+## Versões dos pacotes
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+report(sessionInfo())
+```
