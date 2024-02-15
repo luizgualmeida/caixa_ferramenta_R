@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Luiz G. de Almeida">
+<meta name="dcterms.date" content="2024-03-12">
+
+<title>Técnicas e Métodos de Pesquisa no R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./lms.html" rel="next">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introdução</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Introdução</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./lms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SURVIVAL</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ARIMA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./SEM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SEM</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a>
+  <ul class="collapse">
+  <li><a href="#sobre-as-aulas" id="toc-sobre-as-aulas" class="nav-link" data-scroll-target="#sobre-as-aulas">Sobre as aulas</a></li>
+  <li><a href="#sobre-o-tutorial" id="toc-sobre-o-tutorial" class="nav-link" data-scroll-target="#sobre-o-tutorial">Sobre o tutorial</a></li>
+  <li><a href="#r-e-rstudio" id="toc-r-e-rstudio" class="nav-link" data-scroll-target="#r-e-rstudio">R e Rstudio</a></li>
+  <li><a href="#aulas-práticas-gravadas" id="toc-aulas-práticas-gravadas" class="nav-link" data-scroll-target="#aulas-práticas-gravadas">Aulas práticas gravadas</a></li>
+  <li><a href="#boas-práticas-no-rstudio" id="toc-boas-práticas-no-rstudio" class="nav-link" data-scroll-target="#boas-práticas-no-rstudio">Boas práticas no Rstudio</a>
+  <ul class="collapse">
+  <li><a href="#criando-o-projeto-e-alocando-os-arquivos" id="toc-criando-o-projeto-e-alocando-os-arquivos" class="nav-link" data-scroll-target="#criando-o-projeto-e-alocando-os-arquivos">Criando o projeto e alocando os arquivos</a></li>
+  </ul></li>
+  <li><a href="#instalando-e-carregando-os-pacotes" id="toc-instalando-e-carregando-os-pacotes" class="nav-link" data-scroll-target="#instalando-e-carregando-os-pacotes">Instalando e carregando os pacotes</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Técnicas e Métodos de Pesquisa no R</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Luiz G. de Almeida </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 12, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introdução" class="level1 unnumbered">
+<h1 class="unnumbered">Introdução</h1>
+<p>Tutorial produzido com base nas <a href="https://www.youtube.com/watch?v=_KtjZcaMYhk&amp;list=PLZjaOxYREinslupYDLvknGMB-U-Kl8G7k">aulas práticas</a> da disciplina “<a href="https://www.youtube.com/watch?v=IsrBkJKcLwo&amp;list=PLZjaOxYREinv_M_2nc-BIwptMbfIFipQj&amp;pp=iAQB">Estatística Aplicada a Psicobiologia II - 2023</a>”, ministrada pelo Professor Altay Lino de Souza e oferecida pelo Departamento de Psicobiologia da UNIFESP.</p>
+<section id="sobre-as-aulas" class="level2">
+<h2 class="anchored" data-anchor-id="sobre-as-aulas">Sobre as aulas</h2>
+<p>As aulas são gravadas e disponibilizadas gratuitamente por meio de lives no canal <a href="www.youtube.com/cientistica">Cientística &amp; Podcast Naruhodo</a> do YouTube. Destacando aqui o agradecimento mais do que especial para a Maria Lucia Oliveira De Souza Formigoni, por tornar possível a disciplina.</p>
+</section>
+<section id="sobre-o-tutorial" class="level2">
+<h2 class="anchored" data-anchor-id="sobre-o-tutorial">Sobre o tutorial</h2>
+<p>Este tutorial tem como objetivo oferecer uma introdução prática à análise estatística de dados no R, utilizando diversos bancos de dados para cada tipo de anáise. O público-alvo abrange estudantes de <a href="#0">Estatística Aplicada a Psicobiologia II</a>, pós-graduandos e pesquisadores que buscam aprimorar suas habilidades em análise de dados. É recomendado ter conhecimento básico em estatística, particularmente <a href="#0">Estatística Aplicada a Psicobiologia I</a>, e alguma familiaridade com o ambiente R para acompanhar este tutorial. Abordaremos as seguintes análises:</p>
+<ul>
+<li><p>Transformação de dados para análises</p></li>
+<li><p>Modelos lineares:</p>
+<ul>
+<li><p>Modelo linear geral (GLM ) de medidas repetidas</p></li>
+<li><p>Generalized Estimated Equations (GEE)</p></li>
+<li><p>Modelos mistos e hierárquicos (GMM)</p></li>
+<li><p>Generalized linear models (GzLM)</p></li>
+</ul></li>
+</ul>
+<!-- -->
+<ul>
+<li><p>Análise de sobrevida</p>
+<ul>
+<li><p>Kaplan-Meier</p></li>
+<li><p>Regressão de Cox</p></li>
+<li><p>Cox Tempo dependente</p></li>
+</ul></li>
+</ul>
+<!-- -->
+<ul>
+<li><p>Séries temporais (ARIMA)</p></li>
+<li><p>Modelagem de Equação Estrutural (SEM)</p>
+<ul>
+<li><p>Path analysis</p></li>
+<li><p>Confrmatory Factor Analysis (CFA)</p></li>
+<li><p>Moderação e mediação</p></li>
+</ul></li>
+</ul>
+<p>Ao fim de cada capítulos, nas seções intituladas “Extras”, vamos mostrar dicas sobre pacotes que podem ser úteis para suas análises, mas que não estão disponíveis no SPSS ou no Jamovi.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importante!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O material apresentado aqui é <strong>complementar</strong> às aulas teóricas e práticas. É imprescindível que você assista às aulas antes de resolver os exercícios no R.</p>
+</div>
+</div>
+</section>
+<section id="r-e-rstudio" class="level2">
+<h2 class="anchored" data-anchor-id="r-e-rstudio">R e Rstudio</h2>
+<p>Embora as aulas práticas tenham sido gravadas utilizando o SPSS, o intuito do tutorial é replicar as análises no R, que é gratuito! Portanto você precisa baixar o R e o Rstudio.</p>
+<p><a href="https://cran.r-project.org/bin/windows/base/">Download do R</a><br>
+<a href="https://posit.co/downloads/">Download do Rstudio</a></p>
+</section>
+<section id="aulas-práticas-gravadas" class="level2">
+<h2 class="anchored" data-anchor-id="aulas-práticas-gravadas">Aulas práticas gravadas</h2>
+<p>Os vídeos das aulas práticas no SPSS foram anexados ao fim de cada capítulo para que você possa ter uma referência do tipo de análise realizada. Em alguns casos você notarão que os resultados não serão idênticos no SPSS e no R. Isso ocorre devido aos diferentes algorítimos de estimação de coeficientes utilizados nos programas. O importante é você sempre reportar como a análise foi feita, quais programas e sempre que possível, disponibilizar o código ou o passo-a-passo utilizado para realizar a análise.</p>
+</section>
+<section id="boas-práticas-no-rstudio" class="level2">
+<h2 class="anchored" data-anchor-id="boas-práticas-no-rstudio">Boas práticas no Rstudio</h2>
+<p>Criar um projeto separado para cada tipo de análise no R é uma prática recomendada porque mantém o ambiente organizado, evita conflitos entre projetos, facilita a colaboração e torna a reprodução e compartilhamento de trabalho mais eficientes.</p>
+<section id="criando-o-projeto-e-alocando-os-arquivos" class="level3">
+<h3 class="anchored" data-anchor-id="criando-o-projeto-e-alocando-os-arquivos">Criando o projeto e alocando os arquivos</h3>
+<p>Para criar um novo projeto no R, siga estes passos simples:</p>
+<ol type="1">
+<li><p>Abra o RStudio.</p></li>
+<li><p>Vá até a guia “File” (Arquivo) e selecione “New Project” (Novo Projeto).</p></li>
+<li><p>Escolha um diretório para o seu projeto, onde todas as pastas e arquivos relacionados a ele serão armazenados. Isso ajudará na organização.</p></li>
+<li><p>Clique em “Create Project” (Criar Projeto).</p></li>
+</ol>
+<p>Feito isso você terá um novo projeto configurado. Qualquer arquivo que você deseje usar para o tutorial deve ser colocado dentro da pasta desse projeto. Isso garantirá que todos os caminhos e referências aos arquivos sejam relativos ao diretório do projeto, facilitando a portabilidade e compartilhamento do tutorial.</p>
+<p>Com esses passos, você terá um ambiente de projeto limpo e organizado para trabalhar com seus arquivos e conduzir seu tutorial no R.</p>
+</section>
+</section>
+<section id="instalando-e-carregando-os-pacotes" class="level2">
+<h2 class="anchored" data-anchor-id="instalando-e-carregando-os-pacotes">Instalando e carregando os pacotes</h2>
+<p>No início de cada capítulo, você encontrará uma lista completa dos pacotes necessários para reproduzir as análises correspondentes.</p>
+<p>Para instalar um pacote, basta executar o comando <code>install.packages("nome_do_pacote")</code> uma única vez.</p>
+<p>Por exemplo: <code>install.packages("effects")</code>. Este comando instalará o pacote “effects”, que contém funções para calcular os estimadores de modelos lineares. É importante colocar o nome do pacote entre aspas (” “)</p>
+<p>Após a instalação do pacote, será necessário carregá-lo sempre que desejar utilizar alguma função associada a ele. Para isso basta executar o comando library(nome_do_pacote). Note que aqui não há a necessidade de colocar o nome do pacote entre aspas.</p>
+<p>Exemplo: library(effects).</p>
+<p>Pronto! Agora você está familiarizado com o processo de instalação e carregamento dos pacotes que serão utilizados ao longo deste tutorial. Pode-se fazer uma analogia com uma biblioteca: adquirir os livros seria como instalar os pacotes (<code>install.packages</code>), e retirar um livro da prateleira seria como carregar o pacote (<code>library</code>) quando necessário.</p>
+<!-- ```{r} -->
+<!-- install.packages("A3") -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- #| message: false -->
+<!-- #| warning: false -->
+<!-- library(emmeans)   # Cálculo de médias estimadas após análises estatísticas. -->
+<!-- library(lme4)      # Ajuste de modelos lineares mistos. -->
+<!-- library(nlme)      # Ajuste de modelos mistos não lineares. -->
+<!-- library(flexplot)  # Criação de gráficos flexíveis e personalizados. -->
+<!-- library(foreign)   # Importação/exportação de dados de outros formatos. -->
+<!-- library(tidyr)     # Manipulação de dados. -->
+<!-- library(dplyr)     # Manipulação e transformação de dados de maneira eficiente. -->
+<!-- library(multcomp)  # Correção de múltiplas comparações pós-teste. -->
+<!-- library(effects)   # Visualização de efeitos de modelos estatísticos. -->
+<!-- library(sjstats)   # Estatísticas descritivas e sumarização de modelos. -->
+<!-- library(tm)        # Análise de texto e mineração de texto. -->
+<!-- library(car)       # Análise de regressão e diagnóstico de regressão. -->
+<!-- library(pwr)       # Cálculo do poder estatístico em estudos de amostragem. -->
+<!-- library(rstatix)   # Análise estatística simplificada. -->
+<!-- library(geepack)   # Ajuste de modelos de equações de estimação generalizadas. -->
+<!-- library(htmltools) # Ferramentas para trabalhar com HTML. -->
+<!-- library(mime)      # Ferramentas para manipulação de tipos MIME. -->
+<!-- library(performance) # Avaliação e melhoria do desempenho do modelo linear -->
+<!-- library(see) # Simplificar a exploração de dados -->
+<!-- library(rempsyc) # Métodos psicométricos e estatísticas relacionadas à psicometria -->
+<!-- library(easystats) # Simplifica a análise estatística -->
+<!-- ``` -->
+</section>
+<section id="referências" class="level2">
+<h2 class="anchored" data-anchor-id="referências">Referências</h2>
+<!-- <https://quarto.org/docs/authoring/videos.html> -->
+<p><a href="https://r4ds.hadley.nz/" class="uri">https://r4ds.hadley.nz/</a></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./lms.html" class="pagination-link">
+        <span class="nav-page-text">GLM, GEE, GMM, GzLM</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

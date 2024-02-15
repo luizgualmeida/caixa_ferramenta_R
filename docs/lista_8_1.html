@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Técnicas e Métodos de Pesquisa no R - 10&nbsp; Lista 8.1 - Moderação e Mediação</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./lista_8.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./SEM.html">SEM</a></li><li class="breadcrumb-item"><a href="./lista_8_1.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdução</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./lms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SURVIVAL</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ARIMA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./SEM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SEM</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#a-modelo-causal-teórico" id="toc-a-modelo-causal-teórico" class="nav-link active" data-scroll-target="#a-modelo-causal-teórico"><span class="header-section-number">10.1</span> a) Modelo causal teórico</a>
+  <ul class="collapse">
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a></li>
+  </ul></li>
+  <li><a href="#b-mediação-vs-regressões-lineares" id="toc-b-mediação-vs-regressões-lineares" class="nav-link" data-scroll-target="#b-mediação-vs-regressões-lineares"><span class="header-section-number">10.2</span> b) Mediação vs Regressões lineares</a>
+  <ul class="collapse">
+  <li><a href="#valor-de-c" id="toc-valor-de-c" class="nav-link" data-scroll-target="#valor-de-c">Valor de “c”</a></li>
+  <li><a href="#valor-de-a" id="toc-valor-de-a" class="nav-link" data-scroll-target="#valor-de-a">Valor de a</a></li>
+  <li><a href="#valor-de-b-e-de-c" id="toc-valor-de-b-e-de-c" class="nav-link" data-scroll-target="#valor-de-b-e-de-c">valor de b e de c’</a></li>
+  <li><a href="#diagrama-do-modelo" id="toc-diagrama-do-modelo" class="nav-link" data-scroll-target="#diagrama-do-modelo">Diagrama do modelo</a></li>
+  </ul></li>
+  <li><a href="#modelo-2-opcional-1" id="toc-modelo-2-opcional-1" class="nav-link" data-scroll-target="#modelo-2-opcional-1"><span class="header-section-number">10.3</span> Modelo 2 (Opcional 1)</a>
+  <ul class="collapse">
+  <li><a href="#resultados-1" id="toc-resultados-1" class="nav-link" data-scroll-target="#resultados-1">Resultados</a></li>
+  <li><a href="#diagrama-do-modelo-2" id="toc-diagrama-do-modelo-2" class="nav-link" data-scroll-target="#diagrama-do-modelo-2">Diagrama do modelo 2</a></li>
+  </ul></li>
+  <li><a href="#modelo-3-opcional-2" id="toc-modelo-3-opcional-2" class="nav-link" data-scroll-target="#modelo-3-opcional-2"><span class="header-section-number">10.4</span> Modelo 3 (Opcional 2)</a>
+  <ul class="collapse">
+  <li><a href="#resultados-2" id="toc-resultados-2" class="nav-link" data-scroll-target="#resultados-2">Resultados</a></li>
+  </ul></li>
+  <li><a href="#diagrama-do-modelo-3" id="toc-diagrama-do-modelo-3" class="nav-link" data-scroll-target="#diagrama-do-modelo-3"><span class="header-section-number">10.5</span> Diagrama do modelo 3</a></li>
+  <li><a href="#lista-8.1-resolvida-no-spss" id="toc-lista-8.1-resolvida-no-spss" class="nav-link" data-scroll-target="#lista-8.1-resolvida-no-spss"><span class="header-section-number">10.6</span> Lista 8.1 resolvida no SPSS</a></li>
+  <li><a href="#extras" id="toc-extras" class="nav-link" data-scroll-target="#extras"><span class="header-section-number">10.7</span> Extras!</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências"><span class="header-section-number">10.8</span> Referências</a></li>
+  <li><a href="#versões-dos-pacotes" id="toc-versões-dos-pacotes" class="nav-link" data-scroll-target="#versões-dos-pacotes"><span class="header-section-number">10.9</span> Versões dos pacotes</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Veja o banco de dados DADOSPATH.sav. Nele temos as variáveis Idade, IMC, Sociabilidade (medida por um questionário) e número de treinos realizados em uma academia. Temos uma hipótese teórica de que SOCIABILIDADE é uma variável preditora (X) do número de TREINOS (Y) que a pessoa realiza na academia. No entanto, o IMC (M) é uma variável mediadora desse efeito, não apenas moderadora. Ou seja, a relação entre sociabilidade e treinos só aparece na presença do IMC ou quando ele é conhecido.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semTools)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mediation)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="a-modelo-causal-teórico" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="a-modelo-causal-teórico"><span class="header-section-number">10.1</span> a) Modelo causal teórico</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Verifique esse modelo causal teórico e veja se ele faz sentido, utilizando um modelo SEM com mediação. Avalie os efeitos diretos e indiretos e decida se esse modelo teórico faz sentido, utilizando o AMOS e o Process.</p>
+</div>
+</div>
+<p>Resolução do exercício foi baseada no vídeo “Simple Mediation using lavaan package of R” <a href="https://www.youtube.com/watch?v=nfQOCy9xMnk" class="uri">https://www.youtube.com/watch?v=nfQOCy9xMnk</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>original <span class="ot">=</span> <span class="fu">read.spss</span>(<span class="st">"DADOS PATH.sav"</span>, <span class="at">to.data.frame=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(original)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 94
+Columns: 4
+$ Idade         &lt;dbl&gt; 57, 41, 29, 26, 33, 37, 26, 44, 31, 36, 30, 55, 43, 27, …
+$ IMC1          &lt;dbl&gt; 28.46122, 32.62609, 26.99050, 19.03602, 28.76650, 24.686…
+$ Treinos       &lt;dbl&gt; 108, 144, 48, 102, 123, 63, 39, 105, 6, 48, 144, 144, 11…
+$ Sociabilidade &lt;dbl&gt; 14, 34, 17, 20, 26, 19, 15, 32, 27, 19, 28, 9, 30, 29, 1…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>modelo_1 <span class="ot">=</span> <span class="st">"Treinos ~ c_*Sociabilidade + b*IMC1 </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">            IMC1 ~ a*Sociabilidade</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">            Indireto := a*b</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Total_direto_C := a*b + c_"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">=</span> <span class="fu">sem</span>(modelo_1, original, <span class="at">se =</span> <span class="st">"bootstrap"</span>, <span class="at">bootstrap =</span> <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(fit_1) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">parameterEstimates</span>(fit_1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">lhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">op</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">rhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">label</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">est</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">se</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">z</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">pvalue</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.lower</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">c_</td>
+<td style="text-align: right;">0.6052243</td>
+<td style="text-align: right;">0.6619768</td>
+<td style="text-align: right;">0.9142682</td>
+<td style="text-align: right;">0.3605759</td>
+<td style="text-align: right;">-0.6524603</td>
+<td style="text-align: right;">1.8245324</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: right;">-1.6497656</td>
+<td style="text-align: right;">1.0185007</td>
+<td style="text-align: right;">-1.6197982</td>
+<td style="text-align: right;">0.1052756</td>
+<td style="text-align: right;">-3.6551562</td>
+<td style="text-align: right;">0.4350822</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: right;">0.0190526</td>
+<td style="text-align: right;">0.0507549</td>
+<td style="text-align: right;">0.3753835</td>
+<td style="text-align: right;">0.7073753</td>
+<td style="text-align: right;">-0.0861290</td>
+<td style="text-align: right;">0.1130998</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">2327.0247317</td>
+<td style="text-align: right;">187.7869286</td>
+<td style="text-align: right;">12.3918355</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1884.6418875</td>
+<td style="text-align: right;">2629.3007296</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">17.7329732</td>
+<td style="text-align: right;">3.0046312</td>
+<td style="text-align: right;">5.9018802</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">12.1538364</td>
+<td style="text-align: right;">23.9097897</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">65.6008375</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">65.6008375</td>
+<td style="text-align: right;">65.6008375</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b</td>
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: right;">-0.0314322</td>
+<td style="text-align: right;">0.0996909</td>
+<td style="text-align: right;">-0.3152970</td>
+<td style="text-align: right;">0.7525362</td>
+<td style="text-align: right;">-0.2192393</td>
+<td style="text-align: right;">0.2283743</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b+c_</td>
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: right;">0.5737921</td>
+<td style="text-align: right;">0.6689293</td>
+<td style="text-align: right;">0.8577768</td>
+<td style="text-align: right;">0.3910157</td>
+<td style="text-align: right;">-0.7354611</td>
+<td style="text-align: right;">1.7852540</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<section id="resultados" class="level3">
+<h3 class="anchored" data-anchor-id="resultados">Resultados</h3>
+<ol type="1">
+<li><strong>Regressões:</strong></li>
+</ol>
+<ul>
+<li><p>O coeficiente estimado para a relação entre Sociabilidae e Treinos é 0.605, mas não é estatisticamente significativo (p = 0.360).</p></li>
+<li><p>O coeficiente estimado para a relação entre IMC e Treinos é -1.650, indicando uma relação negativa. No entanto, esse coeficiente também não é estatisticamente significativo (p = 0.100).</p></li>
+<li><p>O coeficiente estimado para a relação entre Sociabilidae e IMC é 0.019 e não é estatisticamente significativo (p = 0.693).</p></li>
+</ul>
+<ol start="2" type="1">
+<li><strong>Parâmetros Definidos:</strong></li>
+</ol>
+<ul>
+<li><p>O efeito indireto é estimado como -0.031, mas não é estatisticamente significativo (p = 0.717). Isso sugere que a variável IMC não medeia significativamente a relação entre Sociabilidae e Treinos.</p></li>
+<li><p>O efeito direto da Sociabilidade no Treino é estimado como 0.574 e também não é estatisticamente significativo (p = 0.386).</p></li>
+</ul>
+<p>Com base nos resultados, podemos concluir que o modelo teórico não se sustenta, pois não há evidência estatística significativa para sugerir relações entre as variáveis Sociabilidae , IMC e Treinos.</p>
+</section>
+</section>
+<section id="b-mediação-vs-regressões-lineares" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="b-mediação-vs-regressões-lineares"><span class="header-section-number">10.2</span> b) Mediação vs Regressões lineares</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Compare os dados encontrados com aqueles realizados por um conjunto de regressões lineares (OLS). Fazer esta análise de mediação por regressão linear e utilizando o AMOS+Process é a mesma coisa? Coloque também o diagrama gerado aqui.</p>
+</div>
+</div>
+<section id="valor-de-c" class="level3">
+<h3 class="anchored" data-anchor-id="valor-de-c">Valor de “c”</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>soc_treinos <span class="ot">=</span> <span class="fu">lm</span>(Treinos <span class="sc">~</span> Sociabilidade, <span class="at">data =</span> original) <span class="co">#valor de c</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">summary</span>(soc_treinos)<span class="sc">$</span>coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Std. Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">69.4395522</td>
+<td style="text-align: right;">14.1638541</td>
+<td style="text-align: right;">4.9025888</td>
+<td style="text-align: right;">0.0000041</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: right;">0.5737921</td>
+<td style="text-align: right;">0.6273496</td>
+<td style="text-align: right;">0.9146289</td>
+<td style="text-align: right;">0.3627775</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="valor-de-a" class="level3">
+<h3 class="anchored" data-anchor-id="valor-de-a">Valor de a</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>soc_imc <span class="ot">=</span> <span class="fu">lm</span>(IMC1 <span class="sc">~</span> Sociabilidade, <span class="at">data =</span> original) </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">summary</span>(soc_imc)<span class="sc">$</span>coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Std. Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">25.3971491</td>
+<td style="text-align: right;">1.2238100</td>
+<td style="text-align: right;">20.7525264</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: right;">0.0190526</td>
+<td style="text-align: right;">0.0542054</td>
+<td style="text-align: right;">0.3514884</td>
+<td style="text-align: right;">0.7260257</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="valor-de-b-e-de-c" class="level3">
+<h3 class="anchored" data-anchor-id="valor-de-b-e-de-c">valor de b e de c’</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>soc_E_imc_treinos <span class="ot">=</span> <span class="fu">lm</span>(Treinos <span class="sc">~</span> IMC1 <span class="sc">+</span> Sociabilidade, <span class="at">data =</span> original) </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">summary</span>(soc_E_imc_treinos)<span class="sc">$</span>coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Std. Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">111.3388945</td>
+<td style="text-align: right;">33.5981763</td>
+<td style="text-align: right;">3.3138374</td>
+<td style="text-align: right;">0.0013220</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: right;">-1.6497656</td>
+<td style="text-align: right;">1.2008507</td>
+<td style="text-align: right;">-1.3738307</td>
+<td style="text-align: right;">0.1728690</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: right;">0.6052243</td>
+<td style="text-align: right;">0.6247647</td>
+<td style="text-align: right;">0.9687235</td>
+<td style="text-align: right;">0.3352508</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Os resultados são diferentes. As mediações apenas por regressão linear não apresentam o resultado do efeito indireto, mostrado no resultado do exercício anterior</p>
+</section>
+<section id="diagrama-do-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="diagrama-do-modelo">Diagrama do modelo</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>diagrama_1 <span class="ot">&lt;-</span> <span class="fu">semPaths</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">object =</span> fit_1,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">what =</span> <span class="st">"path"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">whatLabels =</span> <span class="st">"par"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"ram"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">layout =</span> <span class="st">"tree"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">rotation =</span> <span class="dv">2</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeMan =</span> <span class="dv">7</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeLat =</span> <span class="dv">7</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"lightgray"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">edge.label.cex =</span> <span class="fl">1.2</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">label.cex =</span> <span class="fl">1.3</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="modelo-2-opcional-1" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="modelo-2-opcional-1"><span class="header-section-number">10.3</span> Modelo 2 (Opcional 1)</h2>
+<p>Refaça o modelo tendo a variável Idade como mediador.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>modelo_2 <span class="ot">=</span> <span class="st">"Treinos ~ c_*Sociabilidade + b*Idade </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">            Idade ~ a*Sociabilidade</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">            Indireto := a*b</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Total_direto_C := a*b + c_"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_2 <span class="ot">=</span> <span class="fu">sem</span>(modelo_2, original, <span class="at">se =</span> <span class="st">"bootstrap"</span>, <span class="at">bootstrap =</span> <span class="dv">500</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">parameterEstimates</span>(fit_2)) <span class="co"># parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">lhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">op</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">rhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">label</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">est</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">se</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">z</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">pvalue</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.lower</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">c_</td>
+<td style="text-align: right;">0.4852942</td>
+<td style="text-align: right;">0.6196786</td>
+<td style="text-align: right;">0.7831385</td>
+<td style="text-align: right;">0.4335458</td>
+<td style="text-align: right;">-0.7090243</td>
+<td style="text-align: right;">1.6900127</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: right;">1.5425565</td>
+<td style="text-align: right;">0.4588149</td>
+<td style="text-align: right;">3.3620452</td>
+<td style="text-align: right;">0.0007737</td>
+<td style="text-align: right;">0.6913514</td>
+<td style="text-align: right;">2.4044144</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: right;">0.0573709</td>
+<td style="text-align: right;">0.1100893</td>
+<td style="text-align: right;">0.5211310</td>
+<td style="text-align: right;">0.6022755</td>
+<td style="text-align: right;">-0.1575502</td>
+<td style="text-align: right;">0.2725941</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">2179.2955768</td>
+<td style="text-align: right;">194.4639552</td>
+<td style="text-align: right;">11.2066813</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1707.6722717</td>
+<td style="text-align: right;">2479.7855236</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">82.3681677</td>
+<td style="text-align: right;">10.5597227</td>
+<td style="text-align: right;">7.8002207</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">61.5549212</td>
+<td style="text-align: right;">102.4772562</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">65.6008375</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">65.6008375</td>
+<td style="text-align: right;">65.6008375</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b</td>
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: right;">0.0884979</td>
+<td style="text-align: right;">0.1735841</td>
+<td style="text-align: right;">0.5098273</td>
+<td style="text-align: right;">0.6101725</td>
+<td style="text-align: right;">-0.2660349</td>
+<td style="text-align: right;">0.4446866</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b+c_</td>
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: right;">0.5737921</td>
+<td style="text-align: right;">0.6808613</td>
+<td style="text-align: right;">0.8427445</td>
+<td style="text-align: right;">0.3993714</td>
+<td style="text-align: right;">-0.7934420</td>
+<td style="text-align: right;">1.9182149</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<section id="resultados-1" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-1">Resultados</h3>
+<ol type="1">
+<li><p><strong>Regressões:</strong></p>
+<ul>
+<li><p>A relação estimada entre <code>Sociabilidade</code> e <code>Treinos</code> é 0.485, mas não é estatisticamente significativa (p = 0.384).</p></li>
+<li><p>A relação estimada entre <code>Idade</code> e <code>Treinos</code> é 1.543, indicando uma relação positiva e significativa (p = 0.001).</p></li>
+<li><p>A relação estimada entre <code>Sociabldd</code> e <code>Idade</code> é 0.057 e não é estatisticamente significativa (p = 0.592).</p></li>
+</ul></li>
+<li><p><strong>Parâmetros Definidos:</strong></p>
+<ul>
+<li><p>O efeito <code>Indireto</code> é estimado como 0.088, mas não é estatisticamente significativo (p = 0.605). Isso sugere que a variável <code>Idade</code> não medeia significativamente a relação entre <code>Sociabilidade</code> e <code>Treinos</code>.</p></li>
+<li><p>O efeito total direto da Sociabilidae nos Treinos é estimado como 0.574 e não é estatisticamente significativo (p = 0.345).</p></li>
+</ul></li>
+</ol>
+<p>Os resultados sugerem que a variável <code>Idade</code> está significativamente relacionada à variável <code>Treinos</code>, enquanto a variável <code>Sociabilidade</code> não tem uma relação significativa com <code>Treinos</code>. O efeito indireto através de <code>Idade</code> não é estatisticamente significativo, e o efeito total direto também não é significativo.</p>
+</section>
+<section id="diagrama-do-modelo-2" class="level3">
+<h3 class="anchored" data-anchor-id="diagrama-do-modelo-2">Diagrama do modelo 2</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>diagrama_2 <span class="ot">&lt;-</span> <span class="fu">semPaths</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">object =</span> fit_2,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">what =</span> <span class="st">"path"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">whatLabels =</span> <span class="st">"par"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"ram"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">layout =</span> <span class="st">"tree"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">rotation =</span> <span class="dv">2</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeMan =</span> <span class="dv">7</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeLat =</span> <span class="dv">7</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"lightgray"</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">edge.label.cex =</span> <span class="fl">1.2</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">label.cex =</span> <span class="fl">1.3</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mediation_model_2 <span class="ot">=</span> <span class="fu">lm</span>(Idade <span class="sc">~</span> Sociabilidade, <span class="at">data =</span> original)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">summary</span>(mediation_model_2)<span class="sc">$</span>coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Std. Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">32.8228531</td>
+<td style="text-align: right;">2.6375635</td>
+<td style="text-align: right;">12.4443843</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: right;">0.0573709</td>
+<td style="text-align: right;">0.1168237</td>
+<td style="text-align: right;">0.4910896</td>
+<td style="text-align: right;">0.6245325</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library(flexplot)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize(mediation_model_2) análise gráfica do modelo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>full_model_2 <span class="ot">=</span> <span class="fu">lm</span>(Treinos <span class="sc">~</span> Idade <span class="sc">+</span> Sociabilidade, <span class="at">data =</span> original)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">summary</span>(full_model_2)<span class="sc">$</span>coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Std. Error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">t value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">18.8084463</td>
+<td style="text-align: right;">22.3454098</td>
+<td style="text-align: right;">0.8417141</td>
+<td style="text-align: right;">0.4021546</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Idade</td>
+<td style="text-align: right;">1.5425565</td>
+<td style="text-align: right;">0.5392097</td>
+<td style="text-align: right;">2.8607731</td>
+<td style="text-align: right;">0.0052418</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sociabilidade</td>
+<td style="text-align: right;">0.4852942</td>
+<td style="text-align: right;">0.6049941</td>
+<td style="text-align: right;">0.8021469</td>
+<td style="text-align: right;">0.4245578</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#visualize(full_model_2) análise gráfica do modelo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>results_2 <span class="ot">=</span> <span class="fu">mediate</span>(mediation_model_2, full_model_2,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">treat =</span> <span class="st">"Sociabilidade"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mediator =</span> <span class="st">"Idade"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">boot =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sims =</span> <span class="dv">500</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(results_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper p-value
+ACME             0.0885      -0.2126         0.45    0.52
+ADE              0.4853      -0.6804         1.70    0.37
+Total Effect     0.5738      -0.6401         1.88    0.33
+Prop. Mediated   0.1542      -1.7984         1.59    0.50
+
+Sample Size Used: 94 
+
+
+Simulations: 500 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mediate_plot</span>(Treinos <span class="sc">~</span> Idade  <span class="sc">+</span> Sociabilidade  , <span class="at">data =</span> original)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="modelo-3-opcional-2" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="modelo-3-opcional-2"><span class="header-section-number">10.4</span> Modelo 3 (Opcional 2)</h2>
+<p>Testando outros modelos, foi possível observar que o efeito do IMC sobre o treinamento é mediado pela Idade</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>modelo_3 <span class="ot">=</span> <span class="st">"Treinos ~ c_*IMC1 + b*Idade </span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="st">            Idade ~ a*IMC1</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="st">            Indireto := a*b</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="st">            Total_direto_C := a*b + c_"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit_3 <span class="ot">=</span> <span class="fu">sem</span>(modelo_3, original, <span class="at">se =</span> <span class="st">"bootstrap"</span>, <span class="at">bootstrap =</span> <span class="dv">500</span>) <span class="co">#demora um tempo para executar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">parameterEstimates</span>(fit_3)) <span class="co"># parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">lhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">op</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">rhs</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">label</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">est</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">se</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">z</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">pvalue</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.lower</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ci.upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">c_</td>
+<td style="text-align: right;">-2.7781642</td>
+<td style="text-align: right;">1.0067476</td>
+<td style="text-align: right;">-2.759544</td>
+<td style="text-align: right;">0.0057882</td>
+<td style="text-align: right;">-4.6800358</td>
+<td style="text-align: right;">-0.6198768</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">b</td>
+<td style="text-align: right;">1.9275620</td>
+<td style="text-align: right;">0.4583106</td>
+<td style="text-align: right;">4.205798</td>
+<td style="text-align: right;">0.0000260</td>
+<td style="text-align: right;">0.9813260</td>
+<td style="text-align: right;">2.7588243</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">~</td>
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: right;">0.6075027</td>
+<td style="text-align: right;">0.2252141</td>
+<td style="text-align: right;">2.697446</td>
+<td style="text-align: right;">0.0069874</td>
+<td style="text-align: right;">0.2357407</td>
+<td style="text-align: right;">1.0753598</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Treinos</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">2068.5298836</td>
+<td style="text-align: right;">190.9705838</td>
+<td style="text-align: right;">10.831668</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">1660.9183246</td>
+<td style="text-align: right;">2429.8198497</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">Idade</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">76.0307760</td>
+<td style="text-align: right;">9.8646493</td>
+<td style="text-align: right;">7.707398</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">55.5284839</td>
+<td style="text-align: right;">95.0898386</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;">~~</td>
+<td style="text-align: left;">IMC1</td>
+<td style="text-align: left;"></td>
+<td style="text-align: right;">17.7567863</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">17.7567863</td>
+<td style="text-align: right;">17.7567863</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b</td>
+<td style="text-align: left;">Indireto</td>
+<td style="text-align: right;">1.1709992</td>
+<td style="text-align: right;">0.5155848</td>
+<td style="text-align: right;">2.271206</td>
+<td style="text-align: right;">0.0231345</td>
+<td style="text-align: right;">0.3149790</td>
+<td style="text-align: right;">2.3125077</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: left;">:=</td>
+<td style="text-align: left;">a*b+c_</td>
+<td style="text-align: left;">Total_direto_C</td>
+<td style="text-align: right;">-1.6071651</td>
+<td style="text-align: right;">1.0825367</td>
+<td style="text-align: right;">-1.484629</td>
+<td style="text-align: right;">0.1376422</td>
+<td style="text-align: right;">-3.6571736</td>
+<td style="text-align: right;">0.6752811</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<section id="resultados-2" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-2">Resultados</h3>
+<ol type="1">
+<li><p><strong>Regressões:</strong></p>
+<ul>
+<li><p>A relação estimada entre <code>IMC1</code> (Índice de Massa Corporal) e <code>Treinos</code> é -2.778, indicando uma relação negativa e significativa (p = 0.006).</p></li>
+<li><p>A relação estimada entre <code>Idade</code> e <code>Treinos</code> é 1.928, indicando uma relação positiva e significativa (p = 0.000).</p></li>
+<li><p>A relação estimada entre <code>IMC</code> e <code>Idade</code> é 0.608 e é estatisticamente significativa (p = 0.005).</p></li>
+</ul></li>
+<li><p><strong>Parâmetros Definidos:</strong></p>
+<ul>
+<li><p>O efeito <code>Indireto</code> é estimado como 1.171 e é estatisticamente significativo (p = 0.030). Isso sugere que a variável <code>Idade</code> medeia significativamente a relação entre <code>IMC</code> e <code>Treinos</code>.</p></li>
+<li><p>O efeito total direto de IMC nos Treinos é estimado como -1.607, mas não é estatisticamente significativo (p = 0.114).</p></li>
+</ul></li>
+</ol>
+<p>Os resultados indicam que a variável <code>IMC</code> está significativamente relacionada negativamente à variável <code>Treinos</code>. A variável <code>Idade</code> atua como mediadora nessa relação. O efeito indireto é estimado como 1.171 (p = 0.030), indicando que a inclusão de <code>Idade</code> no modelo altera a relação entre <code>IMC1</code> e <code>Treinos</code>, tornando-a mais negativa do que a relação direta.</p>
+</section>
+</section>
+<section id="diagrama-do-modelo-3" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="diagrama-do-modelo-3"><span class="header-section-number">10.5</span> Diagrama do modelo 3</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>diagrama_3 <span class="ot">&lt;-</span> <span class="fu">semPaths</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">object =</span> fit_3,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">what =</span> <span class="st">"path"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">whatLabels =</span> <span class="st">"par"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"ram"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">layout =</span> <span class="st">"tree"</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">rotation =</span> <span class="dv">2</span>,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeMan =</span> <span class="dv">7</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">sizeLat =</span> <span class="dv">7</span>,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">color =</span> <span class="st">"lightgray"</span>,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">edge.label.cex =</span> <span class="fl">1.2</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">label.cex =</span> <span class="fl">1.3</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mediation_model_3 <span class="ot">=</span> <span class="fu">lm</span>(Idade <span class="sc">~</span> IMC1, <span class="at">data =</span> original)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mediation_model_3)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Std. Error  t value    Pr(&gt;|t|)
+(Intercept) 18.3591515   5.639405 3.255512 0.001584908
+IMC1         0.6075027   0.215734 2.815980 0.005949584</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(mediation_model_3) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>full_model_3 <span class="ot">=</span> <span class="fu">lm</span>(Treinos <span class="sc">~</span> Idade <span class="sc">+</span> IMC1, <span class="at">data =</span> original)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full_model_3)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error   t value     Pr(&gt;|t|)
+(Intercept) 87.606237 31.2333809  2.804891 0.0061538896
+Idade        1.927562  0.5467836  3.525274 0.0006645242
+IMC1        -2.778164  1.1791838 -2.356006 0.0206193649</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(full_model_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>results_3 <span class="ot">=</span> <span class="fu">mediate</span>(mediation_model_3, full_model_3,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">treat =</span> <span class="st">"IMC1"</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mediator =</span> <span class="st">"Idade"</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">boot =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sims =</span> <span class="dv">500</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(results_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper p-value    
+ACME              1.171        0.339         2.43  &lt;2e-16 ***
+ADE              -2.778       -4.585        -0.62   0.024 *  
+Total Effect     -1.607       -3.441         0.57   0.156    
+Prop. Mediated   -0.729      -11.591         7.21   0.156    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Sample Size Used: 94 
+
+
+Simulations: 500 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mediate_plot</span>(Treinos <span class="sc">~</span> Idade  <span class="sc">+</span> IMC1  , <span class="at">data =</span> original)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="lista-8.1-resolvida-no-spss" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="lista-8.1-resolvida-no-spss"><span class="header-section-number">10.6</span> Lista 8.1 resolvida no SPSS</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/NstttDePtcM" title="Structural Equation Modeling (SEM) - Moderação e Mediação - Aula Prática #8.1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</section>
+<section id="extras" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="extras"><span class="header-section-number">10.7</span> Extras!</h2>
+<p>Outro tipo de resolução baseada no vídeo do Dustin Fife (How to do a mediation analysis in R…with visuals!)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mediação com visualização</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mediation)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>mediation_model <span class="ot">=</span> <span class="fu">lm</span>(IMC1 <span class="sc">~</span> Sociabilidade, <span class="at">data =</span> original)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mediation_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = IMC1 ~ Sociabilidade, data = original)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.3645 -2.8931 -0.4598  2.7881 14.5354 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   25.39715    1.22381  20.753   &lt;2e-16 ***
+Sociabilidade  0.01905    0.05421   0.351    0.726    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.257 on 92 degrees of freedom
+Multiple R-squared:  0.001341,  Adjusted R-squared:  -0.009514 
+F-statistic: 0.1235 on 1 and 92 DF,  p-value: 0.726</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(mediation_model, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>full_model <span class="ot">=</span> <span class="fu">lm</span>(Treinos <span class="sc">~</span> IMC1 <span class="sc">+</span> Sociabilidade, <span class="at">data =</span> original)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Treinos ~ IMC1 + Sociabilidade, data = original)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-85.683 -42.165   2.807  47.623  69.596 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)   111.3389    33.5982   3.314  0.00132 **
+IMC1           -1.6498     1.2009  -1.374  0.17287   
+Sociabilidade   0.6052     0.6248   0.969  0.33525   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 49.03 on 91 degrees of freedom
+Multiple R-squared:  0.02915,   Adjusted R-squared:  0.00781 
+F-statistic: 1.366 on 2 and 91 DF,  p-value: 0.2603</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(full_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">=</span> <span class="fu">mediate</span>(mediation_model, full_model,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">treat =</span> <span class="st">"Sociabilidade"</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">mediator =</span> <span class="st">"IMC1"</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">boot =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sims =</span> <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper p-value
+ACME            -0.0314      -0.1976         0.17    0.78
+ADE              0.6052      -0.6669         1.95    0.29
+Total Effect     0.5738      -0.6201         1.89    0.30
+Prop. Mediated  -0.0548      -1.3478         1.26    0.87
+
+Sample Size Used: 94 
+
+
+Simulations: 500 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mediate_plot</span>(Treinos <span class="sc">~</span> IMC1 <span class="sc">+</span>  Sociabilidade, <span class="at">data =</span> original) <span class="co"># Ordem em que aparece as variáveis é muito importante. A última variável será sempre a variável DEPENDENTE (X). Todas as outras que vierem antes dela, serão tratadas como MEDIADORAS (no caso IMC1) </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_8_1_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="referências" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="referências"><span class="header-section-number">10.8</span> Referências</h2>
+<p><a href="https://www.youtube.com/watch?v=_4Fu8SZID2k" class="uri">https://www.youtube.com/watch?v=_4Fu8SZID2k</a></p>
+</section>
+<section id="versões-dos-pacotes" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="versões-dos-pacotes"><span class="header-section-number">10.9</span> Versões dos pacotes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analyses were conducted using the R Statistical language (version 4.3.1; R Core
+Team, 2023) on Windows 11 x64 (build 22621), using the packages Matrix (version
+1.6.0; Bates D et al., 2023), effectsize (version 0.8.6; Ben-Shachar MS et al.,
+2020), semPlot (version 1.1.6; Epskamp S, 2022), flexplot (version 0.20.5; Fife
+D, 2024), mvtnorm (version 1.2.3; Genz A, Bretz F, 2009), lubridate (version
+1.9.3; Grolemund G, Wickham H, 2011), semTools (version 0.5.6; Jorgensen TD et
+al., 2022), parameters (version 0.21.3; Lüdecke D et al., 2020), performance
+(version 0.10.8; Lüdecke D et al., 2021), easystats (version 0.6.0; Lüdecke D
+et al., 2022), see (version 0.8.1; Lüdecke D et al., 2021), insight (version
+0.19.6; Lüdecke D et al., 2019), bayestestR (version 0.13.1; Makowski D et al.,
+2019), modelbased (version 0.8.6; Makowski D et al., 2020), report (version
+0.5.7; Makowski D et al., 2023), correlation (version 0.8.4; Makowski D et al.,
+2022), tibble (version 3.2.1; Müller K, Wickham H, 2023), datawizard (version
+0.9.0; Patil I et al., 2022), foreign (version 0.8.85; R Core Team, 2023),
+lavaan (version 0.6.16; Rosseel Y, 2012), mediation (version 4.5.0; Tingley D
+et al., 2014), MASS (version 7.3.60; Venables WN, Ripley BD, 2002), ggplot2
+(version 3.4.4; Wickham H, 2016), forcats (version 1.0.0; Wickham H, 2023),
+stringr (version 1.5.1; Wickham H, 2023), tidyverse (version 2.0.0; Wickham H
+et al., 2019), dplyr (version 1.1.3; Wickham H et al., 2023), purrr (version
+1.0.2; Wickham H, Henry L, 2023), readr (version 2.1.4; Wickham H et al.,
+2023), tidyr (version 1.3.0; Wickham H et al., 2023), sandwich (version 3.1.0;
+Zeileis A et al., 2020) and kableExtra (version 1.3.4; Zhu H, 2021).
+
+References
+----------
+  - Bates D, Maechler M, Jagan M (2023). _Matrix: Sparse and Dense Matrix Classes
+and Methods_. R package version 1.6-0,
+&lt;https://CRAN.R-project.org/package=Matrix&gt;.
+  - Ben-Shachar MS, Lüdecke D, Makowski D (2020). "effectsize: Estimation of
+Effect Size Indices and Standardized Parameters." _Journal of Open Source
+Software_, *5*(56), 2815. doi:10.21105/joss.02815
+&lt;https://doi.org/10.21105/joss.02815&gt;, &lt;https://doi.org/10.21105/joss.02815&gt;.
+  - Epskamp S (2022). _semPlot: Path Diagrams and Visual Analysis of Various SEM
+Packages' Output_. R package version 1.1.6,
+&lt;https://CRAN.R-project.org/package=semPlot&gt;.
+  - Fife D (2024). _flexplot: Graphically Based Data Analysis Using 'flexplot'_.
+R package version 0.20.5.
+  - Genz A, Bretz F (2009). _Computation of Multivariate Normal and t
+Probabilities_, series Lecture Notes in Statistics. Springer-Verlag,
+Heidelberg. ISBN 978-3-642-01688-2.
+  - Grolemund G, Wickham H (2011). "Dates and Times Made Easy with lubridate."
+_Journal of Statistical Software_, *40*(3), 1-25.
+&lt;https://www.jstatsoft.org/v40/i03/&gt;.
+  - Jorgensen TD, Pornprasertmanit S, Schoemann AM, Rosseel Y (2022).
+_\texttt{semTools}: Useful tools for structural equation modeling_. R package
+version 0.5-6, &lt;https://CRAN.R-project.org/package=semTools&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). "Extracting, Computing
+and Exploring the Parameters of Statistical Models using R." _Journal of Open
+Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
+&lt;https://doi.org/10.21105/joss.02445&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Waggoner P, Makowski D (2021).
+"performance: An R Package for Assessment, Comparison and Testing of
+Statistical Models." _Journal of Open Source Software_, *6*(60), 3139.
+doi:10.21105/joss.03139 &lt;https://doi.org/10.21105/joss.03139&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Makowski D (2022). "easystats:
+Framework for Easy Statistical Modeling, Visualization, and Reporting." _CRAN_.
+R package, &lt;https://easystats.github.io/easystats/&gt;.
+  - Lüdecke D, Patil I, Ben-Shachar M, Wiernik B, Waggoner P, Makowski D (2021).
+"see: An R Package for Visualizing Statistical Models." _Journal of Open Source
+Software_, *6*(64), 3393. doi:10.21105/joss.03393
+&lt;https://doi.org/10.21105/joss.03393&gt;.
+  - Lüdecke D, Waggoner P, Makowski D (2019). "insight: A Unified Interface to
+Access Information from Model Objects in R." _Journal of Open Source Software_,
+*4*(38), 1412. doi:10.21105/joss.01412 &lt;https://doi.org/10.21105/joss.01412&gt;.
+  - Makowski D, Ben-Shachar M, Lüdecke D (2019). "bayestestR: Describing Effects
+and their Uncertainty, Existence and Significance within the Bayesian
+Framework." _Journal of Open Source Software_, *4*(40), 1541.
+doi:10.21105/joss.01541 &lt;https://doi.org/10.21105/joss.01541&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.01541&gt;.
+  - Makowski D, Ben-Shachar M, Patil I, Lüdecke D (2020). "Estimation of
+Model-Based Predictions, Contrasts and Means." _CRAN_.
+&lt;https://github.com/easystats/modelbased&gt;.
+  - Makowski D, Lüdecke D, Patil I, Thériault R, Ben-Shachar M, Wiernik B (2023).
+"Automated Results Reporting as a Practical Tool to Improve Reproducibility and
+Methodological Best Practices Adoption." _CRAN_.
+&lt;https://easystats.github.io/report/&gt;.
+  - Makowski D, Wiernik B, Patil I, Lüdecke D, Ben-Shachar M (2022).
+"correlation: Methods for Correlation Analysis." Version 0.8.3,
+&lt;https://CRAN.R-project.org/package=correlation&gt;. Makowski D, Ben-Shachar M,
+Patil I, Lüdecke D (2020). "Methods and Algorithms for Correlation Analysis in
+R." _Journal of Open Source Software_, *5*(51), 2306. doi:10.21105/joss.02306
+&lt;https://doi.org/10.21105/joss.02306&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.02306&gt;.
+  - Müller K, Wickham H (2023). _tibble: Simple Data Frames_. R package version
+3.2.1, &lt;https://CRAN.R-project.org/package=tibble&gt;.
+  - Patil I, Makowski D, Ben-Shachar M, Wiernik B, Bacher E, Lüdecke D (2022).
+"datawizard: An R Package for Easy Data Preparation and Statistical
+Transformations." _Journal of Open Source Software_, *7*(78), 4684.
+doi:10.21105/joss.04684 &lt;https://doi.org/10.21105/joss.04684&gt;.
+  - R Core Team (2023). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-85,
+&lt;https://CRAN.R-project.org/package=foreign&gt;.
+  - R Core Team (2023). _R: A Language and Environment for Statistical
+Computing_. R Foundation for Statistical Computing, Vienna, Austria.
+&lt;https://www.R-project.org/&gt;.
+  - Rosseel Y (2012). "lavaan: An R Package for Structural Equation Modeling."
+_Journal of Statistical Software_, *48*(2), 1-36. doi:10.18637/jss.v048.i02
+&lt;https://doi.org/10.18637/jss.v048.i02&gt;.
+  - Tingley D, Yamamoto T, Hirose K, Keele L, Imai K (2014). "mediation: R
+Package for Causal Mediation Analysis." _Journal of Statistical Software_,
+*59*(5), 1-38. &lt;http://www.jstatsoft.org/v59/i05/&gt;. Imai K, Keele L, Yamamoto T
+(2010). "Identification, Inference, and Sensitivity Analysis for Causal
+Mediation Effects." _Statistical Science_, *25*(1), 51-71.
+&lt;http://imai.princeton.edu/research/mediation.html&gt;. Imai K, Keele L, Tingley D
+(2010). "A General Approach to Causal Mediation Analysis." _Psychological
+Methods_, *15*(4), 309-334.
+&lt;http://imai.princeton.edu/research/BaronKenny.html&gt;. Imai K, Keele L, Tingley
+D, Yamamoto T (2011). "Unpacking the Black Box of Causality: Learning about
+Causal Mechanisms from Experimental and Observational Studies." _American
+Political Science Review_, *105*(4), 765-789.
+&lt;http://imai.princeton.edu/research/mediationP.html&gt;. Imai K, Yamamoto T
+(2013). "Identification and Sensitivity Analysis for Multiple Causal
+Mechanisms: Revisiting Evidence from Framing Experiments." _Political
+Analysis_, *21*(2), 141-171. &lt;http://imai.princeton.edu/research/medsens.html&gt;.
+Imai K, Keele L, Tingley D, Yamamoto T (2010). "Causal Mediation Analysis Using
+R." In Vinod HD (ed.), _Advances in Social Science Research Using R_.
+Springer-Verlag, New York.
+  - Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth
+edition. Springer, New York. ISBN 0-387-95457-0,
+&lt;https://www.stats.ox.ac.uk/pub/MASS4/&gt;.
+  - Wickham H (2016). _ggplot2: Elegant Graphics for Data Analysis_.
+Springer-Verlag New York. ISBN 978-3-319-24277-4,
+&lt;https://ggplot2.tidyverse.org&gt;.
+  - Wickham H (2023). _forcats: Tools for Working with Categorical Variables
+(Factors)_. R package version 1.0.0,
+&lt;https://CRAN.R-project.org/package=forcats&gt;.
+  - Wickham H (2023). _stringr: Simple, Consistent Wrappers for Common String
+Operations_. R package version 1.5.1,
+&lt;https://CRAN.R-project.org/package=stringr&gt;.
+  - Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G,
+Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K,
+Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K,
+Yutani H (2019). "Welcome to the tidyverse." _Journal of Open Source Software_,
+*4*(43), 1686. doi:10.21105/joss.01686 &lt;https://doi.org/10.21105/joss.01686&gt;.
+  - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar
+of Data Manipulation_. R package version 1.1.3,
+&lt;https://CRAN.R-project.org/package=dplyr&gt;.
+  - Wickham H, Henry L (2023). _purrr: Functional Programming Tools_. R package
+version 1.0.2, &lt;https://CRAN.R-project.org/package=purrr&gt;.
+  - Wickham H, Hester J, Bryan J (2023). _readr: Read Rectangular Text Data_. R
+package version 2.1.4, &lt;https://CRAN.R-project.org/package=readr&gt;.
+  - Wickham H, Vaughan D, Girlich M (2023). _tidyr: Tidy Messy Data_. R package
+version 1.3.0, &lt;https://CRAN.R-project.org/package=tidyr&gt;.
+  - Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances: An
+Object-Oriented Implementation of Clustered Covariances in R." _Journal of
+Statistical Software_, *95*(1), 1-36. doi:10.18637/jss.v095.i01
+&lt;https://doi.org/10.18637/jss.v095.i01&gt;. Zeileis A (2004). "Econometric
+Computing with HC and HAC Covariance Matrix Estimators." _Journal of
+Statistical Software_, *11*(10), 1-17. doi:10.18637/jss.v011.i10
+&lt;https://doi.org/10.18637/jss.v011.i10&gt;. Zeileis A (2006). "Object-Oriented
+Computation of Sandwich Estimators." _Journal of Statistical Software_,
+*16*(9), 1-16. doi:10.18637/jss.v016.i09
+&lt;https://doi.org/10.18637/jss.v016.i09&gt;.
+  - Zhu H (2021). _kableExtra: Construct Complex Table with 'kable' and Pipe
+Syntax_. R package version 1.3.4,
+&lt;https://CRAN.R-project.org/package=kableExtra&gt;.</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./lista_8.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

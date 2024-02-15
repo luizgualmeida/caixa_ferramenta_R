@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Técnicas e Métodos de Pesquisa no R - 4&nbsp; Lista 4 - GMM e ICC</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./lista_5.html" rel="next">
+<link href="./lista_3.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_4.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdução</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./lms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./survival.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SURVIVAL</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ARIMA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_7.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./SEM.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SEM</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#pacotes-que-vamos-utilizar" id="toc-pacotes-que-vamos-utilizar" class="nav-link active" data-scroll-target="#pacotes-que-vamos-utilizar"><span class="header-section-number">4.1</span> Pacotes que vamos utilizar</a></li>
+  <li><a href="#a-modelos-hierárquicos" id="toc-a-modelos-hierárquicos" class="nav-link" data-scroll-target="#a-modelos-hierárquicos"><span class="header-section-number">4.2</span> a) Modelos hierárquicos</a>
+  <ul class="collapse">
+  <li><a href="#média-por-escola" id="toc-média-por-escola" class="nav-link" data-scroll-target="#média-por-escola">Média por Escola</a></li>
+  <li><a href="#média-por-classe" id="toc-média-por-classe" class="nav-link" data-scroll-target="#média-por-classe">Média por classe</a></li>
+  <li><a href="#média-por-grupo" id="toc-média-por-grupo" class="nav-link" data-scroll-target="#média-por-grupo">Média por Grupo</a></li>
+  </ul></li>
+  <li><a href="#b-efeitos-fixos-e-aleatórios" id="toc-b-efeitos-fixos-e-aleatórios" class="nav-link" data-scroll-target="#b-efeitos-fixos-e-aleatórios"><span class="header-section-number">4.3</span> b) Efeitos fixos e aleatórios</a></li>
+  <li><a href="#c-glm-univariado" id="toc-c-glm-univariado" class="nav-link" data-scroll-target="#c-glm-univariado"><span class="header-section-number">4.4</span> c) GLM univariado</a></li>
+  <li><a href="#d-componentes-da-variância-e-icc" id="toc-d-componentes-da-variância-e-icc" class="nav-link" data-scroll-target="#d-componentes-da-variância-e-icc"><span class="header-section-number">4.5</span> d) Componentes da variância e ICC</a>
+  <ul class="collapse">
+  <li><a href="#icc-escola-modelo-1" id="toc-icc-escola-modelo-1" class="nav-link" data-scroll-target="#icc-escola-modelo-1">ICC Escola (modelo 1)</a></li>
+  <li><a href="#icc-classe-modelo-1" id="toc-icc-classe-modelo-1" class="nav-link" data-scroll-target="#icc-classe-modelo-1">ICC Classe (modelo 1)</a></li>
+  <li><a href="#icc-escola-modelo-2" id="toc-icc-escola-modelo-2" class="nav-link" data-scroll-target="#icc-escola-modelo-2">ICC Escola (modelo 2)</a></li>
+  <li><a href="#icc-classe-modelo-2" id="toc-icc-classe-modelo-2" class="nav-link" data-scroll-target="#icc-classe-modelo-2">ICC Classe (modelo 2)</a></li>
+  <li><a href="#icc-com-função" id="toc-icc-com-função" class="nav-link" data-scroll-target="#icc-com-função">ICC com função</a></li>
+  </ul></li>
+  <li><a href="#e-interpretando-os-resultados" id="toc-e-interpretando-os-resultados" class="nav-link" data-scroll-target="#e-interpretando-os-resultados"><span class="header-section-number">4.6</span> e) Interpretando os resultados</a>
+  <ul class="collapse">
+  <li><a href="#verificando-a-referência-do-grupo" id="toc-verificando-a-referência-do-grupo" class="nav-link" data-scroll-target="#verificando-a-referência-do-grupo">Verificando a referência do Grupo</a></li>
+  <li><a href="#criando-o-modelo" id="toc-criando-o-modelo" class="nav-link" data-scroll-target="#criando-o-modelo">Criando o modelo</a></li>
+  <li><a href="#icc-do-modelo" id="toc-icc-do-modelo" class="nav-link" data-scroll-target="#icc-do-modelo">ICC do modelo</a></li>
+  <li><a href="#pressupostos-do-modelo" id="toc-pressupostos-do-modelo" class="nav-link" data-scroll-target="#pressupostos-do-modelo">Pressupostos do modelo</a></li>
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a></li>
+  </ul></li>
+  <li><a href="#sec-extras" id="toc-sec-extras" class="nav-link" data-scroll-target="#sec-extras"><span class="header-section-number">4.7</span> Extras!</a>
+  <ul class="collapse">
+  <li><a href="#métodos-de-estimação-dos-parâmetros-do-modelo" id="toc-métodos-de-estimação-dos-parâmetros-do-modelo" class="nav-link" data-scroll-target="#métodos-de-estimação-dos-parâmetros-do-modelo">Métodos de estimação dos parâmetros do modelo</a></li>
+  <li><a href="#extraindo-valores-de-summary" id="toc-extraindo-valores-de-summary" class="nav-link" data-scroll-target="#extraindo-valores-de-summary">Extraindo valores de summary</a></li>
+  <li><a href="#tamanho-da-classe-importa" id="toc-tamanho-da-classe-importa" class="nav-link" data-scroll-target="#tamanho-da-classe-importa">Tamanho da classe importa?</a></li>
+  <li><a href="#comparando-modelos" id="toc-comparando-modelos" class="nav-link" data-scroll-target="#comparando-modelos">Comparando modelos</a></li>
+  <li><a href="#plot-do-modelo" id="toc-plot-do-modelo" class="nav-link" data-scroll-target="#plot-do-modelo">Plot do modelo</a></li>
+  <li><a href="#função-para-calcular-o-icc" id="toc-função-para-calcular-o-icc" class="nav-link" data-scroll-target="#função-para-calcular-o-icc">Função para calcular o ICC</a></li>
+  </ul></li>
+  <li><a href="#observações" id="toc-observações" class="nav-link" data-scroll-target="#observações"><span class="header-section-number">4.8</span> Observações</a></li>
+  <li><a href="#lista-4-resolvida-no-spss" id="toc-lista-4-resolvida-no-spss" class="nav-link" data-scroll-target="#lista-4-resolvida-no-spss"><span class="header-section-number">4.9</span> Lista 4 resolvida no SPSS</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências"><span class="header-section-number">4.10</span> Referências</a></li>
+  <li><a href="#versões-dos-pacotes" id="toc-versões-dos-pacotes" class="nav-link" data-scroll-target="#versões-dos-pacotes"><span class="header-section-number">4.11</span> Versões dos pacotes</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Para resolver a lista de exercícios 4 vamos utilizar o <a href="https://drive.google.com/file/d/1GVse4Sq6B66Cs9qeyA5BJwv2SxgYrip-/view?usp=sharing">banco de dados THKS2</a>. O banco apresenta dados do programa “Television, School and Family Smoking Prevention and Cessation Project (TVSFP)”, que avaliou a eficácia de um programa presencial para parar de fumar (Currículo) em conjunto com um programa em vídeo (TV) para prevenir o início do tabagismo e fortalecer a resiliência daqueles que deixaram de fumar.</p>
+<p>O estudo adotou um delineamento 2x2 com quatro grupos distintos, considerando a presença do “school-based social-resistance curriculum (CC)” e do “television-based prevention program (TV)”. Esses grupos foram categorizados como “Curriculum &amp; TV”, “Curriculum”, “TV” e “Neither”. Este último indicando que as pessoas do grupo não participaram de nenhuma intervenção.</p>
+<p>A randomização da amostra ocorreu em dois níveis: por escolas e por salas de aula. O banco de dados inclui informações de 1600 alunos de 135 classes distintas em 28 escolas localizadas em Los Angeles. A variável dependente, a Escala de Conhecimento em Tabaco e Saúde (THKS), foi avaliada antes da randomização e após a implementação dos efeitos de cada grupo.</p>
+<p>Com base nestes dados, por favor, apresente as questões específicas e descreva os resultados utilizando as notações apropriadas.</p>
+<section id="pacotes-que-vamos-utilizar" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="pacotes-que-vamos-utilizar"><span class="header-section-number">4.1</span> Pacotes que vamos utilizar</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Seu código R aqui</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjstats)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tm)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(report)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rempsyc)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fitdistrplus)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psychometric)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(misty)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="ot">=</span> <span class="fu">read.spss</span>(<span class="st">"THKS2.sav"</span>, <span class="at">to.data.frame=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como já mencionado no capítulo anterior, é muito importante averiguar os tipos de variáveis antes de começar as análises. Para isso vamos utilizar a função <code>glimpse()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,600
+Columns: 5
+$ SchoolID &lt;dbl&gt; 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 4…
+$ ClassID  &lt;dbl&gt; 404101, 404101, 404101, 404101, 404101, 404101, 404101, 40410…
+$ PreTHKS  &lt;dbl&gt; 1, 2, 4, 3, 1, 1, 2, 0, 1, 2, 2, 1, 1, 0, 4, 1, 2, 1, 2, 2, 2…
+$ PosTHKS  &lt;dbl&gt; 3, 4, 2, 3, 2, 1, 3, 5, 2, 3, 4, 3, 1, 0, 4, 5, 3, 3, 4, 2, 3…
+$ Group    &lt;fct&gt; Curriculum &amp; TV, Curriculum &amp; TV, Curriculum &amp; TV, Curriculum…</code></pre>
+</div>
+</div>
+<p>Ao analisar os arquivos provenientes de outros programas, percebe-se que todas as variáveis numéricas são tratadas como contínuas. No entanto, todas as variáveis no banco de dados são, na verdade, categóricas. Portanto, é necessário modificar o tipo das variáveis antes de iniciar as análises. Para isso vamos utilizar a função <code>as.factor()</code> nas 4 variáveis contínuas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>SchoolID <span class="ot">=</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>SchoolID)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>ClassID <span class="ot">=</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>ClassID)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PreTHKS <span class="ot">=</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PreTHKS)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PosTHKS <span class="ot">=</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PosTHKS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Rodando novamente a função <code>glimpse()</code> podemos verificar se a mudança aconteceu.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,600
+Columns: 5
+$ SchoolID &lt;fct&gt; 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 4…
+$ ClassID  &lt;fct&gt; 404101, 404101, 404101, 404101, 404101, 404101, 404101, 40410…
+$ PreTHKS  &lt;int&gt; 1, 2, 4, 3, 1, 1, 2, 0, 1, 2, 2, 1, 1, 0, 4, 1, 2, 1, 2, 2, 2…
+$ PosTHKS  &lt;int&gt; 3, 4, 2, 3, 2, 1, 3, 5, 2, 3, 4, 3, 1, 0, 4, 5, 3, 3, 4, 2, 3…
+$ Group    &lt;fct&gt; Curriculum &amp; TV, Curriculum &amp; TV, Curriculum &amp; TV, Curriculum…</code></pre>
+</div>
+</div>
+<p>Podemos também calcular o número de alunos por classe também. Isso será bem útil para uma análise Extra no fim do capítulo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Tamanho_Classe <span class="ot">&lt;-</span> <span class="fu">ave</span>(dataset<span class="sc">$</span>PreTHKS, dataset<span class="sc">$</span>SchoolID, dataset<span class="sc">$</span>ClassID, <span class="at">FUN =</span> length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-modelos-hierárquicos" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="a-modelos-hierárquicos"><span class="header-section-number">4.2</span> a) Modelos hierárquicos</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Com base no desenho apresentado, qual é a pergunta que este estudo quer responder?</p>
+</div>
+</div>
+<p>Para abordar as questões específicas relacionadas ao banco de dados THKS2 utilizando um modelo linear GMM hierárquico, precisamos formular perguntas específicas que desejamos responder com a análise. Dado que o THKS é a variável dependente e foi avaliado antes e depois da implementação dos diferentes grupos de intervenção, podemos considerar algumas perguntas relevantes:</p>
+<ul>
+<li><p>Efeito geral da intervenção: Como a média da escala THKS varia entre os grupos “Curriculum &amp; TV”, “Curriculum”, “TV” e “Neither” após a implementação das intervenções?</p></li>
+<li><p>Diferenças entre grupos específicos: Há diferenças significativas nas mudanças médias da escala THKS entre os grupos “Curriculum &amp; TV”, “Curriculum”, “TV” e “Neither”?</p></li>
+<li><p>Variação entre escolas e salas de aula: A variação nas médias da escala THKS é significativa entre as escolas ou entre as salas de aula, considerando o efeito das intervenções?</p></li>
+</ul>
+<p>A análise gráfica pode ser fundamental para avaliar a validade da escolha de um modelo hierárquico. Ao comparar as médias do PreTHKS e do PosTHKS para diferentes escolas e salas de aula, os gráficos podem revelar padrões ou tendências que indicam se há variação sistemática ou não nas médias entre esses níveis hierárquicos. A identificação de padrões específicos pode orientar a decisão de usar um modelo hierárquico para capturar a estrutura aninhada dos dados.</p>
+<p>Vamos criar um gráfico das médias de THKS entre as escolas antes e depois das intervenções.</p>
+<section id="média-por-escola" class="level3">
+<h3 class="anchored" data-anchor-id="média-por-escola">Média por Escola</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instale o pacote ggplot2 se ainda não o tiver instalado</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("ggplot2")</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um novo dataframe para armazenar a média das notas por escola</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>media_por_escola <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PosTHKS, PreTHKS) <span class="sc">~</span> SchoolID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforme os dados em formato longo (tidy)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>media_por_escola_long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(media_por_escola, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> media_por_escola_long, <span class="fu">aes</span>(<span class="at">x =</span> forcats<span class="sc">::</span><span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> SchoolID, <span class="at">group =</span> SchoolID)) <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Médias por Escola"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Valores das médias de THKS"</span>) <span class="sc">+</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)  <span class="co"># Posição da leg</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Observe no gráfico que o efeito da intervenção é basicamente constante. Antes da intervenção a média de THKS era menor e após a intervenção a média aumentou em praticamente todas as escolas analisadas.</p>
+<p>Vamos fazer o mesmo mas separando as médias por classes.</p>
+</section>
+<section id="média-por-classe" class="level3">
+<h3 class="anchored" data-anchor-id="média-por-classe">Média por classe</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instale o pacote ggplot2 se ainda não o tiver instalado</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("ggplot2")</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um novo dataframe para armazenar a média das notas por escola</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>media_por_classe <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PreTHKS, PosTHKS) <span class="sc">~</span> ClassID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforme os dados em formato longo (tidy)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>media_por_classe_long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(media_por_classe, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> media_por_classe_long, <span class="fu">aes</span>(<span class="at">x =</span> forcats<span class="sc">::</span><span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> ClassID, <span class="at">group =</span> ClassID)) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Médias por Classe"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Média de Notas"</span>) <span class="sc">+</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#scale_color_manual(values = rainbow(length(top_50_escolas))) +  # Ajuste as cores manualmente</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)  <span class="co"># Posição da legenda</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Observamos que, em alguns casos, a média de THKS diminui após a intervenção, enquanto em outros ocorre um aumento. A falta de um padrão claro sugere que a classe também desempenha um papel na resposta à intervenção, indicando a necessidade de utilizar modelos hierárquicos com fatores aleatórios nessa variável.</p>
+</section>
+<section id="média-por-grupo" class="level3">
+<h3 class="anchored" data-anchor-id="média-por-grupo">Média por Grupo</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instale o pacote ggplot2 se ainda não o tiver instalado</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("ggplot2")</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  SchoolID ClassID PreTHKS PosTHKS           Group Tamanho_Classe
+1      404  404101       1       3 Curriculum &amp; TV             11
+2      404  404101       2       4 Curriculum &amp; TV             11
+3      404  404101       4       2 Curriculum &amp; TV             11
+4      404  404101       3       3 Curriculum &amp; TV             11
+5      404  404101       1       2 Curriculum &amp; TV             11
+6      404  404101       1       1 Curriculum &amp; TV             11</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um novo dataframe para armazenar a média das notas por escola</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>media_por_grupo <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PosTHKS, PreTHKS) <span class="sc">~</span> Group, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforme os dados em formato longo (tidy)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>media_por_grupo_long <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(media_por_grupo, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um gráfico de dispersão com uma linha contínua conectando as médias das notas</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> media_por_grupo_long, <span class="fu">aes</span>(<span class="at">x =</span> forcats<span class="sc">::</span><span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> Group, <span class="at">group =</span> Group)) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Médias por Grupo"</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Valores das médias de THKS"</span>) <span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)  <span class="co"># Posição da leg</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Os grupos também parecem ter um padrão constante de aumento na média de THKS após a intervenção, indicano que não há necessidade de colocar essa variável como efeito aleatório.</p>
+</section>
+</section>
+<section id="b-efeitos-fixos-e-aleatórios" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="b-efeitos-fixos-e-aleatórios"><span class="header-section-number">4.3</span> b) Efeitos fixos e aleatórios</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Dentre os efeitos observados – Grupo, Classe e Escola – quais são efeitos fixos e aleatórios pelo menos do ponto de vista teórico?</p>
+</div>
+</div>
+<p>os gráficos são apenas uma das diversas maneiras de verificar a necessidade ou não de efeitos aleatórios. Mais a frente vamos ver outras métricas que podemos nos ajudar com a decisão.</p>
+<p>Com base nos gráficos anteriores, podemos inferir que a classe é um efeito aleatório, enquanto a escola e o grupo são efeitos fixos. Para seguir a abordagem prática exemplificada durante a aula no SPSS, iremos construir vários modelos considerando efeitos fixos e aleatórios. Posteriormente, compararemos os índices de aderência e os resultados obtidos, com o intuito de selecionar o modelo mais adequado para os nossos dados.</p>
+</section>
+<section id="c-glm-univariado" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="c-glm-univariado"><span class="header-section-number">4.4</span> c) GLM univariado</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Faça um GLM univariado tendo o THKS pós como VD e os grupos, escolas e classes como variáveis independentes. Coloque as variáveis como efeitos fixos e aleatórios adequadamente conforme a questão anterior. Descreva os resultados encontrados.</p>
+</div>
+</div>
+<p>Caso queira repetir o modelo que o Altay apresentou no vídeo, execute o código abaixo. Assim como no SPSS, no R os valores serão calculados por muito tempo e o modelo não vai convergir.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Por conta e risco!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>modelo1 &lt;- lm(PosTHKS ~ Group * SchoolID * ClassID * PreTHKS, data=dataset)</code></p>
+</div>
+</div>
+</div>
+</section>
+<section id="d-componentes-da-variância-e-icc" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="d-componentes-da-variância-e-icc"><span class="header-section-number">4.5</span> d) Componentes da variância e ICC</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Utilizando o “Variance Components”, verifique se Classe e Escola podem ser considerados fatores aleatórios. Utilize o ICC (Coeficiente de Correlação Intraclasse) como critério para decidir.</p>
+</div>
+</div>
+<p>Vamos utilizar a função <code>lmer()</code> do pacote <code>lme4</code> para criar nossos primeiro modelo com efeitos fixos e aleatórios <strong>(modelo 1)</strong>. Em seguida vamos extrair os componentes da variância dos resultados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>modelo_1 <span class="ot">=</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Group <span class="sc">*</span> PreTHKS <span class="sc">+</span> <span class="co"># Efeitos fixos</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span> <span class="co"># intercepto aleatório da classe aninhado na escola</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>SchoolID), <span class="co"># intercepto aleatório apenas da escola</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> dataset, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">REML =</span> <span class="cn">TRUE</span>) <span class="co"># Método de estimação dos parâmetros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Importante notar em nosso modelo que os efeitos fixos estão fora dos parênteses, ao passo que os efeitos aleatórios (SchooID e ClassID) estão contidos dentro dos parênteses. Essa estrutura informa à função lmer quais variáveis têm efeitos fixos e quais têm efeitos aleatórios.</p>
+<p>Quanto os métodos de estimação dos parâmetros, não deixe de ler a seção “<a href="#sec-extras"><span>Section&nbsp;4.7</span></a>”</p>
+<p>O primeiro passo para mostrar os componentes da variância é extrair os valores do modelo utilizando a função <code>VarCorr</code>. Vamos guardar a saída da função em um data-frame, tornando a visualização mais acessível. Em seguida, utilizaremos os estimadores de variância desejados no cálculo do ICC.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>var_modelo_1 <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_1))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>var_modelo_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               grp        var1 var2       vcov     sdcor
+1 SchoolID:ClassID (Intercept) &lt;NA&gt; 0.06467071 0.2543044
+2         SchoolID (Intercept) &lt;NA&gt; 0.03844644 0.1960776
+3         Residual        &lt;NA&gt; &lt;NA&gt; 1.59946785 1.2647007</code></pre>
+</div>
+</div>
+<p>Os valores que precisamos para calcular o ICC estão na coluna <code>vcov</code>.</p>
+<p>vamos agora armazenar os valores desejados em outras variáveis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>var_classe_1 <span class="ot">=</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="co"># classe</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>var_escola_1 <span class="ot">=</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="co"># school</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>var_erro_1 <span class="ot">=</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">3</span>] <span class="co"># total</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O que fizemos aqui foi acessar o data-frame (comp_var_modelo_1), indicar a coluna que queremos acessar O cifrão (<code>$vcoc</code>) e a linha em que se encontra o valor, indicada pelo número dentra das chaves <code>[]</code>.</p>
+<p>Tudo o que precisamos fazer agora é calcular o ICC, que se dá pela seguinte fórmula:</p>
+<p><span class="math display">\[
+ICC = \frac{\sigma^2_{\text{entre grupos}}}{\sigma^2_{\text{entre grupos}} + \sigma^2_{\text{do erro}}}
+\]</span></p>
+<section id="icc-escola-modelo-1" class="level3">
+<h3 class="anchored" data-anchor-id="icc-escola-modelo-1">ICC Escola (modelo 1)</h3>
+<p>Vamos primeiro calcular o ICC da Escola.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC Escola</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>icc_escola_1 <span class="ot">=</span> var_escola_1 <span class="sc">/</span> (var_escola_1 <span class="sc">+</span> var_erro_1)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(icc_escola_1, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.023</code></pre>
+</div>
+</div>
+<p>Arredondando o valor do cálculo temos que o valor do ICC da escola é de 0,023, ou de aproximadamente 2,3%. Se um valor de 5% fosse estabelecido para considerar uma variabilidade significativa entre os grupos, o ICC de 0,023 seria bastante baixo em relação a esse limiar.</p>
+</section>
+<section id="icc-classe-modelo-1" class="level3">
+<h3 class="anchored" data-anchor-id="icc-classe-modelo-1">ICC Classe (modelo 1)</h3>
+<p>Para calcular o ICC da classe temos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC Classe</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>icc_class_1 <span class="ot">=</span> var_classe_1 <span class="sc">/</span> (var_classe_1 <span class="sc">+</span> var_erro_1)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(icc_class_1, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.039</code></pre>
+</div>
+</div>
+<p>Aqui também temos um valor de ICC abaixo dos 5%, indicando que, por esse critério, a Classe também não deveria ser considerada como um fator aletaório.</p>
+<p>Uma manipulação viável para avaliar o ICC exclusivamente a partir das variáveis que você considera como aleatórias é incluir apenas essas variáveis no modelo, excluindo todas as outras que tenham efeito fixo. Vamos refazer todos os passos anteriores, apenas mudando o modelo <strong>(modelo 2)</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>modelo_2 <span class="ot">=</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>SchoolID), </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> dataset, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">REML =</span> <span class="cn">TRUE</span>) <span class="co"># Método de estimação dos parâmetros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>var_modelo_2 <span class="ot">=</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_2))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>var_modelo_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               grp        var1 var2       vcov     sdcor
+1 SchoolID:ClassID (Intercept) &lt;NA&gt; 0.08497895 0.2915115
+2         SchoolID (Intercept) &lt;NA&gt; 0.11659673 0.3414626
+3         Residual        &lt;NA&gt; &lt;NA&gt; 1.72359029 1.3128558</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>var_classe_2 <span class="ot">=</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="co"># classe</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>var_escola_2 <span class="ot">=</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="co"># escola</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>var_erro_2 <span class="ot">=</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">3</span>] <span class="co"># total</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="icc-escola-modelo-2" class="level3">
+<h3 class="anchored" data-anchor-id="icc-escola-modelo-2">ICC Escola (modelo 2)</h3>
+<p>Calculando o ICC da escola para o modelo 2 temos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC escola</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>icc_school_2 <span class="ot">=</span> var_escola_2 <span class="sc">/</span> (var_escola_2 <span class="sc">+</span> var_erro_2)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(icc_school_2, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.063</code></pre>
+</div>
+</div>
+<p>Agora temos que o ICC da escola é maior que 5%, indicando que a variável é uma boa candidata para ser designada tendo efeito aleatório.</p>
+</section>
+<section id="icc-classe-modelo-2" class="level3">
+<h3 class="anchored" data-anchor-id="icc-classe-modelo-2">ICC Classe (modelo 2)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC classe</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>icc_class_2 <span class="ot">=</span> var_classe_2 <span class="sc">/</span> (var_classe_2 <span class="sc">+</span> var_erro_2)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(icc_class_2, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.047</code></pre>
+</div>
+</div>
+<p>Já a classe continua com um valor de ICC abaixo dos 5%</p>
+</section>
+<section id="icc-com-função" class="level3">
+<h3 class="anchored" data-anchor-id="icc-com-função">ICC com função</h3>
+<p>Podemos utilizar a função <code>multilevel.icc</code> do pacote <code>misty</code> para não precisar calcular na mão o ICC. Digno de nota que a função não aceita efeitos fixos, portanto teremos <strong>APENAS</strong> o ICC do modelo com efeitos aleatórios. Além disso a função pode assumir 3 tipos:</p>
+<ul>
+<li>ICC(1) - Mostra quanto da variação ocorre entre os grupos (nível 2) e entre os grupos de grupos (nível 3), que é semelhante ao que calculamos na mão.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multilevel.icc</span>(PosTHKS, <span class="co"># Variável dependente</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> dataset, <span class="co"># Banco de dados</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">cluster =</span> <span class="fu">c</span>(<span class="st">"SchoolID"</span>, <span class="st">"ClassID"</span>)) <span class="co"># Ordem dos clusters importa. Primeiro o L3 e depois o L2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       L3        L2 
+0.0605645 0.0441411 </code></pre>
+</div>
+</div>
+<ul>
+<li>ICC(1b) - Representa a correlação esperada entre dois elementos escolhidos aleatoriamente no mesmo grupo.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multilevel.icc</span>(PosTHKS, </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> dataset, </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">cluster =</span> <span class="fu">c</span>(<span class="st">"SchoolID"</span>, <span class="st">"ClassID"</span>),</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"1b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       L3        L2 
+0.0605645 0.1607378 </code></pre>
+</div>
+</div>
+<ul>
+<li>ICC(2) Indica quão confiáveis são as médias dos grupos (nível 2 e 3). Ou seja, o quão representativas são as médias dos grupos em relação às diferenças individuais dentro desses grupos.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multilevel.icc</span>(PosTHKS, <span class="at">data =</span> dataset, <span class="at">cluster =</span> <span class="fu">c</span>(<span class="st">"SchoolID"</span>, <span class="st">"ClassID"</span>),</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="at">type =</span> <span class="st">"2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       L3        L2 
+0.7092913 0.3688212 </code></pre>
+</div>
+</div>
+<p>Notem que a primeira fórmula apresenta resultado similar ao que calculamos na mão.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importante!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Não existe um conceito fechado de como definir se uma variável deve ser considerada ou não como efeito aleatório. A teoria deve sempre prevalecer sobre os demais critérios.</p>
+</div>
+</div>
+<p>Pelo critério teórico, vamos assumir que tanto escola quanto classe terão efeito aleatório em nosso modelo final.</p>
+</section>
+</section>
+<section id="e-interpretando-os-resultados" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="e-interpretando-os-resultados"><span class="header-section-number">4.6</span> e) Interpretando os resultados</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercício
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Realize um Modelo Misto Hierárquico (caso os fatores aleatórios sejam relevantes com base em d). Descreva os resultados adequadamente e verifique qual combinação de fatores aleatórios é a mais adequada para explicar a variação dos resultados do THKS (com base no ICC).</p>
+</div>
+</div>
+<section id="verificando-a-referência-do-grupo" class="level3">
+<h3 class="anchored" data-anchor-id="verificando-a-referência-do-grupo">Verificando a referência do Grupo</h3>
+<p>Para seguir os passos do vídeo feito pelo Altay no SPSS primeiro temos que ajustar o nível de referência da variável Grupo. No SPSS a referência é o grupo que não fez nada (Neither). Para verificar qual o nível de referência aqui no R vamos utilizar a função <code>levels()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(dataset<span class="sc">$</span>Group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Curriculum &amp; TV" "Curriculum"      "TV"              "Neither"        </code></pre>
+</div>
+</div>
+<p>O nível de referência é sempre primeiro que aparece na lista, no caso “Curriculum &amp; TV”.</p>
+<p>Vamos mudar para que a referência seja “Neither”, utilizando a função relevel.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">relevel</span>(dataset<span class="sc">$</span>Group, <span class="at">ref =</span> <span class="st">"Neither"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(dataset<span class="sc">$</span>Group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Neither"         "Curriculum &amp; TV" "Curriculum"      "TV"             </code></pre>
+</div>
+</div>
+<p>Agora sim podemos seguir com nossa análise.</p>
+</section>
+<section id="criando-o-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="criando-o-modelo">Criando o modelo</h3>
+<p>Ao contrário do SPSS, não enfrentaremos problemas de convergência em nossos modelos se a matriz de covariância não for modificada. Para demonstrar que alterar a matriz de covariância não afeta significativamente os coeficientes, podemos criar dois modelos para verificação:</p>
+<ul>
+<li><p>a) modelo com matriz de covariância simétrica;</p></li>
+<li><p>b) modelo com matriz de covariância diagonal (padrão caso não definamos explicitamente a matriz).</p></li>
+</ul>
+<p>A função <code>lmer()</code> não oferece uma maneira direta de modificar a matriz de covariância. Portanto, da mesma forma que fizemos na Lista de Exercícios 3, vamos utilizar a função <code>lme()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo a)</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>modelo_a <span class="ot">=</span> <span class="fu">lme</span>(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> PreTHKS <span class="sc">+</span> Group, </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID), <span class="co"># Aqui definimos a matriz simétrica</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset, </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Armazenando os valores dos coeficientes do modelo a) em uma variável</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>coef_a <span class="ot">=</span> modelo_a<span class="sc">$</span>coefficients<span class="sc">$</span>fixed</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo b)</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>modelo_b <span class="ot">=</span> <span class="fu">lme</span>(</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> PreTHKS <span class="sc">+</span> Group, </span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID,</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset, </span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"REML"</span>) <span class="co"># Matriz diagonal por padrão</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Armazenando os valores dos coeficientes do modelo b) em uma variável</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>coef_b <span class="ot">=</span> modelo_b<span class="sc">$</span>coefficients<span class="sc">$</span>fixed</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar um dataframe</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>df_coeficientes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Modelo_a =</span> coef_a,</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>                              <span class="at">Modelo_b =</span> coef_b)</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>df_coeficientes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Modelo_a  Modelo_b
+(Intercept)          1.7019847 1.7019852
+PreTHKS              0.3053629 0.3053628
+GroupCurriculum &amp; TV 0.4924670 0.4924662
+GroupCurriculum      0.6413248 0.6413260
+GroupTV              0.1820783 0.1820802</code></pre>
+</div>
+</div>
+<p>Podemos observar que os valores mudam apenas depois da 3 casa após a vírgula. Portanto podemos construir os modelos sem alterar a matriz de covariância neste caso específico.</p>
+<!-- Vamos continuar utilizando a função `lmer()`, mas caso precise alterar a matriz de variância do seu modelo, veja a resolução dos exercícios da lista 3 (@sec-lista-3). -->
+<p>Vamos ao modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>modelo_3 <span class="ot">=</span> <span class="fu">lme</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> PreTHKS <span class="sc">+</span> Group, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset, </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Escolhi utilizar o lme() por ele apresentar mais resultados na saída da função anova()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="icc-do-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="icc-do-modelo">ICC do modelo</h3>
+<p>Não encontramos uma maneira fácil de mostrar o ICC para modelos de 3 níveis com variáveis independentes fixas. Por isso mostramos como calcular na mão o ICC anteriormente. Podemos acessar os valores de variância do modelo com a seguinte função:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">VarCorr</span>(modelo_3)) <span class="co"># O kable é só pra deixar com um visual melhor a saída.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variance</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">StdDev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SchoolID =</td>
+<td style="text-align: left;">pdLogChol(1)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: left;">0.03864002</td>
+<td style="text-align: left;">0.1965706</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ClassID =</td>
+<td style="text-align: left;">pdLogChol(1)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: left;">0.06466151</td>
+<td style="text-align: left;">0.2542863</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Residual</td>
+<td style="text-align: left;">1.60229394</td>
+<td style="text-align: left;">1.2658175</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Agora queremos acessar cada variância separadamente. Para isso executamos o scritp a seguir.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>var_escola <span class="ot">=</span> <span class="fu">VarCorr</span>(modelo_3)[<span class="dv">2</span>] <span class="co"># Variancia da Escola</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>var_classe <span class="ot">=</span> <span class="fu">VarCorr</span>(modelo_3)[<span class="dv">4</span>] <span class="co"># Variancia da Classe</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>var_res <span class="ot">=</span> <span class="fu">VarCorr</span>(modelo_3)[<span class="dv">5</span>] <span class="co"># Variancia do resíduo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Se você tentar fazer contas com essas variáveis vai notar algo bem estranho</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>var_classe <span class="sc">+</span> var_res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Isso acontece porque elas saíram como caracteres (símbolos, letras…) e não como números!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(var_classe)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+</div>
+<p>Vamos resolver isso transformando elas para números</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>var_escola <span class="ot">=</span> <span class="fu">as.numeric</span>(var_escola)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>var_classe <span class="ot">=</span> <span class="fu">as.numeric</span>(var_classe)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>var_res <span class="ot">=</span> <span class="fu">as.numeric</span>(var_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Agora sim!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(var_escola)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "double"</code></pre>
+</div>
+</div>
+<p>Calculando o ICC da Escola temos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>var_escola<span class="sc">/</span>(var_escola<span class="sc">+</span>var_res) <span class="co">#ICC da escola</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02354758</code></pre>
+</div>
+</div>
+<p>ICC da classe:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>var_classe<span class="sc">/</span>(var_classe<span class="sc">+</span>var_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.03879018</code></pre>
+</div>
+</div>
+</section>
+<section id="pressupostos-do-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="pressupostos-do-modelo">Pressupostos do modelo</h3>
+<p>Como já vimos, parte importante de analisar os modelos é verificar os pressupostos. Não entraremos em detalhes, vamos apenas vislumbrar quandos todos os pressupostos são atendidos! O melhor de tudo, usando apenas 3 palavras na linha de código, graças à função <code>check_model()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Converting missing values (`NA`) into regular values currently not
+  possible for variables of class `NULL`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Que beleza, não? Resíduos normais, baixa colinearidade e ótima linearidade do modelo! Podemos interpretar os resultados com tranquilidade!</p>
+</section>
+<section id="resultados" class="level3">
+<h3 class="anchored" data-anchor-id="resultados">Resultados</h3>
+<p>Vamos verificar se o efeito do grupo é significante, que é a principal variável dependente do nosso modelo. Para isso podemos utilizar a função <code>anova()</code> que é muito versátil para diversas ocasiões.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">anova</span>(modelo_3)) <span class="co">#função kable apenas para deixar mais bonita a tabela</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">numDF</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">denDF</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">F-value</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1464</td>
+<td style="text-align: right;">2240.036555</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PreTHKS</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1464</td>
+<td style="text-align: right;">136.795261</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">6.610438</td>
+<td style="text-align: right;">0.0020567</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Boa! Descobrimos que o efeito do grupo é significativo. Agora precisamos saber entre quais grupos está a diferença e de quanto ela é.</p>
+<p>Para tanto vamos utilizar mais uma vez a função <code>summary()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed-effects model fit by REML
+  Data: dataset 
+       AIC      BIC    logLik
+  5389.335 5432.332 -2686.668
+
+Random effects:
+ Formula: ~1 | SchoolID
+        (Intercept)
+StdDev:   0.1965706
+
+ Formula: ~1 | ClassID %in% SchoolID
+        (Intercept) Residual
+StdDev:   0.2542863 1.265817
+
+Fixed effects:  PosTHKS ~ 1 + PreTHKS + Group 
+                         Value  Std.Error   DF   t-value p-value
+(Intercept)          1.7019852 0.12543004 1464 13.569199  0.0000
+PreTHKS              0.3053628 0.02589132 1464 11.794021  0.0000
+GroupCurriculum &amp; TV 0.4924662 0.15864165   24  3.104268  0.0048
+GroupCurriculum      0.6413260 0.16094729   24  3.984696  0.0005
+GroupTV              0.1820802 0.15724054   24  1.157972  0.2583
+ Correlation: 
+                     (Intr) PrTHKS GrC&amp;TV GrpCrr
+PreTHKS              -0.442                     
+GroupCurriculum &amp; TV -0.649  0.029              
+GroupCurriculum      -0.634  0.015  0.496       
+GroupTV              -0.645  0.008  0.508  0.501
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-2.49874557 -0.69757194 -0.01721254  0.68240735  3.14602049 
+
+Number of Observations: 1600
+Number of Groups: 
+             SchoolID ClassID %in% SchoolID 
+                   28                   135 </code></pre>
+</div>
+</div>
+<p>Como vocês já podem ter percebido as saídas da função <code>summary()</code> no R não geram as saídas mais fáceis de interpretar, como podemos ver no exemplo abaixo.</p>
+<p>Agora que você enfrentou a busca nos detalhes desse fascinante output gerado pela função summary, é com satisfação que compartilhamos a boa notícia de que muitos desenvolvedores compartilham da sua experiência e criaram vários pacotes para aprimorar a visualização dos resultados. Ao longo dos exercícios, apresentaremos algumas abordagens para alcançar isso. No final da seção de modelos lineares, você encontrará um glossário que ajudará na geração de outputs mais amigáveis e formatados para publicações acadêmicas.</p>
+<p>Por hora, vamos compartilhar uma abordagem mais “na mão” para melhorar a visualização dos resultados, para caso algum pacote não atenda completamente às suas necessidades.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumo do modelo</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>resumo_modelo <span class="ot">&lt;-</span> <span class="fu">summary</span>(modelo_3)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extração de estimadores, intervalos de confiança e p-valores</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>coeficientes <span class="ot">&lt;-</span> resumo_modelo<span class="sc">$</span>coefficients<span class="sc">$</span>fixed <span class="co"># essa linha varia muito dependendo do modelo</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>intervalos_confianca <span class="ot">&lt;-</span> <span class="fu">intervals</span>(modelo_3, <span class="at">which =</span> <span class="st">"fixed"</span>) <span class="co"># Função `confint()` pode ser utilizadas para outros modelos</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>p_valores <span class="ot">&lt;-</span> resumo_modelo<span class="sc">$</span>tTable[, <span class="st">"p-value"</span>]</span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar um data frame</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>resultados_modelo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimador =</span> <span class="fu">round</span>(coeficientes, <span class="dv">3</span>),</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">IC_Inf =</span> <span class="fu">round</span>(intervalos_confianca<span class="sc">$</span>fixed[, <span class="dv">1</span>], <span class="dv">3</span>),</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">IC_Sup =</span> <span class="fu">round</span>(intervalos_confianca<span class="sc">$</span>fixed[, <span class="dv">2</span>], <span class="dv">3</span>),</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">round</span>(p_valores, <span class="dv">3</span>)</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Apresentando os resultados</span></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(resultados_modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Estimador</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">IC_Inf</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">IC_Sup</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.702</td>
+<td style="text-align: right;">1.456</td>
+<td style="text-align: right;">1.702</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PreTHKS</td>
+<td style="text-align: right;">0.305</td>
+<td style="text-align: right;">0.255</td>
+<td style="text-align: right;">0.305</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GroupCurriculum &amp; TV</td>
+<td style="text-align: right;">0.492</td>
+<td style="text-align: right;">0.165</td>
+<td style="text-align: right;">0.492</td>
+<td style="text-align: right;">0.005</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GroupCurriculum</td>
+<td style="text-align: right;">0.641</td>
+<td style="text-align: right;">0.309</td>
+<td style="text-align: right;">0.641</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GroupTV</td>
+<td style="text-align: right;">0.182</td>
+<td style="text-align: right;">-0.142</td>
+<td style="text-align: right;">0.182</td>
+<td style="text-align: right;">0.258</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<hr>
+<p>Melhorou um pouco né? Achou muito trabalhoso??</p>
+<p>Que tal fazer tudo em uma linha de código e ainda com correção de Bonferroni!?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_3, pairwise <span class="sc">~</span> Group, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>) <span class="co"># por padrão temos a correção de Tukey</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$emmeans
+ Group           emmean    SE df lower.CL upper.CL
+ Neither           2.33 0.113 27     2.10     2.56
+ Curriculum &amp; TV   2.83 0.112 24     2.60     3.06
+ Curriculum        2.98 0.115 24     2.74     3.21
+ TV                2.52 0.110 24     2.29     2.74
+
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast                     estimate    SE df t.ratio p.value
+ Neither - Curriculum &amp; TV      -0.492 0.159 24  -3.104  0.0290
+ Neither - Curriculum           -0.641 0.161 24  -3.985  0.0033
+ Neither - TV                   -0.182 0.157 24  -1.158  1.0000
+ Curriculum &amp; TV - Curriculum   -0.149 0.160 24  -0.928  1.0000
+ Curriculum &amp; TV - TV            0.310 0.157 24   1.981  0.3550
+ Curriculum - TV                 0.459 0.159 24   2.888  0.0485
+
+Degrees-of-freedom method: containment 
+P value adjustment: bonferroni method for 6 tests </code></pre>
+</div>
+</div>
+<p>Os valores estão negativos porque ajustamos o nível de referência da variável Group para “Neither”. No resultado temos que “Curriculum” apresenta a maior média geral. Logo seria interessante deixá-lo como variável de referência, caso queira que seus estimadores fiquem positivo. Já vimos como fazer isso anteriormente!</p>
+<p>Tente modificar a referência para “Curriculum”, mas <strong>CUIDADO!</strong> Não se esqueça de criar o modelo novamente, caso contrário os resultados ficarão errados!</p>
+<p>Para acessar apenas os resultados de contraste podemos fazer o seguinte:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_3, pairwise <span class="sc">~</span> Group, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)<span class="sc">$</span>contrasts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                     estimate    SE df t.ratio p.value
+ Neither - Curriculum &amp; TV      -0.492 0.159 24  -3.104  0.0290
+ Neither - Curriculum           -0.641 0.161 24  -3.985  0.0033
+ Neither - TV                   -0.182 0.157 24  -1.158  1.0000
+ Curriculum &amp; TV - Curriculum   -0.149 0.160 24  -0.928  1.0000
+ Curriculum &amp; TV - TV            0.310 0.157 24   1.981  0.3550
+ Curriculum - TV                 0.459 0.159 24   2.888  0.0485
+
+Degrees-of-freedom method: containment 
+P value adjustment: bonferroni method for 6 tests </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-extras" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="sec-extras"><span class="header-section-number">4.7</span> Extras!</h2>
+<section id="métodos-de-estimação-dos-parâmetros-do-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="métodos-de-estimação-dos-parâmetros-do-modelo">Métodos de estimação dos parâmetros do modelo</h3>
+<p>O REML (Residual Maximum Likelihood) e o ML (Maximum Likelihood) são duas abordagens distintas para a estimação de parâmetros em modelos de regressão linear mista (ou modelos hierárquicos). Ambas são baseadas no método da máxima verossimilhança, mas diferem na maneira como tratam os graus de liberdade.</p>
+<p><strong>Maximum Likelihood (ML):</strong></p>
+<p>Na abordagem ML, o foco é maximizar a verossimilhança do modelo, considerando tanto os efeitos fixos quanto os efeitos aleatórios. O ML leva em conta todos os parâmetros do modelo para maximizar a probabilidade de observar os dados dados os parâmetros. É mais adequado quando o interesse principal é fazer inferências sobre os parâmetros fixos do modelo.</p>
+<p><strong>Residual Maximum Likelihood (REML):</strong></p>
+<p>A abordagem REML é uma variação do ML que remove os efeitos fixos do modelo antes de calcular a verossimilhança. O REML estima a verossimilhança condicional dos efeitos aleatórios, removendo a contribuição dos efeitos fixos. Ele tende a ser mais eficiente na estimação dos efeitos aleatórios, especialmente em amostras pequenas, e fornece estimativas menos enviesadas para a variância dos efeitos aleatórios. O REML é frequentemente preferido quando o foco está na estimação dos parâmetros aleatórios e quando a inferência sobre os parâmetros fixos não é o objetivo principal.</p>
+</section>
+<section id="extraindo-valores-de-summary" class="level3">
+<h3 class="anchored" data-anchor-id="extraindo-valores-de-summary">Extraindo valores de summary</h3>
+<p>Podemos extrair diversos valores individualmente da função <code>summary()</code>.</p>
+</section>
+<section id="tamanho-da-classe-importa" class="level3">
+<h3 class="anchored" data-anchor-id="tamanho-da-classe-importa">Tamanho da classe importa?</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">7</span>, <span class="at">base_family =</span> <span class="st">""</span>)) </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dataset, <span class="fu">aes</span>(<span class="at">x =</span> Tamanho_Classe, <span class="at">y=</span>PosTHKS))<span class="sc">+</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>SchoolID)<span class="sc">+</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">30</span>))<span class="sc">+</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>)<span class="sc">+</span></span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Tamanho da Classe"</span>)<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">"PosTHKS"</span>)<span class="sc">+</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>Plot.Means<span class="ot">&lt;-</span>dataset <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(SchoolID) <span class="sc">%&gt;%</span>  </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">PosTHKSM =</span> <span class="fu">mean</span>(PosTHKS, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Tamanho_CLasseM=</span><span class="fu">mean</span>(Tamanho_Classe, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> Plot.Means, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(SchoolID, <span class="sc">-</span>PosTHKSM), <span class="at">y=</span>PosTHKSM))<span class="sc">+</span></span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> Tamanho_CLasseM))<span class="sc">+</span></span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>)<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">"PosTHKS"</span>)<span class="sc">+</span></span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="comparando-modelos" class="level3">
+<h3 class="anchored" data-anchor-id="comparando-modelos">Comparando modelos</h3>
+<p>Podemos comparar diversos modelos utilizando a função <code>model.comparison()</code> do pacote <code>flexplot</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model.comparison</span>(modelo_1, modelo_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$statistics
+              aic      bic bayes.factor      p
+modelo_1 5400.422 5459.578 2.090546e+16 &lt;2e-16
+modelo_2 5513.224 5534.735 0.000000e+00       
+
+$predicted_differences
+   0%   25%   50%   75%  100% 
+0.001 0.113 0.243 0.436 1.310 
+
+$r_squared_change
+   Residual (Intercept) (Intercept) 
+ 0.07201389  0.67026142  0.23897964 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># O modelo 1 apresenta melhores resultados</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-do-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="plot-do-modelo">Plot do modelo</h3>
+<p>Criando um gráfico com os coeficientes gerados pelo modelo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Com a correção de Bonferroni</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>results_modelo_3 <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_3, pairwise <span class="sc">~</span> Group, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(results_modelo_3<span class="sc">$</span>emmeans), <span class="fu">aes</span>(<span class="at">x =</span> Group, <span class="at">y =</span> emmean, <span class="at">color =</span> Group)) <span class="sc">+</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição normal"</span>,</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tratamento"</span>,</span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"THKS"</span>) <span class="sc">+</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="lista_4_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="função-para-calcular-o-icc" class="level3">
+<h3 class="anchored" data-anchor-id="função-para-calcular-o-icc">Função para calcular o ICC</h3>
+<p>Caso você queira calcular o ICC para diferentes modelos de 3 níveis, sugiro criar uma função que faça o trabalho repetitivo ao invés de ficar calculando tudo sempre na mão.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importante
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Funciona apenas para modelos gerados pela função <code>lme()</code>.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando minha própria função</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>icc_lme_3nv <span class="ot">=</span> <span class="cf">function</span>(modelo) {</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extração da variância entre grupos e total</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  var_escola <span class="ot">=</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">2</span>])</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>  var_classe <span class="ot">=</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">4</span>])</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>  var_total <span class="ot">=</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">5</span>])</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Cálculo do ICC</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>  icc_escola <span class="ot">=</span> var_escola<span class="sc">/</span>(var_escola<span class="sc">+</span>var_res)</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>  icc_classe <span class="ot">=</span> var_classe<span class="sc">/</span>(var_classe<span class="sc">+</span>var_res)</span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Retorna o valor do ICC </span></span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="st">"ICC-Escola"</span> <span class="ot">=</span> icc_escola, <span class="st">"ICC-Classe"</span> <span class="ot">=</span> icc_classe))</span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Uso</span></span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a><span class="co"># icc_lme_3nv(modelo) - basta substitui "modelo" pelo nome da variável que você escolheu para salvar seu modelo.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="observações" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="observações"><span class="header-section-number">4.8</span> Observações</h2>
+<p>Treine criar mais modelos multinível, inclusive com apenas 2 níveis. Inclusive, se for utilzar a função <code>lmer()</code>, MUITO CUIDADO!</p>
+<p>Este modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>modelo_5b <span class="ot">=</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Group <span class="sc">+</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID),</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>                 dataset,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">REML =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>É diferente deste modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>modelo_5b <span class="ot">=</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Group <span class="sc">+</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>SchoolID) <span class="sc">+</span> <span class="co"># Escola como efeito aleatório</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID), <span class="co"># Classe como efeito aleatório</span></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>                 dataset,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">REML =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Com a função <code>lmer()</code> precisamos indicar no modelo que queremos Escola e Classe como efeito aleatórios em linhas separadas!</p>
+</section>
+<section id="lista-4-resolvida-no-spss" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="lista-4-resolvida-no-spss"><span class="header-section-number">4.9</span> Lista 4 resolvida no SPSS</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/_1lUvEu8M9c" title="’" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</section>
+<section id="referências" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="referências"><span class="header-section-number">4.10</span> Referências</h2>
+<p>https://lmudge13.github.io/sample_code/mixed_effects.html # Tabelas e gráficos de modelos lme</p>
+<p>https://rpsychologist.com/r-guide-longitudinal-lme-lmer#three-level-models</p>
+<p>https://search.r-project.org/CRAN/refmans/misty/html/multilevel.icc.html</p>
+<p>https://www.rdocumentation.org/packages/psychometric/versions/2.4/topics/ICC.lme</p>
+<p>https://www.alexanderdemos.org/Mixed5.html</p>
+<p>https://cran.r-project.org/web/packages/rempsyc/vignettes/assumptions.html#categorical-predictors # pressupostos dos modelos com variáveis categóricas como preditoras.</p>
+</section>
+<section id="versões-dos-pacotes" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="versões-dos-pacotes"><span class="header-section-number">4.11</span> Versões dos pacotes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analyses were conducted using the R Statistical language (version 4.3.1; R Core
+Team, 2023) on Windows 11 x64 (build 22621), using the packages lme4 (version
+1.1.34; Bates D et al., 2015), Matrix (version 1.6.0; Bates D et al., 2023),
+effectsize (version 0.8.6; Ben-Shachar MS et al., 2020), multilevel (version
+2.7; Bliese P, 2022), fitdistrplus (version 1.1.11; Delignette-Muller ML,
+Dutang C, 2015), tm (version 0.7.11; Feinerer I, Hornik K, 2023), flexplot
+(version 0.20.5; Fife D, 2024), psychometric (version 2.4; Fletcher TD, 2023),
+effects (version 4.2.2; Fox J, Weisberg S, 2019), carData (version 3.0.5; Fox J
+et al., 2022), mvtnorm (version 1.2.3; Genz A, Bretz F, 2009), NLP (version
+0.2.1; Hornik K, 2020), TH.data (version 1.1.2; Hothorn T, 2023), multcomp
+(version 1.4.25; Hothorn T et al., 2008), emmeans (version 1.8.8; Lenth R,
+2023), sjstats (version 0.18.2; Lüdecke D, 2022), sjPlot (version 2.8.15;
+Lüdecke D, 2023), parameters (version 0.21.3; Lüdecke D et al., 2020),
+performance (version 0.10.8; Lüdecke D et al., 2021), easystats (version 0.6.0;
+Lüdecke D et al., 2022), see (version 0.8.1; Lüdecke D et al., 2021), insight
+(version 0.19.6; Lüdecke D et al., 2019), bayestestR (version 0.13.1; Makowski
+D et al., 2019), modelbased (version 0.8.6; Makowski D et al., 2020), report
+(version 0.5.7; Makowski D et al., 2023), correlation (version 0.8.4; Makowski
+D et al., 2022), datawizard (version 0.9.0; Patil I et al., 2022), nlme
+(version 3.1.163; Pinheiro J et al., 2023), foreign (version 0.8.85; R Core
+Team, 2023), rempsyc (version 0.1.6; Thériault R, 2023), survival (version
+3.5.7; Therneau T, 2023), MASS (version 7.3.60; Venables WN, Ripley BD, 2002),
+ggplot2 (version 3.4.4; Wickham H, 2016), forcats (version 1.0.0; Wickham H,
+2023), dplyr (version 1.1.3; Wickham H et al., 2023), purrr (version 1.0.2;
+Wickham H, Henry L, 2023), misty (version 0.6.1; Yanagida T, 2024) and
+kableExtra (version 1.3.4; Zhu H, 2021).
+
+References
+----------
+  - Bates D, Mächler M, Bolker B, Walker S (2015). "Fitting Linear Mixed-Effects
+Models Using lme4." _Journal of Statistical Software_, *67*(1), 1-48.
+doi:10.18637/jss.v067.i01 &lt;https://doi.org/10.18637/jss.v067.i01&gt;.
+  - Bates D, Maechler M, Jagan M (2023). _Matrix: Sparse and Dense Matrix Classes
+and Methods_. R package version 1.6-0,
+&lt;https://CRAN.R-project.org/package=Matrix&gt;.
+  - Ben-Shachar MS, Lüdecke D, Makowski D (2020). "effectsize: Estimation of
+Effect Size Indices and Standardized Parameters." _Journal of Open Source
+Software_, *5*(56), 2815. doi:10.21105/joss.02815
+&lt;https://doi.org/10.21105/joss.02815&gt;, &lt;https://doi.org/10.21105/joss.02815&gt;.
+  - Bliese P (2022). _multilevel: Multilevel Functions_. R package version 2.7,
+&lt;https://CRAN.R-project.org/package=multilevel&gt;.
+  - Delignette-Muller ML, Dutang C (2015). "fitdistrplus: An R Package for
+Fitting Distributions." _Journal of Statistical Software_, *64*(4), 1-34.
+doi:10.18637/jss.v064.i04 &lt;https://doi.org/10.18637/jss.v064.i04&gt;.
+  - Feinerer I, Hornik K (2023). _tm: Text Mining Package_. R package version
+0.7-11, &lt;https://CRAN.R-project.org/package=tm&gt;. Feinerer I, Hornik K, Meyer D
+(2008). "Text Mining Infrastructure in R." _Journal of Statistical Software_,
+*25*(5), 1-54. doi:10.18637/jss.v025.i05
+&lt;https://doi.org/10.18637/jss.v025.i05&gt;.
+  - Fife D (2024). _flexplot: Graphically Based Data Analysis Using 'flexplot'_.
+R package version 0.20.5.
+  - Fletcher TD (2023). _psychometric: Applied Psychometric Theory_. R package
+version 2.4, &lt;https://CRAN.R-project.org/package=psychometric&gt;.
+  - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, 3rd
+edition. Sage, Thousand Oaks CA.
+&lt;https://socialsciences.mcmaster.ca/jfox/Books/Companion/index.html&gt;. Fox J,
+Weisberg S (2018). "Visualizing Fit and Lack of Fit in Complex Regression
+Models with Predictor Effect Plots and Partial Residuals." _Journal of
+Statistical Software_, *87*(9), 1-27. doi:10.18637/jss.v087.i09
+&lt;https://doi.org/10.18637/jss.v087.i09&gt;. Fox J (2003). "Effect Displays in R
+for Generalised Linear Models." _Journal of Statistical Software_, *8*(15),
+1-27. doi:10.18637/jss.v008.i15 &lt;https://doi.org/10.18637/jss.v008.i15&gt;. Fox J,
+Hong J (2009). "Effect Displays in R for Multinomial and Proportional-Odds
+Logit Models: Extensions to the effects Package." _Journal of Statistical
+Software_, *32*(1), 1-24. doi:10.18637/jss.v032.i01
+&lt;https://doi.org/10.18637/jss.v032.i01&gt;.
+  - Fox J, Weisberg S, Price B (2022). _carData: Companion to Applied Regression
+Data Sets_. R package version 3.0-5,
+&lt;https://CRAN.R-project.org/package=carData&gt;.
+  - Genz A, Bretz F (2009). _Computation of Multivariate Normal and t
+Probabilities_, series Lecture Notes in Statistics. Springer-Verlag,
+Heidelberg. ISBN 978-3-642-01688-2.
+  - Hornik K (2020). _NLP: Natural Language Processing Infrastructure_. R package
+version 0.2-1, &lt;https://CRAN.R-project.org/package=NLP&gt;.
+  - Hothorn T (2023). _TH.data: TH's Data Archive_. R package version 1.1-2,
+&lt;https://CRAN.R-project.org/package=TH.data&gt;.
+  - Hothorn T, Bretz F, Westfall P (2008). "Simultaneous Inference in General
+Parametric Models." _Biometrical Journal_, *50*(3), 346-363.
+  - Lenth R (2023). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
+R package version 1.8.8, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
+  - Lüdecke D (2022). _sjstats: Statistical Functions for Regression Models
+(Version 0.18.2)_. doi:10.5281/zenodo.1284472
+&lt;https://doi.org/10.5281/zenodo.1284472&gt;,
+&lt;https://CRAN.R-project.org/package=sjstats&gt;.
+  - Lüdecke D (2023). _sjPlot: Data Visualization for Statistics in Social
+Science_. R package version 2.8.15,
+&lt;https://CRAN.R-project.org/package=sjPlot&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). "Extracting, Computing
+and Exploring the Parameters of Statistical Models using R." _Journal of Open
+Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
+&lt;https://doi.org/10.21105/joss.02445&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Waggoner P, Makowski D (2021).
+"performance: An R Package for Assessment, Comparison and Testing of
+Statistical Models." _Journal of Open Source Software_, *6*(60), 3139.
+doi:10.21105/joss.03139 &lt;https://doi.org/10.21105/joss.03139&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Makowski D (2022). "easystats:
+Framework for Easy Statistical Modeling, Visualization, and Reporting." _CRAN_.
+R package, &lt;https://easystats.github.io/easystats/&gt;.
+  - Lüdecke D, Patil I, Ben-Shachar M, Wiernik B, Waggoner P, Makowski D (2021).
+"see: An R Package for Visualizing Statistical Models." _Journal of Open Source
+Software_, *6*(64), 3393. doi:10.21105/joss.03393
+&lt;https://doi.org/10.21105/joss.03393&gt;.
+  - Lüdecke D, Waggoner P, Makowski D (2019). "insight: A Unified Interface to
+Access Information from Model Objects in R." _Journal of Open Source Software_,
+*4*(38), 1412. doi:10.21105/joss.01412 &lt;https://doi.org/10.21105/joss.01412&gt;.
+  - Makowski D, Ben-Shachar M, Lüdecke D (2019). "bayestestR: Describing Effects
+and their Uncertainty, Existence and Significance within the Bayesian
+Framework." _Journal of Open Source Software_, *4*(40), 1541.
+doi:10.21105/joss.01541 &lt;https://doi.org/10.21105/joss.01541&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.01541&gt;.
+  - Makowski D, Ben-Shachar M, Patil I, Lüdecke D (2020). "Estimation of
+Model-Based Predictions, Contrasts and Means." _CRAN_.
+&lt;https://github.com/easystats/modelbased&gt;.
+  - Makowski D, Lüdecke D, Patil I, Thériault R, Ben-Shachar M, Wiernik B (2023).
+"Automated Results Reporting as a Practical Tool to Improve Reproducibility and
+Methodological Best Practices Adoption." _CRAN_.
+&lt;https://easystats.github.io/report/&gt;.
+  - Makowski D, Wiernik B, Patil I, Lüdecke D, Ben-Shachar M (2022).
+"correlation: Methods for Correlation Analysis." Version 0.8.3,
+&lt;https://CRAN.R-project.org/package=correlation&gt;. Makowski D, Ben-Shachar M,
+Patil I, Lüdecke D (2020). "Methods and Algorithms for Correlation Analysis in
+R." _Journal of Open Source Software_, *5*(51), 2306. doi:10.21105/joss.02306
+&lt;https://doi.org/10.21105/joss.02306&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.02306&gt;.
+  - Patil I, Makowski D, Ben-Shachar M, Wiernik B, Bacher E, Lüdecke D (2022).
+"datawizard: An R Package for Easy Data Preparation and Statistical
+Transformations." _Journal of Open Source Software_, *7*(78), 4684.
+doi:10.21105/joss.04684 &lt;https://doi.org/10.21105/joss.04684&gt;.
+  - Pinheiro J, Bates D, R Core Team (2023). _nlme: Linear and Nonlinear Mixed
+Effects Models_. R package version 3.1-163,
+&lt;https://CRAN.R-project.org/package=nlme&gt;. Pinheiro JC, Bates DM (2000).
+_Mixed-Effects Models in S and S-PLUS_. Springer, New York. doi:10.1007/b98882
+&lt;https://doi.org/10.1007/b98882&gt;.
+  - R Core Team (2023). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-85,
+&lt;https://CRAN.R-project.org/package=foreign&gt;.
+  - R Core Team (2023). _R: A Language and Environment for Statistical
+Computing_. R Foundation for Statistical Computing, Vienna, Austria.
+&lt;https://www.R-project.org/&gt;.
+  - Thériault R (2023). "rempsyc: Convenience functions for psychology." _Journal
+of Open Source Software_, *8*(87), 5466. doi:10.21105/joss.05466
+&lt;https://doi.org/10.21105/joss.05466&gt;, &lt;https://doi.org/10.21105/joss.05466&gt;.
+  - Therneau T (2023). _A Package for Survival Analysis in R_. R package version
+3.5-7, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
+Patricia M. Grambsch (2000). _Modeling Survival Data: Extending the Cox Model_.
+Springer, New York. ISBN 0-387-98784-3.
+  - Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth
+edition. Springer, New York. ISBN 0-387-95457-0,
+&lt;https://www.stats.ox.ac.uk/pub/MASS4/&gt;.
+  - Wickham H (2016). _ggplot2: Elegant Graphics for Data Analysis_.
+Springer-Verlag New York. ISBN 978-3-319-24277-4,
+&lt;https://ggplot2.tidyverse.org&gt;.
+  - Wickham H (2023). _forcats: Tools for Working with Categorical Variables
+(Factors)_. R package version 1.0.0,
+&lt;https://CRAN.R-project.org/package=forcats&gt;.
+  - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar
+of Data Manipulation_. R package version 1.1.3,
+&lt;https://CRAN.R-project.org/package=dplyr&gt;.
+  - Wickham H, Henry L (2023). _purrr: Functional Programming Tools_. R package
+version 1.0.2, &lt;https://CRAN.R-project.org/package=purrr&gt;.
+  - Yanagida T (2024). _misty: Miscellaneous Functions 'T. Yanagida'_. R package
+version 0.6.1, &lt;https://CRAN.R-project.org/package=misty&gt;.
+  - Zhu H (2021). _kableExtra: Construct Complex Table with 'kable' and Pipe
+Syntax_. R package version 1.3.4,
+&lt;https://CRAN.R-project.org/package=kableExtra&gt;.</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./lista_3.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./lista_5.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
