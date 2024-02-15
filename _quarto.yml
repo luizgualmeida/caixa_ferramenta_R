@@ -7,7 +7,7 @@ book:
   sidebar:
     collapse-level: 1
   author: "Luiz G. de Almeida"
-  date: "15/12/2023"
+  date: "02/15/2024"
   chapters:
   - index.qmd
 #  - preface.qmd
