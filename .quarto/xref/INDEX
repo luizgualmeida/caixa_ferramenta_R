@@ -1,0 +1,56 @@
+{
+  "index.qmd": {
+    "index.html": "d821c534"
+  },
+  "intro.qmd": {
+    "intro.html": "60d0d971"
+  },
+  "summary.qmd": {
+    "summary.html": "8b04d669"
+  },
+  "references.qmd": {
+    "references.html": "3cfe5bc2"
+  },
+  "lista_1.qmd": {
+    "lista_1.html": "91774022"
+  },
+  "lista_2.qmd": {
+    "lista_2.html": "2fde2d18"
+  },
+  "lista_3.qmd": {
+    "lista_3.html": "7d9c8763"
+  },
+  "lista_4.qmd": {
+    "lista_4.html": "8b3aafc2"
+  },
+  "lista_5.qmd": {
+    "lista_5.html": "7c5745bb"
+  },
+  "lista_6.qmd": {
+    "lista_6.html": "ec24e066"
+  },
+  "lista_6_1.qmd": {
+    "lista_6_1.html": "98ec03f9"
+  },
+  "lista_7.qmd": {
+    "lista_7.html": "340624f3"
+  },
+  "lista_8.qmd": {
+    "lista_8.html": "4b6152d6"
+  },
+  "lista_8_1.qmd": {
+    "lista_8_1.html": "8e660312"
+  },
+  "lms.qmd": {
+    "lms.html": "f3c9031c"
+  },
+  "survival.qmd": {
+    "survival.html": "b6c95b02"
+  },
+  "ARIMA.qmd": {
+    "ARIMA.html": "5f6f9214"
+  },
+  "SEM.qmd": {
+    "SEM.html": "466b9213"
+  }
+}
