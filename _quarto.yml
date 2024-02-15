@@ -1,0 +1,48 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Técnicas e Métodos de Pesquisa no R"
+  sidebar:
+    collapse-level: 1
+  author: "Luiz G. de Almeida"
+  date: "15/12/2023"
+  chapters:
+  - index.qmd
+#  - preface.qmd
+  - part: lms.qmd
+    chapters: 
+    - lista_1.qmd
+    - lista_2.qmd
+    - lista_3.qmd
+    - lista_4.qmd
+    - lista_5.qmd
+  - part: survival.qmd
+    chapters:
+    - lista_6.qmd
+    - lista_6_1.qmd
+  - part: ARIMA.qmd
+    chapters:
+    - lista_7.qmd
+  - part: SEM.qmd
+    chapters:
+    - lista_8.qmd
+    - lista_8_1.qmd
+
+#   - summary.qmd
+#   - references.qmd
+  reader-mode: true
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+     #epub:
+   #cover-image: cover.png
+number-depth: 2
+editor: visual
+

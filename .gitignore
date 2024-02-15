@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/.quarto/
+cover.png
+to_do_list.R
+formatacao_publi.qmd
+_book

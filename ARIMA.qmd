@@ -1,0 +1,85 @@
+# ARIMA
+
+A Análise de Séries Temporais é uma ferramenta fundamental em diversas áreas, inclusive a análise de sujeito único, permitindo a compreensão e previsão de padrões temporais em conjuntos de dados. Nesse contexto, o modelo ARIMA (AutoRegressive Integrated Moving Average) surge como uma abordagem robusta para modelar séries temporais.
+
+## Fundamentos do ARIMA:
+
+**AutoRegressivo (AR)**: Refere-se à relação entre uma observação atual e suas observações passadas. O termo "AutoRegressivo" destaca a dependência linear de uma observação em relação a suas antecessoras.
+
+**Integrated (I)**: Indica o número de diferenciações necessárias para tornar a série temporal estacionária, ou seja, para remover tendências e padrões sistemáticos. A estacionarização é crucial para garantir a estabilidade do modelo.
+
+**Média Móvel (MA)**: Considera os erros residuais das observações anteriores para prever a próxima. O componente "Média Móvel" reflete a média dos erros anteriores, incorporando informações sobre o comportamento recente da série.
+
+**Número de observações:** O número ideal de observações repetidas para uma única unidade de análise é de pelo menos 40, sendo preferível alcançar 50 observações. Não é necessário ter um grande número de pessoas ou unidades de análise; até mesmo com N = 1, você pode obter várias observações do mesmo indivíduo, tornando o ARIMA uma ferramenta eficaz de análise.
+
+## Condições e Pressupostos:
+
+**Estacionariedade**: O ARIMA assume que a série temporal seja estacionária, o que significa que a média, a variância e a estrutura de autocorrelação não devem variar significativamente ao longo do tempo. Se a série não for estacionária, é necessário aplicar diferenciação até atingir a estacionariedade.
+
+**Identificação de Ordem**: A escolha adequada dos parâmetros p, d, e q (ordens AR, I, e MA) é crucial. Isso geralmente é feito por meio de análise visual, funções de autocorrelação (ACF) e autocorrelação parcial (PACF), bem como métodos estatísticos como o critério de informação de Akaike (AIC).
+
+**Ruído Branco**: Os resíduos do modelo ARIMA devem se comportar como um "ruído branco", ou seja, serem independentes, terem média zero e variância constante. Isso garante que não haja padrões significativos nos erros residuais não capturados pelo modelo.
+
+Além dos componentes fundamentais, o ARIMA pode ser estendido para lidar com sazonalidade através do SARIMA (Seasonal ARIMA), que incorpora parâmetros adicionais para modelar padrões recorrentes em determinados intervalos de tempo.
+
+A adequada compreensão dos fundamentos, condições e pressupostos é essencial para explorar todo o potencial desse método e fazer previsões precisas em uma variedade de contextos.
+
+## **Passo a Passo da ARIMA**
+
+1.  **Coleta e Exploração de Dados:**
+
+    -   Inicie coletando dados temporais relevantes para sua análise.
+
+    -   Explore graficamente a série temporal para identificar padrões, sazonalidades e tendências.
+
+2.  **Estacionarização da Série:**
+
+    -   Diferencie a série temporal para torná-la estacionária.
+
+    -   Utilize gráficos, como sequence charts, para visualizar mudanças ao longo do tempo.
+
+3.  **Identificação dos Parâmetros (p, d, q):**
+
+    -   Analise as funções de autocorrelação (ACF) e autocorrelação parcial (PACF) para determinar os valores ideais de p (ordem AR) e q (ordem MA).
+
+    -   Estabeleça a ordem de diferenciação d necessária para atingir a estacionariedade.
+
+4.  **Divisão dos Dados:**
+
+    -   Separe os dados em conjuntos de treinamento e teste para avaliar o desempenho do modelo posteriormente.
+
+5.  **Ajuste do Modelo ARIMA:**
+
+    -   Utilize os parâmetros (p, d, q) identificados para ajustar o modelo ARIMA aos dados de treinamento.
+
+    -   Ajuste também os parâmetros sazonais, se aplicável (SARIMA).
+
+6.  **Validação do Modelo:**
+
+    -   Avalie a qualidade do modelo usando critérios de informação como AIC (Akaike Information Criterion) e BIC (Bayesian Information Criterion) para modelos com os **mesmos valores** de p, d, e q.
+
+    -   Calcule o erro médio quadrático (RMSE) para comparar modelos com **diferentes configurações** de p, d, e q.
+
+7.  **Previsões e Avaliação:**
+
+    -   Faça previsões utilizando o modelo ARIMA ajustado nos dados de teste.
+
+    -   Avalie a precisão das previsões comparando-as com os valores reais.
+
+8.  **Ajustes Finais e Refinamentos:**
+
+    -   Se necessário, ajuste os parâmetros do modelo com base na análise da qualidade das previsões.
+
+    -   Considere iterar nos passos anteriores para melhorar a performance do modelo.
+
+9.  **Interpretação e Comunicação dos Resultados:**
+
+    -   Comunique os resultados do modelo de forma clara, destacando as tendências identificadas e a capacidade de previsão.
+
+Na lista prática de exercícios vamos analisar dois bancos de dados, um apenas para verificar se o modelo é estacionário ou não e outro para de fato criar modelos ARIMA.
+
+Para mais informações sobre os parâmetros p, d, q, consulte as referências
+
+## Referências
+
+https://people.duke.edu/\~rnau/411arim.htm

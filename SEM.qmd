@@ -1,0 +1,15 @@
+# SEM
+
+A modelagem de equação estrutural (SEM) é uma técnica estatística que permite examinar as relações entre múltiplas variáveis, tanto observadas quanto não observadas. Ela combina elementos da análise de regressão, da análise fatorial e da análise de caminhos para testar hipóteses sobre a estrutura causal de fenômenos complexos.
+
+Dentro do SEM, vamos abordar apenas duas técnicas nos exercícios: a análise fatorial confirmatória (CFA) e a análise de caminhos (PA). A CFA é usada para verificar a validade de um modelo de mensuração, ou seja, se as variáveis observadas medem adequadamente os construtos latentes. A PA é usada para estimar os efeitos diretos, indiretos e totais entre as variáveis, tanto observadas quanto latentes. Ambas as técnicas podem ser combinadas em um modelo de equações estruturais completo, que inclui tanto a parte de mensuração quanto a parte estrutural.
+
+A modelagem de equação estrutural é uma ferramenta poderosa e flexível para a pesquisa em diversas áreas do conhecimento, como psicologia, sociologia, educação, economia, administração, entre outras. Ela permite testar teorias, comparar modelos alternativos, avaliar a qualidade do ajuste, controlar variáveis de confusão, e explorar relações não lineares e interações. No entanto, ela também requer cuidados na especificação, estimação, avaliação e interpretação dos modelos, bem como na escolha dos dados e dos softwares adequados.
+
+Nos três exercícios propostos, serão exploradas técnicas estatísticas avançadas. No primeiro, uma regressão linear será aplicada aos dados DADOSPATH.sav, investigando a relação entre idade, IMC, sociabilidade e o número de treinos. O segundo exercício envolverá uma Path Analysis no mesmo banco de dados, comparando resultados com a regressão linear. No terceiro, será realizada uma Análise Fatorial Confirmatória no banco Fatorial_escala.sav, examinando a estrutura do questionário de apego a amigos em fatores de Confiança e Alienacão, além de discutir a qualidade do modelo e possíveis limitações.
+
+## Referências
+
+<https://repositorio.ufba.br/bitstream/ri/17684/1/ebook_SEM_2012.pdf>
+
+<https://statplace.com.br/blog/modelagem-de-equacoes-estruturais/>

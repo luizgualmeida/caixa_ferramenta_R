@@ -1,0 +1,194 @@
+
+<!-- ### Distribuições para Variáveis Contínuas -->
+
+<!-- O pacote `fitdistrplus` permite ajustar diversas distribuições estatísticas aos dados, auxiliando na busca pela função matemática que melhor descreve o comportamento observado. Além do ajuste, o pacote fornece recursos para avaliar a adequação da distribuição aos dados, utilizando gráficos e estatísticas. A geração de gráficos, como histogramas sobrepostos com a curva ajustada, facilita a compreensão visual da qualidade do ajuste. -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- library(fitdistrplus) # Testes para descobrir a distribuição de uma variável -->
+
+<!-- ``` -->
+
+<!-- Vamos utilizar a função `descdist` para calcular os parâmetros descritivos de uma distribuição empírica para dados não censurados em um gráfico de assimetria-curtose. -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- descdist(bd_long$resp, discrete = FALSE, boot=500) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- descdist(bd_long$pulse, discrete = FALSE, boot=500) -->
+
+<!-- ``` -->
+
+<!-- O gráfico CDF (Cumulative Distribution Function) representa a função de distribuição acumulada dos dados. Ele mostra a probabilidade acumulada de que uma variável aleatória seja menor ou igual a um determinado valor. Esse gráfico é útil para visualizar a distribuição geral dos dados e entender como eles se acumulam ao longo de diferentes valores. -->
+
+<!-- O gráfico QQ (Quantile-Quantile) é uma representação visual da comparação entre os quantis teóricos de uma distribuição e os quantis observados nos dados reais. Se os pontos no QQ plot se alinham aproximadamente ao longo de uma linha diagonal, isso sugere que os dados seguem a distribuição teórica escolhida. Desvios dessa linha indicam desvios na distribuição. -->
+
+<!-- O gráfico PP (Probability-Probability) é semelhante ao QQ plot, mas compara as probabilidades acumuladas. Ele plota a probabilidade acumulada observada contra a probabilidade acumulada teórica. Assim como no QQ plot, a linearidade sugere que os dados seguem a distribuição teórica. Desvios indicam diferenças na distribuição. Ambos os gráficos QQ e PP são úteis para verificar a adequação de um modelo teórico aos dados observados. -->
+
+<!-- ## Ajuste da variável "pulse" - Distribuição Normal -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- normal_dist_antes <- fitdist(bd_long$pulse, "norm") -->
+
+<!-- plot(normal_dist_antes) -->
+
+<!-- # print(normal_dist_antes) -->
+
+<!-- # summary(normal_dist_antes) -->
+
+<!-- # logLik(normal_dist_antes) -->
+
+<!-- # vcov(normal_dist_antes) -->
+
+<!-- # coef(normal_dist_antes) -->
+
+<!-- ``` -->
+
+<!-- ## Ajuste da variável "pulse" - Distribuição Gamma -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- gamma_dist_antes <- fitdist(bd_long$pulse, "gamma") -->
+
+<!-- plot(gamma_dist_antes) -->
+
+<!-- # print(gamma_dist_antes) -->
+
+<!-- # summary(gamma_dist_antes) -->
+
+<!-- # logLik(gamma_dist_antes) -->
+
+<!-- # vcov(gamma_dist_antes) -->
+
+<!-- # coef(gamma_dist_antes) -->
+
+<!-- # gofstat(gamma_dist_antes) -->
+
+<!-- #  -->
+
+<!-- ``` -->
+
+<!-- ## Ajuste da variável "pulse" - Distribuição Weibull -->
+
+<!-- ```{r} -->
+
+<!-- #| echo: true -->
+
+<!-- #| warning: false -->
+
+<!-- #| message: false  -->
+
+<!-- weibull_dist_antes <- fitdist(bd_long$pulse, "weibull") -->
+
+<!-- plot(weibull_dist_antes) -->
+
+<!-- # print(weibull_dist_antes) -->
+
+<!-- # summary(weibull_dist_antes) -->
+
+<!-- # logLik(weibull_dist_antes) -->
+
+<!-- # vcov(weibull_dist_antes) -->
+
+<!-- # coef(weibull_dist_antes) -->
+
+<!-- #  -->
+
+<!-- # (normal_dist_antes <- fitdist(bd_long$pulse, "norm", method="mge", gof = "CvM")) -->
+
+<!-- # (normal_dist_antes2 <- fitdist(bd_long$pulse, "norm", method="mge", gof = "KS")) -->
+
+<!-- #  -->
+
+<!-- # (gamma_dist_antes <- fitdist(bd_long$pulse, "gamma")) -->
+
+<!-- #  -->
+
+<!-- #  -->
+
+<!-- # cdfcomp(list(normal_dist_antes, normal_dist_antes2)) -->
+
+<!-- #  -->
+
+<!-- # cdfcomp(list(normal_dist_antes, normal_dist_antes2), xlogscale=TRUE, xlim=c(8, 250), verticals=TRUE) -->
+
+<!-- #  -->
+
+<!-- # denscomp(list(normal_dist_antes, normal_dist_antes2)) -->
+
+<!-- cdfcomp(list(normal_dist_antes, -->
+
+<!--              gamma_dist_antes,  -->
+
+<!--              weibull_dist_antes),  -->
+
+<!--         legendtext=c("normal", "gamma", "Weibull")) -->
+
+<!-- denscomp(list(normal_dist_antes, -->
+
+<!--              gamma_dist_antes,  -->
+
+<!--              weibull_dist_antes),  -->
+
+<!--         legendtext=c("normal", "gamma", "Weibull")) -->
+
+<!-- qqcomp(list(normal_dist_antes, -->
+
+<!--              gamma_dist_antes,  -->
+
+<!--              weibull_dist_antes),  -->
+
+<!--         legendtext=c("normal", "gamma", "Weibull")) -->
+
+<!-- ppcomp(list(normal_dist_antes, -->
+
+<!--              gamma_dist_antes,  -->
+
+<!--              weibull_dist_antes),  -->
+
+<!--         legendtext=c("normal", "gamma", "Weibull")) -->
+
+<!-- gofstat(list(normal_dist_antes, -->
+
+<!--              gamma_dist_antes,  -->
+
+<!--              weibull_dist_antes),  -->
+
+<!--         legendtext=c("normal", "gamma", "Weibull")) -->
+
+<!-- ``` -->
