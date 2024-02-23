@@ -2,6 +2,10 @@
 
 A Análise de Séries Temporais é uma ferramenta fundamental em diversas áreas, inclusive a análise de sujeito único, permitindo a compreensão e previsão de padrões temporais em conjuntos de dados. Nesse contexto, o modelo ARIMA (AutoRegressive Integrated Moving Average) surge como uma abordagem robusta para modelar séries temporais.
 
+**Desenho de Estudo Sugerido:** Uma análise retrospectiva de uma série temporal que representa dados sequenciais ao longo do tempo, buscando identificar padrões, sazonalidades e tendências.
+
+**Exemplo:** Análise de vendas mensais de um produto ao longo dos últimos anos, utilizando um modelo ARIMA para prever futuros padrões de demanda e auxiliar na gestão de estoques.
+
 ## Fundamentos do ARIMA:
 
 **AutoRegressivo (AR)**: Refere-se à relação entre uma observação atual e suas observações passadas. O termo "AutoRegressivo" destaca a dependência linear de uma observação em relação a suas antecessoras.

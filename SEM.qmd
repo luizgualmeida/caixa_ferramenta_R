@@ -8,6 +8,22 @@ A modelagem de equação estrutural é uma ferramenta poderosa e flexível para 
 
 Nos três exercícios propostos, serão exploradas técnicas estatísticas avançadas. No primeiro, uma regressão linear será aplicada aos dados DADOSPATH.sav, investigando a relação entre idade, IMC, sociabilidade e o número de treinos. O segundo exercício envolverá uma Path Analysis no mesmo banco de dados, comparando resultados com a regressão linear. No terceiro, será realizada uma Análise Fatorial Confirmatória no banco Fatorial_escala.sav, examinando a estrutura do questionário de apego a amigos em fatores de Confiança e Alienacão, além de discutir a qualidade do modelo e possíveis limitações.
 
+## Análise Fatorial Confirmatória (CFA)
+
+A Análise de Fator Confirmatória é uma técnica estatística utilizada para avaliar a validade de uma estrutura teórica subjacente a um conjunto de dados. Especificamente, ela é empregada para testar e confirmar a consistência entre os dados observados e a estrutura de fatores previamente proposta. Neste método, um modelo teórico é formulado com fatores latentes e suas respectivas variáveis observadas, e as relações entre eles são testadas em relação aos dados observados. A CFA é comumente utilizada em pesquisas nas áreas de psicologia, educação e ciências sociais para validar construtos teóricos e entender a relação entre variáveis latentes.
+
+**Desenho de Estudo Sugerido:** Uma pesquisa que busca validar um modelo teórico de construtos psicológicos, educacionais ou sociais por meio de dados observados em um conjunto de participantes.
+
+**Exemplo:** Avaliação da validade de um modelo teórico que postula a relação entre variáveis como autoestima, motivação e desempenho acadêmico em estudantes universitários, utilizando a Análise de Fator Confirmatória para testar a consistência dos dados observados com a estrutura proposta.
+
+## Análise de Caminhos (Path Analysis)
+
+Análise de Caminhos é uma técnica estatística utilizada para examinar as relações causais entre variáveis em um modelo teórico complexo. Esta abordagem permite explorar e quantificar as vias diretas e indiretas entre diferentes variáveis, identificando assim o impacto de cada componente no modelo. A análise de caminhos é frequentemente empregada em pesquisas nas áreas de psicologia, sociologia e ciências sociais, proporcionando insights sobre como variáveis interagem e contribuem para um fenômeno específico.
+
+**Desenho de Estudo Sugerido:** Um estudo que investiga as relações causais entre múltiplas variáveis por meio de um modelo teórico, utilizando dados observados para testar as conexões propostas.
+
+**Exemplo:** Exame das interações entre variáveis como ambiente familiar, apoio social e desempenho acadêmico em adolescentes, por meio de um modelo de análise de caminhos. A pesquisa busca compreender como fatores familiares e sociais influenciam diretamente ou indiretamente o sucesso acadêmico dos jovens.
+
 ## Referências
 
 <https://repositorio.ufba.br/bitstream/ri/17684/1/ebook_SEM_2012.pdf>

@@ -30,7 +30,11 @@ library(condSURV)
 
 ```
 
-A análise de sobrevida é uma técnica estatística utilizada para investigar o tempo até a ocorrência de um evento, como a falha de um dispositivo, o desenvolvimento de uma doença ou a morte. 
+A análise de sobrevida é uma técnica estatística utilizada para investigar o tempo até a ocorrência de um evento, como a falha de um dispositivo, o desenvolvimento de uma doença ou a morte.
+
+**Desenho de Estudo Sugerido:** Um estudo de coorte prospectivo com acompanhamento a longo prazo, onde os participantes são monitorados ao longo do tempo, registrando eventos de interesse e o tempo até a ocorrência desses eventos.
+
+**Exemplo:** Avaliação da sobrevida de pacientes com uma doença crônica específica, registrando o tempo até a progressão da doença ou ocorrência de eventos adversos, a fim de identificar fatores associados à sobrevida prolongada.
 
 No contexto da análise de sobrevida, a regressão de Cox, também conhecida como modelo de riscos proporcionais de Cox, é uma ferramenta essencial. Essa abordagem, desenvolvida por David R. Cox, permite avaliar a influência de variáveis independentes no tempo até o evento de interesse, mantendo a suposição de proporções constantes de risco ao longo do tempo. No ambiente estatístico R, a implementação da análise de sobrevida e da Cox regression é amplamente realizada por meio de pacotes como "survival" e "survminer".
 
@@ -62,7 +66,6 @@ fit2 = survfit(surv_obj ~ tx, # basta colocar tx como uma variável preditora no
                data = db) 
 ```
 
-
 ```{r}
 #| echo: false
 #| message: false
@@ -74,8 +77,6 @@ fit2_km = ggsurvfit(fit2, linewidth = 1) +
   #add_risktable() + 
   scale_ggsurvfit() 
 ```
-
-
 
 ## Pressupostos da Cox regression
 
@@ -166,5 +167,3 @@ Algumas dicas para ajudar na interpretação:
 -   Paralelismo: Paralelismo significa que a propagação e distribuição dos resíduos são relativamente constantes ao longo do tempo. Se os resíduos aumentarem ou diminuirem ao longo do tempo, isso pode sugerir uma violação da suposição.
 
 Retomaremos a discussão sobre os pressupostos ao desenvolvermos nosso primeiro modelo e também o que fazer quando o pressuposto da proporcionalidade dos riscos é violado.
-
-
