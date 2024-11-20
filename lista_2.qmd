@@ -93,10 +93,9 @@ Utilize um GEE para verificar o efeito de tempo e grupo sobre os resultados de r
 ##### Criando o modelo
 
 ```{r}
-model_gee_tweedie <- glmmTMB(
-  resp ~ Tempo*drug + us(1 + Tempo | ID),
-  family = tweedie(link = "log"),# tweedie(var.power = 1.5, link.power = 0),  # Definindo a família Tweedie
-  data = bd_long  # Seu conjunto de dados
+model_gee_tweedie <- glmmTMB::glmmTMB(formula = resp ~ Tempo*drug + us(1 + Tempo | ID),
+                                      family = gaussian(),# tweedie(var.power = 1.5, link.power = 0),  # Definindo a família Tweedie
+                                      data = bd_long  # Seu conjunto de dados
   #corstr = "exchangeable"  # Estrutura de correlação (pode ser "independence", "exchangeable", etc.)
 )
 
@@ -104,7 +103,6 @@ AIC(model_gee_tweedie)
 
 rm(model_gee_tweedie)
 ```
-
 
 ```{r}
 #| echo: true
@@ -152,7 +150,7 @@ means_ci_normal = emmeans(modelo_gee_pulse_normal, specs = ~drug:Tempo)
 # Plotar as médias e intervalos de confiança
 
 ggplot(as.data.frame(means_ci_normal), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2, position = position_dodge(0.8)) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
   geom_point(position = position_dodge(0.8), size = 3) +
   labs(title = "Distribuição Normal",
        x = "Tempo",
@@ -210,7 +208,7 @@ means_ci_gamma = emmeans(modelo_gee_pulse_gamma, specs = ~drug:Tempo)
 # Plotar as médias e intervalos de confiança
 
 ggplot(as.data.frame(means_ci_gamma), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2, position = position_dodge(0.8)) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
   geom_point(position = position_dodge(0.8), size = 3) +
   labs(title = "Distribuição Gamma",
        x = "Tempo",
@@ -361,7 +359,6 @@ Não faça apenas um copy/paste dos scripts! Treine escrever os códigos e lembr
 {{< video https://www.youtube.com/watch?v=qd0qF2lRqIs title='GEE - Generalized Estimated Equations - Aula Prática #2 (SPSS)' >}}
 
 ## Referências
-
 
 ## Versões dos pacotes
 

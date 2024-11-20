@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Técnicas e Métodos de Pesquisa no R - 2&nbsp; Lista 2 - GEE</title>
+<title>2&nbsp; Lista 2 - GEE – Técnicas e Métodos de Pesquisa no R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,8 +96,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -104,12 +112,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_2.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_2.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -119,8 +127,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./stickers/curso2_clean.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
         <div class="sidebar-tools-main">
@@ -149,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./lms.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -190,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./survival.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SURVIVAL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -213,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ARIMA</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -230,7 +241,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./SEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SEM</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -252,7 +263,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -276,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_2.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></h1>
 </div>
@@ -291,7 +302,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="introdução" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="introdução"><span class="header-section-number">2.1</span> Introdução</h2>
@@ -338,17 +351,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="criando-o-modelo" class="level5">
 <h5 class="anchored" data-anchor-id="criando-o-modelo">Criando o modelo</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_normal <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,         </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id =</span> ID,                 </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> gaussian, <span class="co">#Distribuição normal      </span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_gee_tweedie <span class="ot">&lt;-</span> glmmTMB<span class="sc">::</span><span class="fu">glmmTMB</span>(<span class="at">formula =</span> resp <span class="sc">~</span> Tempo<span class="sc">*</span>drug <span class="sc">+</span> <span class="fu">us</span>(<span class="dv">1</span> <span class="sc">+</span> Tempo <span class="sc">|</span> ID),</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">family =</span> <span class="fu">gaussian</span>(),<span class="co"># tweedie(var.power = 1.5, link.power = 0),  # Definindo a família Tweedie</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">data =</span> bd_long  <span class="co"># Seu conjunto de dados</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#corstr = "exchangeable"  # Estrutura de correlação (pode ser "independence", "exchangeable", etc.)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in finalizeTMB(TMBStruc, obj, fit, h, data.tmb.old): Model convergence
+problem; non-positive-definite Hessian matrix. See vignette('troubleshooting')</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model_gee_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(model_gee_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_normal <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,         </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id =</span> ID,                 </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> gaussian, <span class="co">#Distribuição normal      </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="resumo-do-modelo-e-contrastes" class="level5">
 <h5 class="anchored" data-anchor-id="resumo-do-modelo-e-contrastes">Resumo do modelo e contrastes</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -380,37 +409,37 @@ alpha.1:3  -0.2885  0.2076
 alpha.2:3   0.1154  0.2665
 Number of clusters:   12  Maximum cluster size: 3 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_normal, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_normal, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
- drug     Tempo emmean     SE  df asymp.LCL asymp.UCL
- New Drug 1       2.20 0.0408 Inf      2.12      2.28
- Placebo  1       2.67 0.0304 Inf      2.61      2.73
- New Drug 2       2.22 0.0549 Inf      2.11      2.32
- Placebo  2       2.82 0.0280 Inf      2.76      2.87
- New Drug 3       2.28 0.0436 Inf      2.20      2.37
- Placebo  3       2.78 0.0366 Inf      2.71      2.86
+ drug     Tempo emmean     SE df lower.CL upper.CL
+ New Drug 1       2.20 0.0408 30     2.12     2.28
+ Placebo  1       2.67 0.0304 30     2.60     2.73
+ New Drug 2       2.22 0.0549 30     2.10     2.33
+ Placebo  2       2.82 0.0280 30     2.76     2.87
+ New Drug 3       2.28 0.0436 30     2.19     2.37
+ Placebo  3       2.78 0.0366 30     2.71     2.86
 
 Covariance estimate used: vbeta 
 Confidence level used: 0.95 
 
 $contrasts
- contrast                          estimate     SE  df z.ratio p.value
- New Drug Tempo1 - Placebo Tempo1   -0.4667 0.0509 Inf  -9.165  &lt;.0001
- New Drug Tempo1 - New Drug Tempo2  -0.0167 0.0366 Inf  -0.455  0.9976
- New Drug Tempo1 - Placebo Tempo2   -0.6167 0.0495 Inf -12.449  &lt;.0001
- New Drug Tempo1 - New Drug Tempo3  -0.0833 0.0684 Inf  -1.219  0.8279
- New Drug Tempo1 - Placebo Tempo3   -0.5833 0.0549 Inf -10.634  &lt;.0001
- Placebo Tempo1 - New Drug Tempo2    0.4500 0.0627 Inf   7.173  &lt;.0001
- Placebo Tempo1 - Placebo Tempo2    -0.1500 0.0204 Inf  -7.348  &lt;.0001
- Placebo Tempo1 - New Drug Tempo3    0.3833 0.0531 Inf   7.213  &lt;.0001
- Placebo Tempo1 - Placebo Tempo3    -0.1167 0.0549 Inf  -2.127  0.2733
- New Drug Tempo2 - Placebo Tempo2   -0.6000 0.0616 Inf  -9.738  &lt;.0001
- New Drug Tempo2 - New Drug Tempo3  -0.0667 0.0609 Inf  -1.095  0.8834
- New Drug Tempo2 - Placebo Tempo3   -0.5667 0.0660 Inf  -8.590  &lt;.0001
- Placebo Tempo2 - New Drug Tempo3    0.5333 0.0518 Inf  10.292  &lt;.0001
- Placebo Tempo2 - Placebo Tempo3     0.0333 0.0509 Inf   0.655  0.9867
- New Drug Tempo3 - Placebo Tempo3   -0.5000 0.0569 Inf  -8.783  &lt;.0001
+ contrast                          estimate     SE df t.ratio p.value
+ New Drug Tempo1 - Placebo Tempo1   -0.4667 0.0509 30  -9.165  &lt;.0001
+ New Drug Tempo1 - New Drug Tempo2  -0.0167 0.0366 30  -0.455  0.9973
+ New Drug Tempo1 - Placebo Tempo2   -0.6167 0.0495 30 -12.449  &lt;.0001
+ New Drug Tempo1 - New Drug Tempo3  -0.0833 0.0684 30  -1.219  0.8244
+ New Drug Tempo1 - Placebo Tempo3   -0.5833 0.0549 30 -10.634  &lt;.0001
+ Placebo Tempo1 - New Drug Tempo2    0.4500 0.0627 30   7.173  &lt;.0001
+ Placebo Tempo1 - Placebo Tempo2    -0.1500 0.0204 30  -7.348  &lt;.0001
+ Placebo Tempo1 - New Drug Tempo3    0.3833 0.0531 30   7.213  &lt;.0001
+ Placebo Tempo1 - Placebo Tempo3    -0.1167 0.0549 30  -2.127  0.3013
+ New Drug Tempo2 - Placebo Tempo2   -0.6000 0.0616 30  -9.738  &lt;.0001
+ New Drug Tempo2 - New Drug Tempo3  -0.0667 0.0609 30  -1.095  0.8793
+ New Drug Tempo2 - Placebo Tempo3   -0.5667 0.0660 30  -8.590  &lt;.0001
+ Placebo Tempo2 - New Drug Tempo3    0.5333 0.0518 30  10.292  &lt;.0001
+ Placebo Tempo2 - Placebo Tempo3     0.0333 0.0509 30   0.655  0.9855
+ New Drug Tempo3 - Placebo Tempo3   -0.5000 0.0569 30  -8.783  &lt;.0001
 
 P value adjustment: tukey method for comparing a family of 6 estimates </code></pre>
 </div>
@@ -419,37 +448,49 @@ P value adjustment: tukey method for comparing a family of 6 estimates </code></
 <section id="verificando-os-pressupostos" class="level5">
 <h5 class="anchored" data-anchor-id="verificando-os-pressupostos">Verificando os pressupostos</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Converting missing values (`NA`) into regular values currently not
   possible for variables of class `NULL`.</code></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Failed to compute posterior predictive checks with `re_formula=NULL`.
+  Trying again with `re_formula=NA` now.</code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="plot-dos-resultados" class="level5">
 <h5 class="anchored" data-anchor-id="plot-dos-resultados">Plot dos resultados</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>means_ci_normal <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_normal, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>means_ci_normal <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_normal, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_normal), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> asymp.LCL, <span class="at">ymax =</span> asymp.UCL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Normal"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_normal), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Normal"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <hr>
@@ -460,17 +501,17 @@ P value adjustment: tukey method for comparing a family of 6 estimates </code></
 <section id="criando-o-modelo-1" class="level5">
 <h5 class="anchored" data-anchor-id="criando-o-modelo-1">Criando o modelo</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_gamma <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,         </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id =</span> ID,                 </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> <span class="fu">Gamma</span>(<span class="at">link =</span> <span class="st">"identity"</span>), <span class="co">#Distribuição Gamma      </span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_gamma <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,         </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id =</span> ID,                 </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> <span class="fu">Gamma</span>(<span class="at">link =</span> <span class="st">"identity"</span>), <span class="co">#Distribuição Gamma      </span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="resumo-do-modelo-e-contrastes-1" class="level5">
 <h5 class="anchored" data-anchor-id="resumo-do-modelo-e-contrastes-1">Resumo do modelo e contrastes</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -502,37 +543,37 @@ alpha.1:3   -0.279   0.208
 alpha.2:3    0.156   0.279
 Number of clusters:   12  Maximum cluster size: 3 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_gamma, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_gamma, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
- drug     Tempo emmean     SE  df asymp.LCL asymp.UCL
- New Drug 1       2.20 0.0408 Inf      2.12      2.28
- Placebo  1       2.67 0.0304 Inf      2.61      2.73
- New Drug 2       2.22 0.0549 Inf      2.11      2.32
- Placebo  2       2.82 0.0281 Inf      2.76      2.87
- New Drug 3       2.28 0.0436 Inf      2.20      2.37
- Placebo  3       2.78 0.0366 Inf      2.71      2.85
+ drug     Tempo emmean     SE df lower.CL upper.CL
+ New Drug 1       2.20 0.0408 30     2.12     2.28
+ Placebo  1       2.67 0.0304 30     2.60     2.73
+ New Drug 2       2.22 0.0549 30     2.10     2.33
+ Placebo  2       2.82 0.0281 30     2.76     2.87
+ New Drug 3       2.28 0.0436 30     2.19     2.37
+ Placebo  3       2.78 0.0366 30     2.71     2.86
 
 Covariance estimate used: vbeta 
 Confidence level used: 0.95 
 
 $contrasts
- contrast                          estimate     SE  df z.ratio p.value
- New Drug Tempo1 - Placebo Tempo1    -0.467 0.0509 Inf  -9.170  &lt;.0001
- New Drug Tempo1 - New Drug Tempo2   -0.017 0.0366 Inf  -0.450  0.9980
- New Drug Tempo1 - Placebo Tempo2    -0.617 0.0495 Inf -12.450  &lt;.0001
- New Drug Tempo1 - New Drug Tempo3   -0.083 0.0684 Inf  -1.220  0.8280
- New Drug Tempo1 - Placebo Tempo3    -0.583 0.0549 Inf -10.630  &lt;.0001
- Placebo Tempo1 - New Drug Tempo2     0.450 0.0627 Inf   7.170  &lt;.0001
- Placebo Tempo1 - Placebo Tempo2     -0.150 0.0204 Inf  -7.350  &lt;.0001
- Placebo Tempo1 - New Drug Tempo3     0.383 0.0531 Inf   7.210  &lt;.0001
- Placebo Tempo1 - Placebo Tempo3     -0.117 0.0549 Inf  -2.130  0.2730
- New Drug Tempo2 - Placebo Tempo2    -0.600 0.0616 Inf  -9.740  &lt;.0001
- New Drug Tempo2 - New Drug Tempo3   -0.067 0.0609 Inf  -1.100  0.8830
- New Drug Tempo2 - Placebo Tempo3    -0.567 0.0660 Inf  -8.590  &lt;.0001
- Placebo Tempo2 - New Drug Tempo3     0.533 0.0518 Inf  10.290  &lt;.0001
- Placebo Tempo2 - Placebo Tempo3      0.033 0.0509 Inf   0.650  0.9870
- New Drug Tempo3 - Placebo Tempo3    -0.500 0.0569 Inf  -8.780  &lt;.0001
+ contrast                          estimate     SE df t.ratio p.value
+ New Drug Tempo1 - Placebo Tempo1    -0.467 0.0509 30  -9.170  &lt;.0001
+ New Drug Tempo1 - New Drug Tempo2   -0.017 0.0366 30  -0.450  0.9970
+ New Drug Tempo1 - Placebo Tempo2    -0.617 0.0495 30 -12.450  &lt;.0001
+ New Drug Tempo1 - New Drug Tempo3   -0.083 0.0684 30  -1.220  0.8240
+ New Drug Tempo1 - Placebo Tempo3    -0.583 0.0549 30 -10.630  &lt;.0001
+ Placebo Tempo1 - New Drug Tempo2     0.450 0.0627 30   7.170  &lt;.0001
+ Placebo Tempo1 - Placebo Tempo2     -0.150 0.0204 30  -7.350  &lt;.0001
+ Placebo Tempo1 - New Drug Tempo3     0.383 0.0531 30   7.210  &lt;.0001
+ Placebo Tempo1 - Placebo Tempo3     -0.117 0.0549 30  -2.130  0.3010
+ New Drug Tempo2 - Placebo Tempo2    -0.600 0.0616 30  -9.740  &lt;.0001
+ New Drug Tempo2 - New Drug Tempo3   -0.067 0.0609 30  -1.100  0.8790
+ New Drug Tempo2 - Placebo Tempo3    -0.567 0.0660 30  -8.590  &lt;.0001
+ Placebo Tempo2 - New Drug Tempo3     0.533 0.0518 30  10.290  &lt;.0001
+ Placebo Tempo2 - Placebo Tempo3      0.033 0.0509 30   0.650  0.9860
+ New Drug Tempo3 - Placebo Tempo3    -0.500 0.0569 30  -8.780  &lt;.0001
 
 P value adjustment: tukey method for comparing a family of 6 estimates </code></pre>
 </div>
@@ -541,37 +582,53 @@ P value adjustment: tukey method for comparing a family of 6 estimates </code></
 <section id="verificando-os-pressupostos-1" class="level5">
 <h5 class="anchored" data-anchor-id="verificando-os-pressupostos-1">Verificando os pressupostos</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Converting missing values (`NA`) into regular values currently not
   possible for variables of class `NULL`.</code></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Failed to compute posterior predictive checks with `re_formula=NULL`.
+  Trying again with `re_formula=NA` now.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Cannot simulate residuals for models of class `geeglm`. Please try
+  `check_model(..., residual_type = "normal")` instead.</code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="plot-dos-resultados-1" class="level5">
 <h5 class="anchored" data-anchor-id="plot-dos-resultados-1">Plot dos resultados</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>means_ci_gamma <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_gamma, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>means_ci_gamma <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_gamma, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gamma), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> asymp.LCL, <span class="at">ymax =</span> asymp.UCL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Gamma"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gamma), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Gamma"</span>,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <hr>
@@ -582,11 +639,11 @@ P value adjustment: tukey method for comparing a family of 6 estimates </code></
 <section id="criando-o-modelo-2" class="level5">
 <h5 class="anchored" data-anchor-id="criando-o-modelo-2">Criando o modelo</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_tweedie <span class="ot">&lt;-</span> <span class="fu">glm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                          <span class="co"># id = ID, </span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> <span class="fu">tweedie</span>(<span class="at">var.power=</span><span class="dv">2</span>, <span class="at">link.power =</span> <span class="dv">0</span>),</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">contrasts =</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse_tweedie <span class="ot">&lt;-</span> <span class="fu">glm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                          <span class="co"># id = ID, </span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> <span class="fu">tweedie</span>(<span class="at">var.power=</span><span class="dv">2</span>, <span class="at">link.power =</span> <span class="dv">0</span>),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">contrasts =</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -620,7 +677,7 @@ Aviso!
 <section id="resumo-do-modelo-e-contrastes-2" class="level5">
 <h5 class="anchored" data-anchor-id="resumo-do-modelo-e-contrastes-2">Resumo do modelo e contrastes</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -646,7 +703,7 @@ AIC: NA
 
 Number of Fisher Scoring iterations: 3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_tweedie, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(modelo_gee_pulse_tweedie, pairwise <span class="sc">~</span> drug<span class="sc">*</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$emmeans
  drug     Tempo emmean     SE  df asymp.LCL asymp.UCL
@@ -678,7 +735,8 @@ $contrasts
  Placebo Tempo2 - Placebo Tempo3     0.0119 0.0263 Inf   0.450  0.9980
  New Drug Tempo3 - Placebo Tempo3   -0.1980 0.0263 Inf  -7.540  &lt;.0001
 
-Note: contrasts are still on the mu^0 scale 
+Note: contrasts are still on the mu^0 scale. Consider using
+      regrid() if you want contrasts of back-transformed estimates. 
 P value adjustment: tukey method for comparing a family of 6 estimates </code></pre>
 </div>
 </div>
@@ -686,33 +744,45 @@ P value adjustment: tukey method for comparing a family of 6 estimates </code></
 <section id="verificando-os-pressupostos-2" class="level5">
 <h5 class="anchored" data-anchor-id="verificando-os-pressupostos-2">Verificando os pressupostos</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar o diagnóstico do modelo GEE para a variável 'pulse'</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Cannot simulate residuals for models of class `glm`. Please try
+  `check_model(..., residual_type = "normal")` instead.</code></pre>
+</div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="plot-dos-resultados-2" class="level5">
 <h5 class="anchored" data-anchor-id="plot-dos-resultados-2">Plot dos resultados</h5>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>means_ci_tweedie <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_tweedie, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvando os resultados do modelo em uma variável</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>means_ci_tweedie <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gee_pulse_tweedie, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_tweedie), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> asymp.LCL, <span class="at">ymax =</span> asymp.UCL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Tweedie"</span>,</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotar as médias e intervalos de confiança</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_tweedie), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> asymp.LCL, <span class="at">ymax =</span> asymp.UCL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição Tweedie"</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Pulse"</span>) <span class="sc">+</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_2_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_2_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <hr>
@@ -736,17 +806,17 @@ Nota
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">QIC</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">QIC</span>(modelo_gee_pulse_normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      QIC      QICu Quasi Lik       CIC    params      QICC 
    12.347    12.347    -0.173     6.000     6.000   102.347 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">QIC</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">QIC</span>(modelo_gee_pulse_gamma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      QIC      QICu Quasi Lik       CIC    params      QICC 
     125.2     125.2     -56.6       6.0       6.0     215.2 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#QIC(modelo_gee_pulse_tweedie)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#QIC(modelo_gee_pulse_tweedie)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="c-sumarizando-os-resultados" class="level3">
@@ -767,7 +837,7 @@ Nota
 <section id="resutados-com-distribuição-tweedie" class="level4">
 <h4 class="anchored" data-anchor-id="resutados-com-distribuição-tweedie">Resutados com distribuição Tweedie</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gee_pulse_tweedie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>We fitted a general linear model (Tweedie family with a mu^0 link) (estimated
 using ML) to predict pulse with drug and Tempo (formula: pulse ~ drug + Tempo +
@@ -824,56 +894,56 @@ Dica!
 <section id="versões-dos-pacotes" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="versões-dos-pacotes"><span class="header-section-number">2.6</span> Versões dos pacotes</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analyses were conducted using the R Statistical language (version 4.3.1; R Core
-Team, 2023) on Windows 11 x64 (build 22621), using the packages lme4 (version
-1.1.34; Bates D et al., 2015), Matrix (version 1.6.0; Bates D et al., 2023),
-effectsize (version 0.8.6; Ben-Shachar MS et al., 2020), gee (version 4.13.26;
-Carey VJ, 2023), pwr (version 1.3.0; Champely S, 2020), htmltools (version
-0.5.7; Cheng J et al., 2023), fitdistrplus (version 1.1.11; Delignette-Muller
+<pre><code>Analyses were conducted using the R Statistical language (version 4.3.3; R Core
+Team, 2024) on Windows 11 x64 (build 22631), using the packages lme4 (version
+1.1.35.5; Bates D et al., 2015), Matrix (version 1.6.5; Bates D et al., 2024),
+effectsize (version 0.8.9; Ben-Shachar MS et al., 2020), gee (version 4.13.27;
+Carey VJ, 2024), pwr (version 1.3.0; Champely S, 2020), htmltools (version
+0.5.8.1; Cheng J et al., 2024), fitdistrplus (version 1.2.1; Delignette-Muller
 ML, Dutang C, 2015), tweedie (version 2.3.5; Dunn PK, Smyth GK, 2005), tm
-(version 0.7.11; Feinerer I, Hornik K, 2023), flexplot (version 0.20.5; Fife D,
-2024), effects (version 4.2.2; Fox J, Weisberg S, 2019), car (version 3.1.2;
+(version 0.7.14; Feinerer I, Hornik K, 2024), flexplot (version 0.21.2; Fife,
+D, 2022), effects (version 4.2.2; Fox J, Weisberg S, 2019), car (version 3.1.3;
 Fox J, Weisberg S, 2019), carData (version 3.0.5; Fox J et al., 2022), mvtnorm
-(version 1.2.3; Genz A, Bretz F, 2009), statmod (version 1.5.0; Giner G, Smyth
-GK, 2016), geepack (version 1.3.9; Halekoh U et al., 2006), NLP (version 0.2.1;
-Hornik K, 2020), TH.data (version 1.1.2; Hothorn T, 2023), multcomp (version
-1.4.25; Hothorn T et al., 2008), rstatix (version 0.7.2; Kassambara A, 2023),
-emmeans (version 1.8.8; Lenth R, 2023), sjstats (version 0.18.2; Lüdecke D,
-2022), parameters (version 0.21.3; Lüdecke D et al., 2020), performance
-(version 0.10.8; Lüdecke D et al., 2021), easystats (version 0.6.0; Lüdecke D
-et al., 2022), see (version 0.8.1; Lüdecke D et al., 2021), insight (version
-0.19.6; Lüdecke D et al., 2019), survey (version 4.2.1; Lumley T, 2023),
-bayestestR (version 0.13.1; Makowski D et al., 2019), modelbased (version
-0.8.6; Makowski D et al., 2020), report (version 0.5.7; Makowski D et al.,
-2023), correlation (version 0.8.4; Makowski D et al., 2022), datawizard
-(version 0.9.0; Patil I et al., 2022), nlme (version 3.1.163; Pinheiro J et
-al., 2023), foreign (version 0.8.85; R Core Team, 2023), GGally (version 2.2.0;
-Schloerke B et al., 2023), rempsyc (version 0.1.6; Thériault R, 2023), survival
-(version 3.5.7; Therneau T, 2023), MASS (version 7.3.60; Venables WN, Ripley
-BD, 2002), ggplot2 (version 3.4.4; Wickham H, 2016), dplyr (version 1.1.3;
-Wickham H et al., 2023), tidyr (version 1.3.0; Wickham H et al., 2023) and mime
-(version 0.12; Xie Y, 2021).
+(version 1.3.2; Genz A, Bretz F, 2009), statmod (version 1.5.0; Giner G, Smyth
+GK, 2016), geepack (version 1.3.11; Halekoh U et al., 2006), NLP (version
+0.3.0; Hornik K, 2024), TH.data (version 1.1.2; Hothorn T, 2023), multcomp
+(version 1.4.26; Hothorn T et al., 2008), rstatix (version 0.7.2; Kassambara A,
+2023), emmeans (version 1.10.5; Lenth R, 2024), sjstats (version 0.19.0;
+Lüdecke D, 2024), parameters (version 0.23.0; Lüdecke D et al., 2020),
+performance (version 0.12.4; Lüdecke D et al., 2021), easystats (version 0.7.3;
+Lüdecke D et al., 2022), see (version 0.8.5; Lüdecke D et al., 2021), insight
+(version 0.20.5; Lüdecke D et al., 2019), survey (version 4.4.2; Lumley T,
+2024), bayestestR (version 0.15.0; Makowski D et al., 2019), modelbased
+(version 0.8.8; Makowski D et al., 2020), report (version 0.5.9; Makowski D et
+al., 2023), correlation (version 0.8.5; Makowski D et al., 2022), datawizard
+(version 0.13.0; Patil I et al., 2022), nlme (version 3.1.166; Pinheiro J et
+al., 2024), foreign (version 0.8.87; R Core Team, 2024), GGally (version 2.2.1;
+Schloerke B et al., 2024), rempsyc (version 0.1.8; Thériault R, 2023), survival
+(version 3.7.0; Therneau T, 2024), MASS (version 7.3.60.0.1; Venables WN,
+Ripley BD, 2002), ggplot2 (version 3.5.1; Wickham H, 2016), dplyr (version
+1.1.4; Wickham H et al., 2023), tidyr (version 1.3.1; Wickham H et al., 2024)
+and mime (version 0.12; Xie Y, 2021).
 
 References
 ----------
   - Bates D, Mächler M, Bolker B, Walker S (2015). "Fitting Linear Mixed-Effects
 Models Using lme4." _Journal of Statistical Software_, *67*(1), 1-48.
 doi:10.18637/jss.v067.i01 &lt;https://doi.org/10.18637/jss.v067.i01&gt;.
-  - Bates D, Maechler M, Jagan M (2023). _Matrix: Sparse and Dense Matrix Classes
-and Methods_. R package version 1.6-0,
+  - Bates D, Maechler M, Jagan M (2024). _Matrix: Sparse and Dense Matrix Classes
+and Methods_. R package version 1.6-5,
 &lt;https://CRAN.R-project.org/package=Matrix&gt;.
   - Ben-Shachar MS, Lüdecke D, Makowski D (2020). "effectsize: Estimation of
 Effect Size Indices and Standardized Parameters." _Journal of Open Source
 Software_, *5*(56), 2815. doi:10.21105/joss.02815
 &lt;https://doi.org/10.21105/joss.02815&gt;, &lt;https://doi.org/10.21105/joss.02815&gt;.
-  - Carey VJ (2023). _gee: Generalized Estimation Equation Solver_. R package
-version 4.13-26, &lt;https://CRAN.R-project.org/package=gee&gt;.
+  - Carey VJ (2024). _gee: Generalized Estimation Equation Solver_. R package
+version 4.13-27, &lt;https://CRAN.R-project.org/package=gee&gt;.
   - Champely S (2020). _pwr: Basic Functions for Power Analysis_. R package
 version 1.3-0, &lt;https://CRAN.R-project.org/package=pwr&gt;.
-  - Cheng J, Sievert C, Schloerke B, Chang W, Xie Y, Allen J (2023). _htmltools:
-Tools for HTML_. R package version 0.5.7,
+  - Cheng J, Sievert C, Schloerke B, Chang W, Xie Y, Allen J (2024). _htmltools:
+Tools for HTML_. R package version 0.5.8.1,
 &lt;https://CRAN.R-project.org/package=htmltools&gt;.
   - Delignette-Muller ML, Dutang C (2015). "fitdistrplus: An R Package for
 Fitting Distributions." _Journal of Statistical Software_, *64*(4), 1-34.
@@ -884,13 +954,13 @@ Smyth GK (2008). "Evaluation of Tweedie exponential dispersion models using
 Fourier inversion." _Statistics and Computing_, *18*(1), 73-86. Dunn PK (2022).
 _Tweedie: Evaluation of Tweedie Exponential Family Models_. R package version
 2.3.5.
-  - Feinerer I, Hornik K (2023). _tm: Text Mining Package_. R package version
-0.7-11, &lt;https://CRAN.R-project.org/package=tm&gt;. Feinerer I, Hornik K, Meyer D
+  - Feinerer I, Hornik K (2024). _tm: Text Mining Package_. R package version
+0.7-14, &lt;https://CRAN.R-project.org/package=tm&gt;. Feinerer I, Hornik K, Meyer D
 (2008). "Text Mining Infrastructure in R." _Journal of Statistical Software_,
 *25*(5), 1-54. doi:10.18637/jss.v025.i05
 &lt;https://doi.org/10.18637/jss.v025.i05&gt;.
-  - Fife D (2024). _flexplot: Graphically Based Data Analysis Using 'flexplot'_.
-R package version 0.20.5.
+  - Fife, A. D (2022). "Flexplot: Graphically-based data analysis."
+_Psychological Methods_, *27*(4), -19. &lt;doi.org/10.1037/met0000424&gt;.
   - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, 3rd
 edition. Sage, Thousand Oaks CA.
 &lt;https://socialsciences.mcmaster.ca/jfox/Books/Companion/index.html&gt;. Fox J,
@@ -905,8 +975,7 @@ Logit Models: Extensions to the effects Package." _Journal of Statistical
 Software_, *32*(1), 1-24. doi:10.18637/jss.v032.i01
 &lt;https://doi.org/10.18637/jss.v032.i01&gt;.
   - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, Third
-edition. Sage, Thousand Oaks CA.
-&lt;https://socialsciences.mcmaster.ca/jfox/Books/Companion/&gt;.
+edition. Sage, Thousand Oaks CA. &lt;https://www.john-fox.ca/Companion/&gt;.
   - Fox J, Weisberg S, Price B (2022). _carData: Companion to Applied Regression
 Data Sets_. R package version 3.0-5,
 &lt;https://CRAN.R-project.org/package=carData&gt;.
@@ -932,18 +1001,18 @@ Estimating Equations." _Journal of Statistical Software_, *15/2*, 1-11. Yan J,
 Fine JP (2004). "Estimating Equations for Association Structures." _Statistics
 in Medicine_, *23*, 859-880. Yan J (2002). "geepack: Yet Another Package for
 Generalized Estimating Equations." _R-News_, *2/3*, 12-14.
-  - Hornik K (2020). _NLP: Natural Language Processing Infrastructure_. R package
-version 0.2-1, &lt;https://CRAN.R-project.org/package=NLP&gt;.
+  - Hornik K (2024). _NLP: Natural Language Processing Infrastructure_. R package
+version 0.3-0, &lt;https://CRAN.R-project.org/package=NLP&gt;.
   - Hothorn T (2023). _TH.data: TH's Data Archive_. R package version 1.1-2,
 &lt;https://CRAN.R-project.org/package=TH.data&gt;.
   - Hothorn T, Bretz F, Westfall P (2008). "Simultaneous Inference in General
 Parametric Models." _Biometrical Journal_, *50*(3), 346-363.
   - Kassambara A (2023). _rstatix: Pipe-Friendly Framework for Basic Statistical
 Tests_. R package version 0.7.2, &lt;https://CRAN.R-project.org/package=rstatix&gt;.
-  - Lenth R (2023). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
-R package version 1.8.8, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
-  - Lüdecke D (2022). _sjstats: Statistical Functions for Regression Models
-(Version 0.18.2)_. doi:10.5281/zenodo.1284472
+  - Lenth R (2024). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
+R package version 1.10.5, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
+  - Lüdecke D (2024). _sjstats: Statistical Functions for Regression Models
+(Version 0.19.0)_. doi:10.5281/zenodo.1284472
 &lt;https://doi.org/10.5281/zenodo.1284472&gt;,
 &lt;https://CRAN.R-project.org/package=sjstats&gt;.
   - Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). "Extracting, Computing
@@ -954,9 +1023,11 @@ Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
 "performance: An R Package for Assessment, Comparison and Testing of
 Statistical Models." _Journal of Open Source Software_, *6*(60), 3139.
 doi:10.21105/joss.03139 &lt;https://doi.org/10.21105/joss.03139&gt;.
-  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Makowski D (2022). "easystats:
-Framework for Easy Statistical Modeling, Visualization, and Reporting." _CRAN_.
-R package, &lt;https://easystats.github.io/easystats/&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Bacher E, Thériault R, Makowski
+D (2022). "easystats: Framework for Easy Statistical Modeling, Visualization,
+and Reporting." _CRAN_. doi:10.32614/CRAN.package.easystats
+&lt;https://doi.org/10.32614/CRAN.package.easystats&gt;, R package,
+&lt;https://easystats.github.io/easystats/&gt;.
   - Lüdecke D, Patil I, Ben-Shachar M, Wiernik B, Waggoner P, Makowski D (2021).
 "see: An R Package for Visualizing Statistical Models." _Journal of Open Source
 Software_, *6*(64), 3393. doi:10.21105/joss.03393
@@ -964,8 +1035,8 @@ Software_, *6*(64), 3393. doi:10.21105/joss.03393
   - Lüdecke D, Waggoner P, Makowski D (2019). "insight: A Unified Interface to
 Access Information from Model Objects in R." _Journal of Open Source Software_,
 *4*(38), 1412. doi:10.21105/joss.01412 &lt;https://doi.org/10.21105/joss.01412&gt;.
-  - Lumley T (2023). "survey: analysis of complex survey samples." R package
-version 4.2. Lumley T (2004). "Analysis of Complex Survey Samples." _Journal of
+  - Lumley T (2024). "survey: analysis of complex survey samples." R package
+version 4.4. Lumley T (2004). "Analysis of Complex Survey Samples." _Journal of
 Statistical Software_, *9*(1), 1-19. R package verson 2.2. Lumley T (2010).
 _Complex Surveys: A Guide to Analysis Using R: A Guide to Analysis Using R_.
 John Wiley and Sons.
@@ -992,25 +1063,25 @@ R." _Journal of Open Source Software_, *5*(51), 2306. doi:10.21105/joss.02306
 "datawizard: An R Package for Easy Data Preparation and Statistical
 Transformations." _Journal of Open Source Software_, *7*(78), 4684.
 doi:10.21105/joss.04684 &lt;https://doi.org/10.21105/joss.04684&gt;.
-  - Pinheiro J, Bates D, R Core Team (2023). _nlme: Linear and Nonlinear Mixed
-Effects Models_. R package version 3.1-163,
+  - Pinheiro J, Bates D, R Core Team (2024). _nlme: Linear and Nonlinear Mixed
+Effects Models_. R package version 3.1-166,
 &lt;https://CRAN.R-project.org/package=nlme&gt;. Pinheiro JC, Bates DM (2000).
 _Mixed-Effects Models in S and S-PLUS_. Springer, New York. doi:10.1007/b98882
 &lt;https://doi.org/10.1007/b98882&gt;.
-  - R Core Team (2023). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
-'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-85,
+  - R Core Team (2024). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-87,
 &lt;https://CRAN.R-project.org/package=foreign&gt;.
-  - R Core Team (2023). _R: A Language and Environment for Statistical
+  - R Core Team (2024). _R: A Language and Environment for Statistical
 Computing_. R Foundation for Statistical Computing, Vienna, Austria.
 &lt;https://www.R-project.org/&gt;.
   - Schloerke B, Cook D, Larmarange J, Briatte F, Marbach M, Thoen E, Elberg A,
-Crowley J (2023). _GGally: Extension to 'ggplot2'_. R package version 2.2.0,
+Crowley J (2024). _GGally: Extension to 'ggplot2'_. R package version 2.2.1,
 &lt;https://CRAN.R-project.org/package=GGally&gt;.
   - Thériault R (2023). "rempsyc: Convenience functions for psychology." _Journal
 of Open Source Software_, *8*(87), 5466. doi:10.21105/joss.05466
 &lt;https://doi.org/10.21105/joss.05466&gt;, &lt;https://doi.org/10.21105/joss.05466&gt;.
-  - Therneau T (2023). _A Package for Survival Analysis in R_. R package version
-3.5-7, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
+  - Therneau T (2024). _A Package for Survival Analysis in R_. R package version
+3.7-0, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
 Patricia M. Grambsch (2000). _Modeling Survival Data: Extending the Cox Model_.
 Springer, New York. ISBN 0-387-98784-3.
   - Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth
@@ -1020,10 +1091,10 @@ edition. Springer, New York. ISBN 0-387-95457-0,
 Springer-Verlag New York. ISBN 978-3-319-24277-4,
 &lt;https://ggplot2.tidyverse.org&gt;.
   - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar
-of Data Manipulation_. R package version 1.1.3,
+of Data Manipulation_. R package version 1.1.4,
 &lt;https://CRAN.R-project.org/package=dplyr&gt;.
-  - Wickham H, Vaughan D, Girlich M (2023). _tidyr: Tidy Messy Data_. R package
-version 1.3.0, &lt;https://CRAN.R-project.org/package=tidyr&gt;.
+  - Wickham H, Vaughan D, Girlich M (2024). _tidyr: Tidy Messy Data_. R package
+version 1.3.1, &lt;https://CRAN.R-project.org/package=tidyr&gt;.
   - Xie Y (2021). _mime: Map Filenames to MIME Types_. R package version 0.12,
 &lt;https://CRAN.R-project.org/package=mime&gt;.</code></pre>
 </div>
@@ -1068,18 +1139,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1111,11 +1171,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1125,8 +1224,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1138,7 +1246,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1182,6 +1413,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1207,6 +1439,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1268,17 +1526,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lista_1.html" class="pagination-link">
+      <a href="./lista_1.html" class="pagination-link" aria-label="Lista 1 - GLM, GEE e GMM">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lista_3.html" class="pagination-link">
+      <a href="./lista_3.html" class="pagination-link" aria-label="Lista 3 - Matriz de Covariância">
         <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

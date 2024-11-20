@@ -43,12 +43,12 @@ Este tutorial tem como objetivo oferecer uma introdução prática à análise e
     -   Confrmatory Factor Analysis (CFA)
 
     -   Moderação e mediação
-    
-Ao fim de cada capítulos, nas seções intituladas "Extras", vamos mostrar dicas sobre pacotes que podem ser úteis para suas análises, mas que não estão disponíveis no SPSS ou no Jamovi.
-    
 
-::: {.callout-important}
+Ao fim de cada capítulos, nas seções intituladas "Extras", vamos mostrar dicas sobre pacotes que podem ser úteis para suas análises, mas que não estão disponíveis no SPSS ou no Jamovi.
+
+::: callout-important
 #### Importante!
+
 O material apresentado aqui é **complementar** às aulas teóricas e práticas. É imprescindível que você assista às aulas antes de resolver os exercícios no R.
 :::
 
@@ -97,39 +97,64 @@ Exemplo: library(effects).
 
 Pronto! Agora você está familiarizado com o processo de instalação e carregamento dos pacotes que serão utilizados ao longo deste tutorial. Pode-se fazer uma analogia com uma biblioteca: adquirir os livros seria como instalar os pacotes (`install.packages`), e retirar um livro da prateleira seria como carregar o pacote (`library`) quando necessário.
 
-
-
 <!-- ```{r} -->
+
 <!-- install.packages("A3") -->
+
 <!-- ``` -->
 
 <!-- ```{r} -->
+
 <!-- #| message: false -->
+
 <!-- #| warning: false -->
+
 <!-- library(emmeans)   # Cálculo de médias estimadas após análises estatísticas. -->
+
 <!-- library(lme4)      # Ajuste de modelos lineares mistos. -->
+
 <!-- library(nlme)      # Ajuste de modelos mistos não lineares. -->
+
 <!-- library(flexplot)  # Criação de gráficos flexíveis e personalizados. -->
+
 <!-- library(foreign)   # Importação/exportação de dados de outros formatos. -->
+
 <!-- library(tidyr)     # Manipulação de dados. -->
+
 <!-- library(dplyr)     # Manipulação e transformação de dados de maneira eficiente. -->
+
 <!-- library(multcomp)  # Correção de múltiplas comparações pós-teste. -->
+
 <!-- library(effects)   # Visualização de efeitos de modelos estatísticos. -->
+
 <!-- library(sjstats)   # Estatísticas descritivas e sumarização de modelos. -->
+
 <!-- library(tm)        # Análise de texto e mineração de texto. -->
+
 <!-- library(car)       # Análise de regressão e diagnóstico de regressão. -->
+
 <!-- library(pwr)       # Cálculo do poder estatístico em estudos de amostragem. -->
+
 <!-- library(rstatix)   # Análise estatística simplificada. -->
+
 <!-- library(geepack)   # Ajuste de modelos de equações de estimação generalizadas. -->
+
 <!-- library(htmltools) # Ferramentas para trabalhar com HTML. -->
+
 <!-- library(mime)      # Ferramentas para manipulação de tipos MIME. -->
+
 <!-- library(performance) # Avaliação e melhoria do desempenho do modelo linear -->
+
 <!-- library(see) # Simplificar a exploração de dados -->
+
 <!-- library(rempsyc) # Métodos psicométricos e estatísticas relacionadas à psicometria -->
+
 <!-- library(easystats) # Simplifica a análise estatística -->
+
 <!-- ``` -->
 
 ## Referências
+
 <!-- <https://quarto.org/docs/authoring/videos.html> -->
 
 <https://r4ds.hadley.nz/>
