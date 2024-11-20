@@ -6,6 +6,7 @@ book:
   title: "Técnicas e Métodos de Pesquisa no R"
   sidebar:
     collapse-level: 1
+    logo: "stickers/curso2_clean.png"
   author: "Luiz G. de Almeida"
   date: "02/15/2024"
   chapters:

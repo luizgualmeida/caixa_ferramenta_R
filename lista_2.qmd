@@ -93,6 +93,20 @@ Utilize um GEE para verificar o efeito de tempo e grupo sobre os resultados de r
 ##### Criando o modelo
 
 ```{r}
+model_gee_tweedie <- glmmTMB(
+  resp ~ Tempo*drug + us(1 + Tempo | ID),
+  family = tweedie(link = "log"),# tweedie(var.power = 1.5, link.power = 0),  # Definindo a família Tweedie
+  data = bd_long  # Seu conjunto de dados
+  #corstr = "exchangeable"  # Estrutura de correlação (pode ser "independence", "exchangeable", etc.)
+)
+
+AIC(model_gee_tweedie)
+
+rm(model_gee_tweedie)
+```
+
+
+```{r}
 #| echo: true
 #| message: false
 #| warning: false
