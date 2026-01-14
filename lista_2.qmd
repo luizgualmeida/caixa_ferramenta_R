@@ -1,367 +1,818 @@
-# Lista 2 - GEE
+# Lista 2: GEE Avançado {.unnumbered}
 
-## Introdução
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
+
+Nesta lista, você explorará a flexibilidade dos modelos GEE testando **diferentes distribuições de probabilidade** (Normal, Gamma e Tweedie). Aprenderá a comparar modelos usando o **QIC** e a escolher a distribuição mais adequada para seus dados.
+:::
+
+---
+
+## 📦 Pacotes Necessários
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-library(emmeans)   # Cálculo de médias estimadas após análises estatísticas.
-library(lme4)      # Ajuste de modelos lineares mistos.
-library(nlme)      # Ajuste de modelos mistos não lineares.
-library(flexplot)  # Criação de gráficos flexíveis e personalizados.
-library(foreign)   # Importação/exportação de dados de outros formatos.
-library(tidyr)     # Manipulação de dados.
-library(dplyr)     # Manipulação e transformação de dados de maneira eficiente.
-library(multcomp)  # Correção de múltiplas comparações pós-teste.
-library(effects)   # Visualização de efeitos de modelos estatísticos.
-library(sjstats)   # Estatísticas descritivas e sumarização de modelos.
-library(tm)        # Análise de texto e mineração de texto.
-library(car)       # Análise de regressão e diagnóstico de regressão.
-library(pwr)       # Cálculo do poder estatístico em estudos de amostragem.
-library(rstatix)   # Análise estatística simplificada.
-library(geepack)   # Ajuste de modelos de equações de estimação generalizadas.
-library(htmltools) # Ferramentas para trabalhar com HTML.
-library(mime)      # Ferramentas para manipulação de tipos MIME.
-library(performance) # Avaliação e melhoria do desempenho do modelo linear
-library(see) # Simplificar a exploração de dados
-library(rempsyc) # Métodos psicométricos e estatísticas relacionadas à psicometria
-library(easystats) # Simplifica a análise estatística
-library(GGally)
-library(gee)
-library(tweedie)
-library(stats)
-library(statmod)
-library(fitdistrplus)
-library(survey)
 
+# Lista completa de pacotes
+pacotes <- c(
+  "emmeans", "lme4", "nlme", "flexplot", "foreign",
+  "tidyr", "dplyr", "multcomp", "effects", "sjstats",
+  "car", "rstatix", "geepack", "performance", "see",
+  "rempsyc", "easystats", "GGally", "gee", "tweedie",
+  "stats", "statmod", "fitdistrplus", "ggplot2"
+)
+
+# Verificar e instalar faltantes
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  cat("Instalando:", paste(pacotes_faltantes, collapse = ", "), "\n")
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
+
+# Carregar silenciosamente
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes carregados!\n")
 ```
 
-Na lista 2 vamos utilizar mais uma vez o banco de dados [New Drug](https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing) com medidas de resp e pulse. Não se esqueça de transformá-lo para o formato long como no exercício anterior.
+---
+
+## 📥 Preparação dos Dados
+
+::: {.callout-important}
+## Download Necessário
+
+Use o mesmo banco **"[New Drug](https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing)"** da Lista 1. 
+:::
+
+### Carregamento e Transformação
 
 ```{r}
 #| echo: true
 #| warning: false
-#| message: false 
-# Carregar o banco de dados e armazena na variável original_wide
+#| message: false
 
-original_wide = read.spss("bd_New drug_respiratory&pulse.sav", to.data.frame=TRUE) 
+# 1. Carregar dados originais
+original_wide <- read.spss("bd_New drug_respiratory&pulse.sav", 
+                           to.data.frame = TRUE)
 
+# 2. Renomear colunas
+bd <- original_wide %>%
+  rename_with(~gsub("(resp|pulse)(\\d+)", "\\1_\\2", .), -drug) %>%
+  mutate(ID = row_number()) %>%
+  select(ID, everything())
 
+# 3. Converter para formato long
+bd_long <- pivot_longer(
+  bd,
+  cols = resp_1:pulse_3,
+  names_to = c(".value", "Tempo"),
+  names_pattern = "(.+)_(.+)"
+)
 
-```
+# 4. Converter para fatores
+bd_long$ID <- factor(bd_long$ID)
+bd_long$Tempo <- factor(bd_long$Tempo)
 
-```{r}
-#| echo: true
-#| warning: false
-#| message: false 
-
-# Renomear as colunas do banco de dados para facilitar a conversão para o formato longo.
-
-bd <- original_wide %>%   rename_with(~gsub("(resp|pulse)(\\d+)", "\\1_\\2", .), -drug) %>%  mutate(ID = row_number()) %>% dplyr::select(ID, everything())  
-```
-
-```{r}
-#| echo: true
-#| warning: false
-#| message: false 
-
-# Organizar os dados para o formato longo
-
-bd_long = pivot_longer(bd, cols=resp_1:pulse_3, names_to = c(".value", "Tempo"),   names_pattern = "(.+)_(.+)")  
-```
-
-Primeiras linhas do banco de dados depois de transformado.
-
-```{r}
-#| echo: true
-#| warning: false
-#| message: false 
+# Visualizar estrutura
 head(bd_long)
 ```
 
-------------------------------------------------------------------------
+---
 
-## Exercícios
+## 🎯 Parte A: Modelos GEE com Diferentes Distribuições
 
-### a) GEE com a VD "Pulse"
+::: {.callout-tip}
+## Por que Testar Diferentes Distribuições?
 
-Utilize um GEE para verificar o efeito de tempo e grupo sobre os resultados de resp e pulse. Faça 3 modelos para cada variável dependente (com as distribuições Normal, Gamma e Tweedie) e cole aqui apenas as tabelas relevantes para a análise.
+A escolha da distribuição afeta:
+- **Ajuste do modelo** aos dados
+- **Interpretação dos coeficientes**
+- **Precisão das predições**
+- **Validade das inferências**
 
-#### **Distribuição normal**
+Testar múltiplas distribuições ajuda a identificar qual melhor representa seus dados.
+:::
 
-##### Criando o modelo
+---
 
-```{r}
-model_gee_tweedie <- glmmTMB::glmmTMB(formula = resp ~ Tempo*drug + us(1 + Tempo | ID),
-                                      family = gaussian(),# tweedie(var.power = 1.5, link.power = 0),  # Definindo a família Tweedie
-                                      data = bd_long  # Seu conjunto de dados
-  #corstr = "exchangeable"  # Estrutura de correlação (pode ser "independence", "exchangeable", etc.)
-)
+### Modelo 1: Distribuição Normal (Gaussian)
 
-AIC(model_gee_tweedie)
-
-rm(model_gee_tweedie)
-```
+#### Ajuste do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-modelo_gee_pulse_normal <- geeglm(pulse ~ drug + Tempo + drug*Tempo, 
-                           data = bd_long,         
-                           id = ID,                 
-                           family = gaussian, #Distribuição normal      
-                           corstr = "unstructured")
+
+modelo_gee_pulse_normal <- geeglm(
+  pulse ~ drug + Tempo + drug*Tempo,
+  data = bd_long,
+  id = ID,
+  family = gaussian,
+  corstr = "unstructured"
+)
 ```
 
-##### Resumo do modelo e contrastes
+::: {.callout-note collapse="true"}
+## 📊 Quando Usar Distribuição Normal?
+
+**Adequada para:**
+- Variáveis contínuas
+- Distribuição simétrica
+- Sem limite inferior ou superior rígido
+
+**Características:**
+- Link: identidade (padrão)
+- Variância: constante
+- Suporte: $(-\infty, +\infty)$
+:::
+
+---
+
+#### Resultados e Contrastes
 
 ```{r}
+#| echo: true
+
 summary(modelo_gee_pulse_normal)
-emmeans(modelo_gee_pulse_normal, pairwise ~ drug*Tempo)
-
 ```
 
-##### Verificando os pressupostos
+::: {.panel-tabset}
+
+##### Médias Marginais
 
 ```{r}
-# Plotar o diagnóstico do modelo GEE para a variável 'pulse'
+#| echo: true
+
+emmeans(modelo_gee_pulse_normal, 
+        specs = ~drug*Tempo)
+```
+
+##### Comparações Par-a-Par
+
+```{r}
+#| echo: true
+
+emmeans(modelo_gee_pulse_normal, 
+        pairwise ~ drug*Tempo)
+```
+
+:::
+
+---
+
+#### Diagnóstico do Modelo
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-height: 10
+#| fig-width: 12
 
 check_model(modelo_gee_pulse_normal)
 ```
 
-##### Plot dos resultados
+---
+
+#### Visualização dos Resultados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-# Salvando os resultados do modelo em uma variável
+# Calcular médias marginais
+means_ci_normal <- emmeans(modelo_gee_pulse_normal, 
+                           specs = ~drug:Tempo)
 
-means_ci_normal = emmeans(modelo_gee_pulse_normal, specs = ~drug:Tempo)
+# Criar gráfico elegante
+ggplot(as.data.frame(means_ci_normal), 
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(
+    aes(ymin = lower.CL, ymax = upper.CL),
+    width = 0.2,
+    position = position_dodge(0.1)
+  ) +
+  geom_point(
+    position = position_dodge(0.1),
+    size = 4
+  ) +
+  geom_line(
+    position = position_dodge(0.1),
+    linewidth = 1
+  ) +
+  labs(
+    title = "GEE com Distribuição Normal",
+    subtitle = "Médias marginais estimadas com IC 95%",
+    x = "Tempo",
+    y = "Pulso (bpm)",
+    color = "Tratamento"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 15),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_color_brewer(palette = "Set1")
 ```
+
+---
+
+### Modelo 2: Distribuição Gamma
+
+#### Ajuste do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Plotar as médias e intervalos de confiança
 
-ggplot(as.data.frame(means_ci_normal), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
-  geom_point(position = position_dodge(0.8), size = 3) +
-  labs(title = "Distribuição Normal",
-       x = "Tempo",
-       y = "Pulse") +
-  theme_minimal()
+modelo_gee_pulse_gamma <- geeglm(
+  pulse ~ drug + Tempo + drug*Tempo,
+  data = bd_long,
+  id = ID,
+  family = Gamma(link = "identity"),
+  corstr = "unstructured"
+)
 ```
 
-------------------------------------------------------------------------
+::: {.callout-note collapse="true"}
+## 📊 Quando Usar Distribuição Gamma?
 
-#### **Distribuição gamma**
+**Adequada para:**
+- Variáveis contínuas **positivas**
+- Distribuição assimétrica à direita
+- Variância proporcional à média
 
-##### Criando o modelo
+**Características:**
+- Link comum: log ou identity
+- Variância: aumenta com a média
+- Suporte: $(0, +\infty)$
+
+**Exemplos:**
+- Tempo de reação
+- Tempo de sobrevida
+- Concentrações biomarcadores
+:::
+
+---
+
+#### Resultados e Contrastes
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-modelo_gee_pulse_gamma <- geeglm(pulse ~ drug + Tempo + drug*Tempo, 
-                           data = bd_long,         
-                           id = ID,                 
-                           family = Gamma(link = "identity"), #Distribuição Gamma      
-                           corstr = "unstructured")
-```
 
-##### Resumo do modelo e contrastes
-
-```{r}
 summary(modelo_gee_pulse_gamma)
-emmeans(modelo_gee_pulse_gamma, pairwise ~ drug*Tempo)
 ```
 
-##### Verificando os pressupostos
+::: {.panel-tabset}
+
+##### Médias Marginais
 
 ```{r}
-# Plotar o diagnóstico do modelo GEE para a variável 'pulse'
+#| echo: true
+
+emmeans(modelo_gee_pulse_gamma, 
+        specs = ~drug*Tempo)
+```
+
+##### Comparações Par-a-Par
+
+```{r}
+#| echo: true
+
+emmeans(modelo_gee_pulse_gamma, 
+        pairwise ~ drug*Tempo)
+```
+
+:::
+
+---
+
+#### Diagnóstico do Modelo
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-height: 10
+#| fig-width: 12
 
 check_model(modelo_gee_pulse_gamma)
 ```
 
-##### Plot dos resultados
+---
+
+#### Visualização dos Resultados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Salvando os resultados do modelo em uma variável
 
-means_ci_gamma = emmeans(modelo_gee_pulse_gamma, specs = ~drug:Tempo)
+# Calcular médias marginais
+means_ci_gamma <- emmeans(modelo_gee_pulse_gamma, 
+                          specs = ~drug:Tempo)
+
+# Criar gráfico
+ggplot(as.data.frame(means_ci_gamma),
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(
+    aes(ymin = lower.CL, ymax = upper.CL),
+    width = 0.2,
+    position = position_dodge(0.1)
+  ) +
+  geom_point(
+    position = position_dodge(0.1),
+    size = 4
+  ) +
+  geom_line(
+    position = position_dodge(0.1),
+    linewidth = 1
+  ) +
+  labs(
+    title = "GEE com Distribuição Gamma",
+    subtitle = "Médias marginais estimadas com IC 95%",
+    x = "Tempo",
+    y = "Pulso (bpm)",
+    color = "Tratamento"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 15),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_color_brewer(palette = "Set1")
 ```
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-# Plotar as médias e intervalos de confiança
+---
 
-ggplot(as.data.frame(means_ci_gamma), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
-  geom_point(position = position_dodge(0.8), size = 3) +
-  labs(title = "Distribuição Gamma",
-       x = "Tempo",
-       y = "Pulse") +
-  theme_minimal()
-```
+### Modelo 3: Distribuição Tweedie
 
-------------------------------------------------------------------------
+::: {.callout-warning}
+## ⚠️ Implementação Limitada
 
-#### **Distribuição tweedie**
+Atualmente, a função `geeglm()` não suporta nativamente a família Tweedie. Estamos usando `glm()` como alternativa, mas isso **não** captura a estrutura de correlação das medidas repetidas.
 
-##### Criando o modelo
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-modelo_gee_pulse_tweedie <- glm(pulse ~ drug + Tempo + drug*Tempo, 
-                           data = bd_long,
-                          # id = ID, 
-                           family = tweedie(var.power=2, link.power = 0),
-                          contrasts = )
-```
-
-::: callout-warning
-#### Aviso!
-
-Utilizamos a função glm para criar o modelo Tweedie. Estamos trabalhando para criar o modelo com a função GEE. Por hora utilize o SPSS🤮.
+**Recomendações:**
+- Para análises definitivas, use SPSS ou SAS que implementam GEE-Tweedie
+- Considere `glmmTMB::glmmTMB()` como alternativa (modelo misto)
+- Aguarde atualizações do pacote `geepack`
 :::
 
-<!-- ```{r} outra maneira de fazer o modelo tweedie-->
-
-<!-- #| echo: true -->
-
-<!-- #| message: false -->
-
-<!-- #| warning: false -->
-
-<!-- mepsdsgn = svydesign( -->
-
-<!--   id = ~ID, -->
-
-<!--   strata = ~drug, -->
-
-<!--   #weights = ~perwt20f, -->
-
-<!--   data = bd_long, -->
-
-<!--   nest = TRUE) -->
-
-<!-- modelo_gee_pulse_tweedie2 <- svyglm(pulse ~ drug + Tempo + drug*Tempo,  -->
-
-<!--                            mepsdsgn, -->
-
-<!--                           # id = ID,  -->
-
-<!--                            family = tweedie(var.power=2, link.power = 0)) -->
-
-<!-- ``` -->
-
-##### Resumo do modelo e contrastes
+#### Ajuste do Modelo (Limitado)
 
 ```{r}
-summary(modelo_gee_pulse_tweedie)
-emmeans(modelo_gee_pulse_tweedie, pairwise ~ drug*Tempo)
+#| echo: true
+#| message: false
+#| warning: false
 
+modelo_gee_pulse_tweedie <- glm(
+  pulse ~ drug + Tempo + drug*Tempo,
+  data = bd_long,
+  family = tweedie(var.power = 2, link.power = 0)
+)
 ```
 
-##### Verificando os pressupostos
+::: {.callout-note collapse="true"}
+## 📊 Quando Usar Distribuição Tweedie?
+
+**Adequada para:**
+- Dados com **excesso de zeros**
+- Distribuição assimétrica
+- Variância aumenta com a média
+
+**Características:**
+- Parâmetro `var.power`:
+  - 0 = Normal
+  - 1 = Poisson
+  - 2 = Gamma
+  - 1-2 = Distribuições compostas
+- Flexível para diferentes tipos de assimetria
+
+**Exemplos:**
+- Custos médicos (muitos zeros)
+- Precipitação pluviométrica
+- Dados de contagem inflados de zeros
+:::
+
+---
+
+#### Resultados e Contrastes
 
 ```{r}
-# Plotar o diagnóstico do modelo GEE para a variável 'pulse'
+#| echo: true
+
+summary(modelo_gee_pulse_tweedie)
+```
+
+::: {.panel-tabset}
+
+##### Médias Marginais
+
+```{r}
+#| echo: true
+
+emmeans(modelo_gee_pulse_tweedie, 
+        specs = ~drug*Tempo)
+```
+
+##### Comparações Par-a-Par
+
+```{r}
+#| echo: true
+
+emmeans(modelo_gee_pulse_tweedie, 
+        pairwise ~ drug*Tempo)
+```
+
+:::
+
+---
+
+#### Diagnóstico do Modelo
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-height: 10
+#| fig-width: 12
 
 check_model(modelo_gee_pulse_tweedie)
 ```
 
-##### Plot dos resultados
+---
+
+#### Visualização dos Resultados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-# Salvando os resultados do modelo em uma variável
+# Calcular médias marginais
+means_ci_tweedie <- emmeans(modelo_gee_pulse_tweedie, 
+                            specs = ~drug:Tempo)
 
-means_ci_tweedie = emmeans(modelo_gee_pulse_tweedie, specs = ~drug:Tempo)
+# Criar gráfico
+ggplot(as.data.frame(means_ci_tweedie),
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2,
+    position = position_dodge(0.1)
+  ) +
+  geom_point(
+    position = position_dodge(0.1),
+    size = 4
+  ) +
+  geom_line(
+    position = position_dodge(0.1),
+    linewidth = 1
+  ) +
+  labs(
+    title = "GLM com Distribuição Tweedie",
+    subtitle = "Médias marginais estimadas com IC 95% (sem estrutura de correlação)",
+    x = "Tempo",
+    y = "Pulso (bpm)",
+    color = "Tratamento",
+    caption = "Nota: Modelo não captura correlação entre medidas repetidas"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 15),
+    panel.grid.minor = element_blank(),
+    plot.caption = element_text(face = "italic", hjust = 0)
+  ) +
+  scale_color_brewer(palette = "Set1")
 ```
+
+---
+
+## 🎯 Parte B: Comparação de Modelos com QIC
+
+::: {.callout-tip}
+## O que é QIC?
+
+**Quasi-likelihood Information Criterion** é análogo ao AIC, mas para modelos GEE.
+
+**Interpretação:**
+- Menor QIC = melhor modelo
+- Diferença > 2 indica melhoria substancial
+- Penaliza complexidade do modelo
+
+**Componentes:**
+- QIC: Informação geral
+- QICu: Versão não ajustada
+- Quasi Lik: Quasi-verossimilhança
+:::
+
+### Cálculo do QIC
 
 ```{r}
 #| echo: true
-#| message: false
 #| warning: false
-# Plotar as médias e intervalos de confiança
 
-ggplot(as.data.frame(means_ci_tweedie), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL), width = 0.2, position = position_dodge(0.8)) +
-  geom_point(position = position_dodge(0.8), size = 3) +
-  labs(title = "Distribuição Tweedie",
-       x = "Tempo",
-       y = "Pulse") +
-  theme_minimal()
+# Calcular QIC para modelos GEE
+qic_normal <- QIC(modelo_gee_pulse_normal)
+qic_gamma <- QIC(modelo_gee_pulse_gamma)
+
+# Criar tabela comparativa
+tabela_qic <- data.frame(
+  Modelo = c("Normal", "Gamma"),
+  QIC = c(qic_normal[1], qic_gamma[1]),
+  QICu = c(qic_normal[2], qic_gamma[2]),
+  QuasiLik = c(qic_normal[3], qic_gamma[3])
+)
+
+# Ordenar por QIC
+tabela_qic <- tabela_qic[order(tabela_qic$QIC), ]
+
+# Adicionar ranking
+tabela_qic$Ranking <- 1:nrow(tabela_qic)
+
+# Exibir resultado
+knitr::kable(
+  tabela_qic,
+  digits = 2,
+  caption = "Comparação de Modelos via QIC (menor é melhor)"
+)
 ```
 
-------------------------------------------------------------------------
+::: {.callout-warning}
+## ⚠️ Limitação do QIC
 
-### b) QIC
+A função `QIC()` **não funciona** com modelos `glm()` ou `lm()`, apenas com `geeglm()`.
 
-Compare cada um dos modelos com diferentes distribuições utilizando o QIC (Quasi Likehood Independence Criterion). Os modelos têm diferença entre si nos resultados?
-
-::: callout-note
-#### Nota
-
-A função `QIC()` não funciona para modelos gerados com as funções glm e lm, apenas com o GEE. Resolveremos em breve! Por hora utilize o SPSS🤮.
+Para o modelo Tweedie, você precisará:
+- Usar software específico (SPSS, SAS)
+- Aguardar implementação em R
+- Comparar apenas Normal vs Gamma por enquanto
 :::
 
+---
+
+### Interpretação dos Resultados
+
+::: {.panel-tabset}
+
+#### Diferenças Substantivas
+
+**Regra prática:**
+- ΔqIC < 2: Modelos equivalentes
+- ΔqIC 2-10: Diferença moderada
+- ΔqIC > 10: Diferença substancial
+
 ```{r}
-QIC(modelo_gee_pulse_normal)
-QIC(modelo_gee_pulse_gamma)
-#QIC(modelo_gee_pulse_tweedie)
+#| echo: true
+
+# Calcular diferenças
+delta_qic <- abs(diff(tabela_qic$QIC))
+
+cat("Diferença QIC:", round(delta_qic, 2), "\n")
+
+if (delta_qic < 2) {
+  cat("→ Modelos são equivalentes\n")
+} else if (delta_qic < 10) {
+  cat("→ Diferença moderada - considere outros fatores\n")
+} else {
+  cat("→ Diferença substancial - prefira modelo com menor QIC\n")
+}
 ```
 
-### c) Sumarizando os resultados
+#### Outros Critérios
 
-::: callout-note
-#### Nota
+Além do QIC, considere:
 
-A função `report()` não funciona para modelos gerados com as funções GEE. Aproveite para treinar a escrita no formato de uma publicação acadêmica.
+1. **Pressupostos teóricos**
+   - Qual distribuição faz sentido para a variável?
+   - Pulse tem limite inferior (> 0)?
+
+2. **Diagnósticos visuais**
+   - Qual modelo tem melhores diagnósticos?
+   - Resíduos mais bem comportados?
+
+3. **Interpretabilidade**
+   - Coeficientes fazem sentido?
+   - Intervalos de confiança plausíveis?
+
+4. **Validação cruzada**
+   - Como o modelo prediz novos dados?
+
 :::
 
-#### Resutados com distribuição Tweedie
+---
+
+## 📝 Parte C: Sumarizando Resultados
+
+::: {.callout-warning}
+## Limitação do `report()`
+
+A função `report()` **não funciona** para modelos GEE (`geeglm`). 
+
+**Funciona apenas para:** `glm`, `lm`, `lme`, etc.
+
+Aproveite para **treinar escrita científica**! 
+:::
+
+### Exemplo de Relatório - Modelo Tweedie
 
 ```{r}
+#| echo: true
+
 report(modelo_gee_pulse_tweedie)
 ```
 
-## Considerações finais
+---
 
-Realizamos todas as análises para a VD Pulse! Agora faça as análises para a variável Reps!
+### Template para Redação Manual
 
-::: callout-tip
-#### Dica!
+::: {.callout-tip collapse="true"}
+## 📝 Estrutura Sugerida para Resultados
 
-Não faça apenas um copy/paste dos scripts! Treine escrever os códigos e lembre-se de mudar o nome das variáveis do modelo para que não ocorra nenhum conflito! Compare seus resultados com os da aula prática.
+**Para GEE, estruture seus resultados assim:**
+
+---
+
+**Análise de Medidas Repetidas via GEE**
+
+Utilizamos Equações de Estimação Generalizadas (GEE) com estrutura de correlação não-estruturada para modelar a trajetória de pulso ao longo de três momentos de avaliação (Tempo 1, 2, 3), comparando grupo experimental (droga) e controle (placebo).
+
+**Comparação de Distribuições**
+
+Testamos três especificações de distribuição:
+- Gaussiana (Normal)
+- Gamma
+- Tweedie (var.power = 2)
+
+A comparação via QIC indicou que [MODELO X] apresentou melhor ajuste (QIC = X.XX), seguido por [MODELO Y] (QIC = Y.YY, ΔQIC = Z.ZZ).
+
+**Resultados Principais**
+
+No modelo [ESCOLHIDO]:
+
+*Efeito de Grupo:*
+- O grupo que recebeu droga apresentou [maior/menor] pulso comparado ao placebo (β = X.XX, EP = Y.YY, p = Z.ZZ)
+
+*Efeito de Tempo:*
+- Observou-se [aumento/redução/estabilidade] no pulso ao longo do tempo (β_Tempo2 = X.XX, p = Y.YY; β_Tempo3 = A.AA, p = B.BB)
+
+*Interação Grupo × Tempo:*
+- [Houve/Não houve] interação significativa, indicando que [INTERPRETAÇÃO]
+
+**Médias Estimadas**
+
+As médias marginais estimadas revelaram que:
+- No Tempo 1: Droga M = X.X (IC95% Y.Y-Z.Z), Placebo M = A.A (IC95% B.B-C.C)
+- No Tempo 2: [continuar...]
+- No Tempo 3: [continuar...]
+
+**Conclusão**
+
+[Resumo dos achados principais e implicações]
+
+---
 :::
 
-## Lista 2 resolvida no SPSS
+---
+
+## 🎯 Desafio: Análise da Variável "Resp"
+
+::: {.callout-important}
+## Sua Vez!
+
+Agora replique **todas as análises** para a variável **"resp"** (respiração):
+
+**Checklist:**
+- [ ] Modelo GEE com distribuição Normal
+- [ ] Modelo GEE com distribuição Gamma
+- [ ] Modelo GLM com distribuição Tweedie
+- [ ] Diagnósticos de cada modelo
+- [ ] Visualizações com ggplot2
+- [ ] Comparação via QIC
+- [ ] Interpretação dos resultados
+- [ ] Redação científica dos achados
+:::
+
+::: {.callout-tip}
+## 💡 Dica Importante
+
+**Não faça apenas copy/paste!**
+
+1. **Digite os códigos** para treinar sintaxe
+2. **Renomeie variáveis** apropriadamente:
+   - `modelo_gee_pulse_normal` → `modelo_gee_resp_normal`
+   - `means_ci_normal` → `means_ci_resp_normal`
+3. **Ajuste labels** nos gráficos (Pulse → Resp)
+4. **Compare** seus resultados com a aula prática
+5. **Reflita** sobre diferenças entre as variáveis
+:::
+
+---
+
+## 📚 Material Complementar
+
+### Aula em Vídeo (SPSS)
 
 {{< video https://www.youtube.com/watch?v=qd0qF2lRqIs title='GEE - Generalized Estimated Equations - Aula Prática #2 (SPSS)' >}}
 
-## Referências
+---
 
-## Versões dos pacotes
+### Aprofundamento Teórico
+
+::: {.callout-note collapse="true"}
+## 📖 Entendendo Distribuições
+
+**Normal (Gaussian):**
+- Clássica, simétrica, bem conhecida
+- Assume variância constante
+- Adequada para muitas variáveis contínuas
+
+**Gamma:**
+- Assimétrica à direita
+- Variância aumenta com a média
+- Ideal para tempos, concentrações
+
+**Tweedie:**
+- Família flexível entre Poisson e Gamma
+- `var.power` controla forma:
+  - 0: Normal
+  - 1: Poisson  
+  - 2: Gamma
+  - 1 < p < 2: Distribuições compostas
+- Útil para dados com zeros
+
+**Como escolher?**
+1. Examine distribuição dos dados (histogramas)
+2. Considere natureza da variável (positiva? contínua?)
+3. Teste múltiplas e compare QIC
+4. Verifique pressupostos (diagnósticos)
+:::
+
+---
+
+### Estruturas de Correlação GEE
+
+::: {.callout-note collapse="true"}
+## 🔗 Tipos de `corstr`
+
+**Independence:**
+- Assume observações independentes
+- Mais simples, menos realista
+
+**Exchangeable:**
+- Correlação constante entre momentos
+- Assume simetria composta
+
+**AR(1) - Autorregressiva:**
+- Correlação diminui com distância temporal
+- Adequada para séries temporais
+
+**Unstructured:**
+- Sem restrições, mais flexível
+- Estima todas as correlações
+- Requer mais dados
+
+**Como escolher?**
+- Depende da estrutura temporal
+- `unstructured` é mais flexível mas menos eficiente
+- AR(1) para medições igualmente espaçadas
+- Teste e compare resultados
+:::
+
+---
+
+## 🔧 Informações de Sessão
 
 ```{r}
+#| echo: true
+
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 2
+
+Nesta lista você:
+
+✅ Ajustou modelos GEE com **três distribuições diferentes**  
+✅ Aprendeu a **comparar modelos** via QIC  
+✅ Criou **visualizações profissionais** com ggplot2  
+✅ Interpretou **diagnósticos** de modelos complexos  
+✅ Praticou **redação científica** de resultados  
+
+**Próximos passos:**
+- Complete análises para variável "resp"
+- Compare resultados entre pulse e resp
+- Reflita sobre qual distribuição é mais adequada
+- Prepare-se para Lista 3: Modelos Mistos!
+:::
