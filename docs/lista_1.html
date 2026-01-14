@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Técnicas e Métodos de Pesquisa no R - 1&nbsp; Lista 1 - GLM, GEE e GMM</title>
+<title>1&nbsp; Lista 1: GLM, GEE e GMM – Técnicas e Métodos de Pesquisa no R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,13 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -106,12 +141,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_1.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">Modelos Lineares</a></li><li class="breadcrumb-item"><a href="./lista_1.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1: GLM, GEE e GMM</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -121,8 +156,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./stickers/curso2_clean.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
         <div class="sidebar-tools-main">
@@ -144,14 +182,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introdução</span></a>
+ <span class="menu-text">Bem-vindo</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./lms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Modelos Lineares</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -159,7 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1: GLM, GEE e GMM</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -192,7 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./survival.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SURVIVAL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -215,7 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ARIMA</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -232,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./SEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SEM</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -254,42 +292,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#glm" id="toc-glm" class="nav-link active" data-scroll-target="#glm"><span class="header-section-number">1.1</span> GLM</a>
+  <li><a href="#dados-e-materiais" id="toc-dados-e-materiais" class="nav-link active" data-scroll-target="#dados-e-materiais"><span class="header-section-number">1.1</span> 📥 Dados e Materiais</a></li>
+  <li><a href="#parte-1-glm-modelo-linear-geral" id="toc-parte-1-glm-modelo-linear-geral" class="nav-link" data-scroll-target="#parte-1-glm-modelo-linear-geral"><span class="header-section-number">1.2</span> 📊 Parte 1: GLM (Modelo Linear Geral)</a>
   <ul class="collapse">
-  <li><a href="#análise-para-a-variável-resp" id="toc-análise-para-a-variável-resp" class="nav-link" data-scroll-target="#análise-para-a-variável-resp">Análise para a Variável “resp”</a></li>
-  <li><a href="#análise-para-a-variável-pulse" id="toc-análise-para-a-variável-pulse" class="nav-link" data-scroll-target="#análise-para-a-variável-pulse">Análise para a Variável “pulse”</a></li>
+  <li><a href="#modelo-para-resp" id="toc-modelo-para-resp" class="nav-link" data-scroll-target="#modelo-para-resp">Modelo para “Resp”</a></li>
+  <li><a href="#modelo-para-pulse" id="toc-modelo-para-pulse" class="nav-link" data-scroll-target="#modelo-para-pulse">Modelo para “Pulse”</a></li>
   </ul></li>
-  <li><a href="#gee" id="toc-gee" class="nav-link" data-scroll-target="#gee"><span class="header-section-number">1.2</span> GEE</a>
+  <li><a href="#parte-2-gee-equações-de-estimação-generalizadas" id="toc-parte-2-gee-equações-de-estimação-generalizadas" class="nav-link" data-scroll-target="#parte-2-gee-equações-de-estimação-generalizadas"><span class="header-section-number">1.3</span> 📊 Parte 2: GEE (Equações de Estimação Generalizadas)</a>
   <ul class="collapse">
-  <li><a href="#análise-para-a-variável-resp-1" id="toc-análise-para-a-variável-resp-1" class="nav-link" data-scroll-target="#análise-para-a-variável-resp-1">Análise para a Variável “Resp”</a></li>
-  <li><a href="#análise-para-a-variável-pulse-1" id="toc-análise-para-a-variável-pulse-1" class="nav-link" data-scroll-target="#análise-para-a-variável-pulse-1">Análise para a Variável “Pulse”</a></li>
+  <li><a href="#modelo-gee-para-resp" id="toc-modelo-gee-para-resp" class="nav-link" data-scroll-target="#modelo-gee-para-resp">Modelo GEE para “Resp”</a></li>
+  <li><a href="#modelo-gee-para-pulse" id="toc-modelo-gee-para-pulse" class="nav-link" data-scroll-target="#modelo-gee-para-pulse">Modelo GEE para “Pulse”</a></li>
   </ul></li>
-  <li><a href="#gmm" id="toc-gmm" class="nav-link" data-scroll-target="#gmm"><span class="header-section-number">1.3</span> GMM</a>
+  <li><a href="#parte-3-gmm-modelos-mistos-generalizados" id="toc-parte-3-gmm-modelos-mistos-generalizados" class="nav-link" data-scroll-target="#parte-3-gmm-modelos-mistos-generalizados"><span class="header-section-number">1.4</span> 📊 Parte 3: GMM (Modelos Mistos Generalizados)</a>
   <ul class="collapse">
-  <li><a href="#análise-para-a-variável-resp-2" id="toc-análise-para-a-variável-resp-2" class="nav-link" data-scroll-target="#análise-para-a-variável-resp-2">Análise para a Variável “resp”</a></li>
-  <li><a href="#análise-para-a-variável-pulse-2" id="toc-análise-para-a-variável-pulse-2" class="nav-link" data-scroll-target="#análise-para-a-variável-pulse-2">Análise para a Variável “Pulse”</a></li>
+  <li><a href="#modelo-gmm-para-resp" id="toc-modelo-gmm-para-resp" class="nav-link" data-scroll-target="#modelo-gmm-para-resp">Modelo GMM para “Resp”</a></li>
+  <li><a href="#modelo-gmm-para-pulse" id="toc-modelo-gmm-para-pulse" class="nav-link" data-scroll-target="#modelo-gmm-para-pulse">Modelo GMM para “Pulse”</a></li>
   </ul></li>
-  <li><a href="#violação-dos-pressupostos-o-que-pode-ser-feito" id="toc-violação-dos-pressupostos-o-que-pode-ser-feito" class="nav-link" data-scroll-target="#violação-dos-pressupostos-o-que-pode-ser-feito"><span class="header-section-number">1.4</span> Violação dos pressupostos: o que pode ser feito?</a></li>
-  <li><a href="#conclusão" id="toc-conclusão" class="nav-link" data-scroll-target="#conclusão"><span class="header-section-number">1.5</span> Conclusão</a></li>
-  <li><a href="#lista-1-resolvida-no-spss" id="toc-lista-1-resolvida-no-spss" class="nav-link" data-scroll-target="#lista-1-resolvida-no-spss"><span class="header-section-number">1.6</span> Lista 1 resolvida no SPSS</a></li>
-  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências"><span class="header-section-number">1.7</span> Referências</a></li>
-  <li><a href="#versões-dos-pacotes" id="toc-versões-dos-pacotes" class="nav-link" data-scroll-target="#versões-dos-pacotes"><span class="header-section-number">1.8</span> Versões dos pacotes</a></li>
+  <li><a href="#sec-violacoes" id="toc-sec-violacoes" class="nav-link" data-scroll-target="#sec-violacoes"><span class="header-section-number">1.5</span> 🔧 Violação dos Pressupostos: O Que Fazer?</a></li>
+  <li><a href="#conclusão" id="toc-conclusão" class="nav-link" data-scroll-target="#conclusão"><span class="header-section-number">1.6</span> 📝 Conclusão</a></li>
+  <li><a href="#recursos-complementares" id="toc-recursos-complementares" class="nav-link" data-scroll-target="#recursos-complementares"><span class="header-section-number">1.7</span> 📚 Recursos Complementares</a>
+  <ul class="collapse">
+  <li><a href="#aula-em-vídeo-spss" id="toc-aula-em-vídeo-spss" class="nav-link" data-scroll-target="#aula-em-vídeo-spss">Aula em Vídeo (SPSS)</a></li>
+  <li><a href="#referências-recomendadas" id="toc-referências-recomendadas" class="nav-link" data-scroll-target="#referências-recomendadas">Referências Recomendadas</a></li>
+  </ul></li>
+  <li><a href="#informações-de-sessão" id="toc-informações-de-sessão" class="nav-link" data-scroll-target="#informações-de-sessão"><span class="header-section-number">1.8</span> 🔧 Informações de Sessão</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">Modelos Lineares</a></li><li class="breadcrumb-item"><a href="./lista_1.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1: GLM, GEE e GMM</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1: GLM, GEE e GMM</span></h1>
 </div>
 
 
@@ -302,39 +344,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
 
-<p>Baixe o banco <strong>“<a href="https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing">new drug respiratory&amp;pulse</a>”.</strong> O objetivo desta primeira aula prática será entender como os testes são realizados no R. A comparação entre os diferentes métodos será objeto de listas de exercícios subsequentes.</p>
-<section id="glm" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="glm"><span class="header-section-number">1.1</span> GLM</h2>
-<!-- **Descrição do General Linear Model (GLM) para Medidas Repetidas:**\ -->
-<!-- O GLM para medidas repetidas é uma técnica estatística que permite analisar dados em que as mesmas unidades (sujeitos ou grupos) são medidas em várias ocasiões ou sob diferentes condições. Ele é usado para investigar como as mudanças nas variáveis dependentes são afetadas por fatores independentes, levando em consideração a estrutura repetida dos dados. -->
-<!-- **Pressupostos do GLM para Medidas Repetidas:**\ -->
-<!-- Os pressupostos comuns do GLM para medidas repetidas incluem: -->
-<!-- 1.  Esfericidade: Assume-se que a matriz de variância-covariância das diferenças entre os níveis de um fator (ou condição) seja aproximadamente igual, o que é chamado de "esfericidade." A falta de esfericidade pode afetar os resultados. -->
-<!-- 2.  Normalidade dos resíduos: Como em muitas análises estatísticas, assume-se que os resíduos seguem uma distribuição normal. -->
-<!-- 3.  Linearidade: A relação entre as variáveis independentes e dependentes deve ser linear. -->
-<!-- **Vantagens do GLM para Medidas Repetidas:** -->
-<!-- -   Leva em consideração a estrutura repetida dos dados: Esse modelo é especialmente útil quando você tem medidas repetidas dentro dos mesmos sujeitos ou grupos. -->
-<!-- -   Permite investigar efeitos ao longo do tempo ou condições: É adequado para estudar como as mudanças em uma variável dependente são afetadas por fatores independentes em várias ocasiões ou condições. -->
-<!-- -   Pode incluir fatores interativos: É possível analisar interações entre fatores em um design experimental de medidas repetidas. -->
-<!-- **Desvantagens do GLM para Medidas Repetidas:** -->
-<!-- -   Sensibilidade à violação da esfericidade: A falta de esfericidadepode levar a resultados imprecisos, e correções como a correção de Greenhouse-Geisser podem ser necessárias. -->
-<!-- -   Complexidade da interpretação: Em designs com muitos níveis de fatores ou interações, a interpretação dos resultados pode se tornar complexa. -->
-<!-- -   Requer planejamento cuidadoso: A coleta de dados em um design de medidas repetidas requer planejamento cuidadoso e consideração dos efeitos de confusão. -->
-<!-- **Situações em que usar o GLM para Medidas Repetidas:** -->
-<!-- -   Experimentos com medidas repetidas: É apropriado para análise de experimentos onde as mesmas unidades são medidas em várias ocasiões ou sob diferentes condições. -->
-<!-- -   Estudos longitudinais: É útil para analisar dados longitudinais em que as mesmas medidas são coletadas em intervalos de tempo diferentes. -->
-<!-- -   Avaliação de tratamentos ou intervenções ao longo do tempo: Permite avaliar como um tratamento ou intervenção afeta as mudanças nas variáveis dependentes ao longo do tempo. -->
-<!-- O GLM para medidas repetidas é uma ferramenta poderosa para análise de dados com estrutura repetida, mas requer atenção aos pressupostos e planejamento adequado para a coleta de dados. É amplamente utilizado em pesquisas nas áreas de psicologia, medicina, ciências sociais e outras disciplinas onde medidas repetidas são comuns. -->
-<section id="análise-para-a-variável-resp" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-resp">Análise para a Variável “resp”</h3>
-<p>Vamos ajustar o seguinte modelo de medidas repetidas para a variável dependente “resp”:</p>
-<p><span class="math display">\[ resp = \beta_0 + \beta_1drug + \beta_2Tempo + \beta_3drug*Tempo + \varepsilon \]</span></p>
+
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Objetivo da Lista
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nesta primeira lista prática, você aprenderá a implementar e interpretar três abordagens fundamentais para análise de medidas repetidas: <strong>GLM</strong>, <strong>GEE</strong> e <strong>GMM</strong>. O foco é compreender como cada método funciona no R, com comparações detalhadas em listas subsequentes.</p>
+</div>
+</div>
+<hr>
+<section id="dados-e-materiais" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="dados-e-materiais"><span class="header-section-number">1.1</span> 📥 Dados e Materiais</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Download Necessário
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Faça o download do banco de dados <strong>“<a href="https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing">new drug respiratory&amp;pulse</a>”</strong> e salve na pasta do seu projeto.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="parte-1-glm-modelo-linear-geral" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="parte-1-glm-modelo-linear-geral"><span class="header-section-number">1.2</span> 📊 Parte 1: GLM (Modelo Linear Geral)</h2>
+<section id="modelo-para-resp" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-para-resp">Modelo para “Resp”</h3>
+<p>Vamos ajustar um modelo de medidas repetidas para a variável respiratória:</p>
+<p><span class="math display">\[
+\text{resp} = \beta_0 + \beta_1\text{drug} + \beta_2\text{Tempo} + \beta_3\text{drug} \times \text{Tempo} + \varepsilon
+\]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>modelo1_resp <span class="ot">=</span> <span class="fu">lm</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, <span class="at">data =</span> bd_long) </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo1_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>modelo1_resp <span class="ot">&lt;-</span> <span class="fu">lm</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> bd_long)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo1_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -360,90 +417,153 @@ Multiple R-squared:  0.4559,    Adjusted R-squared:  0.3652
 F-statistic: 5.027 on 5 and 30 DF,  p-value: 0.001836</code></pre>
 </div>
 </div>
-<p>Como houve diferença apenas entre os grupos que receberam a droga e o placebo, não vamos realizar o post hoc</p>
-<section id="pressupostos-do-modelo-lmresp" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo-lmresp">Pressupostos do modelo lm(resp)</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"pp_check"</span>, <span class="st">"linearity"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+📖 Interpretando os Coeficientes
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <ul>
-<li><p><strong>Posterior Predictive Checks:</strong> utilizadas para identificar discrepâncias sistemáticas entre dados reais e simulados, auxiliando a avaliar se o tipo de modelo (família de distribuição) se ajusta adequadamente aos dados.</p></li>
-<li><p><strong>Linearity Assumption:</strong> o gráfico de Linearidade verifica a suposição de relação linear. No entanto, a dispersão dos pontos também indica possíveis heterocedasticidades (ou seja, variância não constante, daí o termo “ncv” para este gráfico), mostrando se os resíduos têm padrões não lineares. Esse gráfico ajuda a observar se os preditores têm uma relação não linear com o resultado, indicada aproximadamente pela linha de referência. Uma linha reta e horizontal sugere que a especificação do modelo parece estar adequada. Contudo, se a linha for em forma de U, alguns preditores provavelmente devem ser modelados como termos quadráticos.</p></li>
+<li><strong>Intercept:</strong> Valor médio de resp no grupo referência (placebo) no tempo 1</li>
+<li><strong>drug:</strong> Diferença entre tratamento e placebo no tempo 1</li>
+<li><strong>Tempo:</strong> Mudança ao longo do tempo no grupo placebo</li>
+<li><strong>drug:Tempo:</strong> Como o efeito da droga muda ao longo do tempo (interação)</li>
 </ul>
+<p><strong>Significância estatística</strong> é indicada pelos valores-p na coluna <code>Pr(&gt;|t|)</code>.</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="diagnóstico-do-modelo" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo">Diagnóstico do Modelo</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Predição e Linearidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Homogeneidade e Outliers</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Colinearidade e Normalidade</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"homogeneity"</span>, <span class="st">"outliers"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"pp_check"</span>, <span class="st">"linearity"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<ul>
-<li><p><strong>Homogeneity of Variance:</strong> verifica a suposição de variância igual (homocedasticidade). O padrão desejado é que os pontos se espalhem igualmente acima e abaixo de uma linha reta horizontal, sem desvios aparentes.</p></li>
-<li><p><strong>Influential Observations</strong>: identifica observações influentes. Se algum ponto estiver fora da distância de Cook (linhas tracejadas), é considerado uma observação influente.</p></li>
-</ul>
+</div>
+<p><strong>Posterior Predictive Check:</strong> Compara dados observados (verde) com simulações do modelo (azul). Boa sobreposição indica ajuste adequado.</p>
+<p><strong>Linearidade:</strong> Linha horizontal sugere relação linear apropriada. Padrões em U indicam necessidade de termos quadráticos.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"vif"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"homogeneity"</span>, <span class="st">"outliers"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p><strong>Multicollinearity:</strong> verifica possíveis problemas de multicolinearidade entre os preditores. Em resumo, a multicolinearidade significa que, uma vez conhecido o efeito de um preditor, o valor de conhecer o outro preditor é relativamente baixo. Isso pode ocorrer quando uma terceira variável não observada tem um efeito causal em cada um dos dois preditores associados ao resultado. Nesses casos, a relação relevante seria entre a variável não observada e o resultado.</p>
-<p><strong>Normality of Residuals:</strong> determina se os resíduos do modelo de regressão têm uma distribuição normal. Geralmente, os pontos devem seguir a linha. Desvios (principalmente nas caudas) indicam que o modelo não prevê bem o resultado para a faixa que apresenta maiores desvios da linha. Para modelos lineares generalizados, é exibido um gráfico Q-Q meio-normal dos resíduos padronizados de desvio absoluto, mas a interpretação do gráfico permanece a mesma.</p>
+</div>
+<p><strong>Homogeneidade:</strong> Pontos devem se distribuir uniformemente. Padrões (cone, curva) indicam heterocedasticidade.</p>
+<p><strong>Observações Influentes:</strong> Pontos fora das linhas tracejadas (Distância de Cook) são observações influentes que merecem investigação.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp, </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"vif"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>VIF (Variance Inflation Factor):</strong> - VIF &lt; 5: Sem problemas - VIF 5-10: Colinearidade moderada - VIF &gt; 10: Colinearidade severa</p>
+<p><strong>Normalidade dos Resíduos:</strong> Pontos devem seguir a linha diagonal. Desvios nas caudas indicam problemas de predição nesses extremos.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+⚠️ Avaliação dos Pressupostos
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Este modelo apresenta violações em diversos pressupostos. Veja a <a href="#sec-violacoes">seção de soluções</a> ao final deste capítulo para estratégias de correção.</p>
+</div>
+</div>
+<hr>
 </section>
-<section id="conclusão-sobre-os-pressupostos" class="level4">
-<h4 class="anchored" data-anchor-id="conclusão-sobre-os-pressupostos">Conclusão sobre os pressupostos</h4>
-<p>Fica nítido que o modelo violou diversos pressupostos. Ao fim do capítulo você encontrará uma lista de ações que podem ser tomadas para cada uma das violações do modelo. Caso tudo mais falhe, apenas aceite que você tem um modelo ruim.</p>
+<section id="visualização-completa" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-completa">Visualização Completa</h4>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Tudo em um painel só!
+💡 Painel Completo de Diagnósticos
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Você pode utilizar a função <code>check_model()</code> sem especificar o parâmetro check. O resultado é um único painel com todas as análises. Nos exemplos anteriores os plots apareceram separados por questões didáticas e de formatação. Veja abaixo como fica o plot em painel.</p>
+<p>Use <code>check_model()</code> sem especificar <code>check</code> para ver todos os diagnósticos em um único painel:</p>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
 </div>
 </div>
+</div>
+<hr>
 </section>
-<section id="plot-do-modelo-lmresp" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-lmresp">Plot do modelo lm(resp)</h4>
-<p>Agora vamos fazer um plot do modelo.</p>
+<section id="visualização-do-modelo" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo">Visualização do Modelo</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo1_resp, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>O código <code>visualize(modelo1_resp, plot = "model")</code> usa a função <code>visualize</code> do pacote <code>flexplot</code> para criar um gráfico que visualiza o modelo estatístico denominado <code>modelo1_resp</code>. Este gráfico é uma representação visual do modelo, ajudando a compreender a relação entre as variáveis independentes e a variável dependente no contexto da análise estatística em questão.</p>
+</div>
+<hr>
 </section>
-<section id="escrevendo-os-resultados-com-a-função-report" class="level4">
-<h4 class="anchored" data-anchor-id="escrevendo-os-resultados-com-a-função-report">Escrevendo os Resultados com a função <code>report()</code></h4>
-<div class="callout callout-style-default callout-tip callout-titled" title="Grandes poderes...">
+<section id="relatório-automatizado" class="level4">
+<h4 class="anchored" data-anchor-id="relatório-automatizado">Relatório Automatizado</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Grandes poderes…
+⚡ Poder do <code>report()</code>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Podemos utilizar a função <code>report()</code> do pacote <code>easystat</code> que gerar um texto formatado para publicação e em inglês com os principais resultados de diversos modelos lineares! Com isso conseguimos diminuir erros de digitação, confusão com os estimadores e uma maior reprodutibilidade. Mas lembre-se! É <strong>fundamental</strong> você treinar como escrever os resultados. Use o poder do <code>report()</code> com sabedoria e sempre revise o texto gerado!</p>
+<p>A função <code>report()</code> do pacote <code>easystats</code> gera texto formatado para publicação em inglês, reduzindo erros de digitação e aumentando reprodutibilidade.</p>
+<p><strong>Importante:</strong> Use com sabedoria! Sempre revise e compreenda os resultados antes de usar em publicações.</p>
 </div>
 </div>
-</section>
-<section id="resultados" class="level4">
-<h4 class="anchored" data-anchor-id="resultados">Resultados</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo1_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -475,21 +595,28 @@ version of the dataset. 95% Confidence Intervals (CIs) and p-values were
 computed using a Wald t-distribution approximation.</code></pre>
 </div>
 </div>
+<hr>
 </section>
 </section>
-<section id="análise-para-a-variável-pulse" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-pulse">Análise para a Variável “pulse”</h3>
-<p>Agora, ajustaremos o mesmo modelo para a variável dependente “pulse”:</p>
-<p><span class="math display">\[ pulse= \beta_0 + \beta_1drug + \beta_2Tempo + \beta_3drug*Tempo + \varepsilon \]</span></p>
+<section id="modelo-para-pulse" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-para-pulse">Modelo para “Pulse”</h3>
+<p>Agora ajustaremos o mesmo modelo para a variável de pulso:</p>
+<p><span class="math display">\[
+\text{pulse} = \beta_0 + \beta_1\text{drug} + \beta_2\text{Tempo} + \beta_3\text{drug} \times \text{Tempo} + \varepsilon
+\]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustando o modelo </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>modelo1_pulse <span class="ot">=</span> <span class="fu">glm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, <span class="at">data =</span> bd_long) </span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>modelo1_pulse <span class="ot">&lt;-</span> <span class="fu">lm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> bd_long)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo1_pulse) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo1_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-glm(formula = pulse ~ drug + Tempo + drug * Tempo, data = bd_long)
+lm(formula = pulse ~ drug + Tempo + drug * Tempo, data = bd_long)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.20000 -0.08333  0.00000  0.08750  0.18333 
 
 Coefficients:
                    Estimate Std. Error t value Pr(&gt;|t|)    
@@ -502,103 +629,125 @@ drugPlacebo:Tempo3  0.03333    0.08777   0.380    0.707
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-(Dispersion parameter for gaussian family taken to be 0.01155556)
-
-    Null deviance: 2.89889  on 35  degrees of freedom
-Residual deviance: 0.34667  on 30  degrees of freedom
-AIC: -50.981
-
-Number of Fisher Scoring iterations: 2</code></pre>
+Residual standard error: 0.1075 on 30 degrees of freedom
+Multiple R-squared:  0.8804,    Adjusted R-squared:  0.8605 
+F-statistic: 44.17 on 5 and 30 DF,  p-value: 6.029e-13</code></pre>
 </div>
 </div>
-<p><em>Descrição dos resultados</em></p>
-<section id="pressupostos-do-modelo" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo">Pressupostos do modelo</h4>
+<hr>
+<section id="diagnóstico-do-modelo-1" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo-1">Diagnóstico do Modelo</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Predição e Linearidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Homogeneidade e Outliers</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Colinearidade e Normalidade</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"pp_check"</span>, <span class="st">"linearity"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"pp_check"</span>, <span class="st">"linearity"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"homogeneity"</span>, <span class="st">"outliers"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"homogeneity"</span>, <span class="st">"outliers"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"vif"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo1_pulse, </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"vif"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>A interpretação dos resultados é a mesma para o modelo com a variável resp.</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="plot-do-modelo-lmpulse" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-lmpulse">Plot do modelo lm(pulse)</h4>
-<p>Agora vamos fazer um plot do modelo.</p>
+<section id="visualização-do-modelo-1" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo-1">Visualização do Modelo</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo1_pulse, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="resultados-1" class="level4">
-<h4 class="anchored" data-anchor-id="resultados-1">Resultados</h4>
+<section id="relatório-automatizado-1" class="level4">
+<h4 class="anchored" data-anchor-id="relatório-automatizado-1">Relatório Automatizado</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo1_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>We fitted a linear model (estimated using ML) to predict pulse with drug and
-Tempo (formula: pulse ~ drug + Tempo + drug * Tempo). The model's explanatory
-power is substantial (R2 = 0.88). The model's intercept, corresponding to drug
-= New Drug and Tempo = 1, is at 2.20 (95% CI [2.11, 2.29], t(30) = 50.13, p &lt;
-.001). Within this model:
+<pre><code>We fitted a linear model (estimated using OLS) to predict pulse with drug and
+Tempo (formula: pulse ~ drug + Tempo + drug * Tempo). The model explains a
+statistically significant and substantial proportion of variance (R2 = 0.88,
+F(5, 30) = 44.17, p &lt; .001, adj. R2 = 0.86). The model's intercept,
+corresponding to drug = New Drug and Tempo = 1, is at 2.20 (95% CI [2.11,
+2.29], t(30) = 50.13, p &lt; .001). Within this model:
 
   - The effect of drug [Placebo] is statistically significant and positive (beta
-= 0.47, 95% CI [0.35, 0.59], t(30) = 7.52, p &lt; .001; Std. beta = 1.62, 95% CI
-[1.20, 2.04])
+= 0.47, 95% CI [0.34, 0.59], t(30) = 7.52, p &lt; .001; Std. beta = 1.62, 95% CI
+[1.18, 2.06])
   - The effect of Tempo [2] is statistically non-significant and positive (beta =
-0.02, 95% CI [-0.10, 0.14], t(30) = 0.27, p = 0.788; Std. beta = 0.06, 95% CI
-[-0.36, 0.48])
+0.02, 95% CI [-0.11, 0.14], t(30) = 0.27, p = 0.790; Std. beta = 0.06, 95% CI
+[-0.38, 0.50])
   - The effect of Tempo [3] is statistically non-significant and positive (beta =
-0.08, 95% CI [-0.04, 0.20], t(30) = 1.34, p = 0.179; Std. beta = 0.29, 95% CI
-[-0.13, 0.71])
+0.08, 95% CI [-0.04, 0.21], t(30) = 1.34, p = 0.189; Std. beta = 0.29, 95% CI
+[-0.15, 0.73])
   - The effect of drug [Placebo] × Tempo [2] is statistically non-significant and
-positive (beta = 0.13, 95% CI [-0.04, 0.31], t(30) = 1.52, p = 0.129; Std. beta
-= 0.46, 95% CI [-0.13, 1.06])
+positive (beta = 0.13, 95% CI [-0.05, 0.31], t(30) = 1.52, p = 0.139; Std. beta
+= 0.46, 95% CI [-0.16, 1.09])
   - The effect of drug [Placebo] × Tempo [3] is statistically non-significant and
-positive (beta = 0.03, 95% CI [-0.14, 0.21], t(30) = 0.38, p = 0.704; Std. beta
-= 0.12, 95% CI [-0.48, 0.71])
+positive (beta = 0.03, 95% CI [-0.15, 0.21], t(30) = 0.38, p = 0.707; Std. beta
+= 0.12, 95% CI [-0.51, 0.74])
 
 Standardized parameters were obtained by fitting the model on a standardized
 version of the dataset. 95% Confidence Intervals (CIs) and p-values were
 computed using a Wald t-distribution approximation.</code></pre>
 </div>
 </div>
+<hr>
 </section>
 </section>
 </section>
-<section id="gee" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="gee"><span class="header-section-number">1.2</span> GEE</h2>
-<section id="análise-para-a-variável-resp-1" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-resp-1">Análise para a Variável “Resp”</h3>
-<p>Realizaremos uma análise usando Generalized Estimating Equations (GEE) para a variável “resp”.</p>
+<section id="parte-2-gee-equações-de-estimação-generalizadas" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="parte-2-gee-equações-de-estimação-generalizadas"><span class="header-section-number">1.3</span> 📊 Parte 2: GEE (Equações de Estimação Generalizadas)</h2>
+<section id="modelo-gee-para-resp" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-gee-para-resp">Modelo GEE para “Resp”</h3>
+<p>GEE oferece estimativas robustas mesmo quando a estrutura de correlação não é perfeitamente especificada.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>ID <span class="ot">=</span> <span class="fu">as.factor</span>(bd_long<span class="sc">$</span>ID) </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>Tempo <span class="ot">=</span> <span class="fu">as.factor</span>(bd_long<span class="sc">$</span>Tempo) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustando o modelo GEE para "resp" </span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>modelo_gee_resp <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data =</span> bd_long,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">id =</span> ID,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">family =</span> gaussian,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">corstr =</span> <span class="st">"unstructured"</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_resp <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> ID,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">corstr =</span> <span class="st">"unstructured"</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -631,57 +780,86 @@ alpha.2:3  7.600e-01 0.09074
 Number of clusters:   12  Maximum cluster size: 3 </code></pre>
 </div>
 </div>
-<section id="pressupostos-do-modelo-gee-resp" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo-gee-resp">Pressupostos do modelo GEE (resp)</h4>
-<p>Agora vamos fazer um plot do histograma dos resíduos do modelo</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🔍 Parâmetros do GEE
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><code>id</code>:</strong> Identificador do sujeito (observações repetidas)</li>
+<li><strong><code>family</code>:</strong> Distribuição da variável resposta (gaussian, binomial, poisson)</li>
+<li><strong><code>corstr</code>:</strong> Estrutura de correlação
+<ul>
+<li><code>"independence"</code>: Sem correlação</li>
+<li><code>"exchangeable"</code>: Correlação constante</li>
+<li><code>"ar1"</code>: Autorregressiva de ordem 1</li>
+<li><code>"unstructured"</code>: Sem restrições (mais flexível)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<hr>
+<section id="diagnóstico-do-modelo-gee" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo-gee">Diagnóstico do Modelo GEE</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_resp) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="plot-do-modelo-gee-resp" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-gee-resp">Plot do modelo GEE (resp)</h4>
-<p>Agora vamos fazer um plot do modelo.</p>
+<section id="visualização-do-modelo-2" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo-2">Visualização do Modelo</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo_gee_resp, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo_gee_resp, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-</section>
-<section id="resultados-do-modelo" class="level4">
-<h4 class="anchored" data-anchor-id="resultados-do-modelo">Resultados do modelo</h4>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning
+⚠️ Limitação do <code>report()</code>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A função <code>report()</code> não funciona para modelos GEE. Então treine para escrever os seus resultados!</p>
+<p>A função <code>report()</code> <strong>não funciona</strong> para modelos GEE. Pratique escrever seus resultados manualmente!</p>
 </div>
 </div>
-<!-- ```{r} -->
-<!-- report(modelo_gee_resp) -->
-<!-- ``` -->
+<hr>
 </section>
 </section>
-<section id="análise-para-a-variável-pulse-1" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-pulse-1">Análise para a Variável “Pulse”</h3>
-<p>Agora, realizaremos uma análise GEE para a variável “pulse”.</p>
+<section id="modelo-gee-para-pulse" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-gee-para-pulse">Modelo GEE para “Pulse”</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo, </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">data =</span> bd_long,         </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">id =</span> ID,                 </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">family =</span> gaussian,       </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">corstr =</span> <span class="st">"unstructured"</span>)  </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>modelo_gee_pulse <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> ID,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> gaussian,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">corstr =</span> <span class="st">"unstructured"</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gee_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -714,59 +892,49 @@ alpha.2:3    0.115   0.267
 Number of clusters:   12  Maximum cluster size: 3 </code></pre>
 </div>
 </div>
-<section id="pressupostos-do-modelo-gee-pulse" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo-gee-pulse">Pressupostos do modelo GEE (pulse)</h4>
-<p>Agora vamos fazer um plot do histograma dos resíduos do modelo</p>
+<hr>
+<section id="diagnóstico-do-modelo-2" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo-2">Diagnóstico do Modelo</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gee_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="plot-do-modelo-gee-pulse" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-gee-pulse">Plot do modelo GEE (pulse)</h4>
-<p>Agora vamos fazer um plot do modelo.</p>
+<section id="visualização-do-modelo-3" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo-3">Visualização do Modelo</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo_gee_pulse, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualize</span>(modelo_gee_pulse, <span class="at">plot =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-</section>
-<section id="resultados-do-modelo-1" class="level4">
-<h4 class="anchored" data-anchor-id="resultados-do-modelo-1">Resultados do modelo</h4>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
 </div>
-<div class="callout-title-container flex-fill">
-Warning
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A função <code>report()</code> não funciona para modelos GEE. Então treine para escrever os seus resultados!</p>
-</div>
-</div>
-<!-- ```{r} -->
-<!-- report(modelo_gee_pulse) -->
-<!-- ``` -->
+<hr>
 </section>
 </section>
 </section>
-<section id="gmm" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="gmm"><span class="header-section-number">1.3</span> GMM</h2>
-<section id="análise-para-a-variável-resp-2" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-resp-2">Análise para a Variável “resp”</h3>
-<p>Agora, realizaremos uma análise usando Generalized Mixed Models (GMM) para a variável “resp”.</p>
+<section id="parte-3-gmm-modelos-mistos-generalizados" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="parte-3-gmm-modelos-mistos-generalizados"><span class="header-section-number">1.4</span> 📊 Parte 3: GMM (Modelos Mistos Generalizados)</h2>
+<section id="modelo-gmm-para-resp" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-gmm-para-resp">Modelo GMM para “Resp”</h3>
+<p>Modelos mistos incorporam efeitos fixos e aleatórios, capturando variabilidade entre e dentro de sujeitos.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>modelo_gmm_resp <span class="ot">=</span> <span class="fu">lme</span>(   <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug <span class="sc">*</span> Tempo,  </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>ID, </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> bd_long ) </span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gmm_resp) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>modelo_gmm_resp <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>ID,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gmm_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed-effects model fit by REML
   Data: bd_long 
@@ -802,53 +970,100 @@ Number of Observations: 36
 Number of Groups: 12 </code></pre>
 </div>
 </div>
-<section id="pressupostos-do-modelo-gmm-resp" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo-gmm-resp">Pressupostos do modelo GMM (resp)</h4>
-<p>Agora vamos fazer um plot do histograma dos resíduos do modelo</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🔍 Estrutura do Modelo Misto
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong><code>fixed</code>:</strong> Efeitos fixos (mesmos do GLM)</li>
+<li><strong><code>random = ~1|ID</code>:</strong> Intercepto aleatório por sujeito
+<ul>
+<li>Captura variabilidade baseline entre indivíduos</li>
+<li><code>~1</code> indica apenas intercepto aleatório</li>
+<li><code>|ID</code> agrupa por sujeito</li>
+</ul></li>
+</ul>
+<p><strong>Estruturas mais complexas:</strong> - <code>~Tempo|ID</code>: Intercepto e slope aleatórios - <code>~1|Escola/Sala</code>: Hierarquia aninhada</p>
+</div>
+</div>
+</div>
+<hr>
+<section id="diagnóstico-do-modelo-3" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo-3">Diagnóstico do Modelo</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gmm_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gmm_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
+</div>
+<hr>
 </section>
-<section id="plot-do-modelo-gmm-resp" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-gmm-resp">Plot do modelo GMM (resp)</h4>
-<p>Agora vamos fazer um plot do modelo.</p>
+<section id="visualização-do-modelo-4" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo-4">Visualização do Modelo</h4>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Dica!
+💡 Visualização Manual com ggplot2
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>A função <code>visualize()</code> as vezes não funciona com determinados modelos. Vamos fazer o gráfico na mão utilizando a função <code>ggplot()</code> do pacote <code>ggplot2</code></p>
+<p>A função <code>visualize()</code> nem sempre funciona com modelos complexos. Vamos criar gráficos manualmente com <code>ggplot2</code>:</p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vamos guardar os resultados do modelo em uma variável</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>means_ci_gmm_resp <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gmm_resp, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Código para criar nosso gráfico</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gmm_resp), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição normal"</span>,</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Resp"</span>) <span class="sc">+</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular médias marginais estimadas</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>means_ci_gmm_resp <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo_gmm_resp, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar gráfico</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gmm_resp), </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug, <span class="at">group =</span> drug)) <span class="sc">+</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.2</span>,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>), </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Efeito da Droga na Respiração ao Longo do Tempo"</span>,</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Médias marginais estimadas com IC 95%"</span>,</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Respiração (Resp)"</span>,</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Tratamento"</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="resultados-do-modelo-2" class="level4">
-<h4 class="anchored" data-anchor-id="resultados-do-modelo-2">Resultados do modelo</h4>
+<section id="relatório-automatizado-2" class="level4">
+<h4 class="anchored" data-anchor-id="relatório-automatizado-2">Relatório Automatizado</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gmm_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gmm_resp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>We fitted a linear mixed model (estimated using REML and nlminb optimizer) to
 predict resp with drug and Tempo (formula: resp ~ drug + Tempo + drug * Tempo).
@@ -879,18 +1094,19 @@ version of the dataset. 95% Confidence Intervals (CIs) and p-values were
 computed using a Wald t-distribution approximation.</code></pre>
 </div>
 </div>
+<hr>
 </section>
 </section>
-<section id="análise-para-a-variável-pulse-2" class="level3">
-<h3 class="anchored" data-anchor-id="análise-para-a-variável-pulse-2">Análise para a Variável “Pulse”</h3>
-<p>Agora, realizaremos uma análise GMM para a variável “pulse”.</p>
+<section id="modelo-gmm-para-pulse" class="level3">
+<h3 class="anchored" data-anchor-id="modelo-gmm-para-pulse">Modelo GMM para “Pulse”</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajustando o modelo GMM para "pulse" </span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>modelo_gmm_pulse <span class="ot">=</span> <span class="fu">lme</span>(   <span class="at">fixed =</span> pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug <span class="sc">*</span> Tempo,  </span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>ID,  </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">data =</span> bd_long ) </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gmm_pulse) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>modelo_gmm_pulse <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> pulse <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>ID,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo_gmm_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed-effects model fit by REML
   Data: bd_long 
@@ -926,40 +1142,62 @@ Number of Observations: 36
 Number of Groups: 12 </code></pre>
 </div>
 </div>
-<section id="pressupostos-do-modelo-gmm-pulse" class="level4">
-<h4 class="anchored" data-anchor-id="pressupostos-do-modelo-gmm-pulse">Pressupostos do modelo GMM (pulse)</h4>
-<p>Agora vamos fazer um plot do histograma dos resíduos do modelo</p>
+<hr>
+<section id="diagnóstico-do-modelo-4" class="level4">
+<h4 class="anchored" data-anchor-id="diagnóstico-do-modelo-4">Diagnóstico do Modelo</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gmm_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_gmm_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="visualização-do-modelo-5" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-do-modelo-5">Visualização do Modelo</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular médias marginais</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>means_ci_gmm_pulse <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo_gmm_pulse, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar gráfico</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gmm_pulse),</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug, <span class="at">group =</span> drug)) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL),</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.2</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>),</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Efeito da Droga no Pulso ao Longo do Tempo"</span>,</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Médias marginais estimadas com IC 95%"</span>,</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pulso (Pulse)"</span>,</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Tratamento"</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lista_1_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="plot-do-modelo-gmm-pulse" class="level4">
-<h4 class="anchored" data-anchor-id="plot-do-modelo-gmm-pulse">Plot do modelo GMM (pulse)</h4>
-<p>Agora vamos fazer um plot do modelo utilizando mais uma vez a função <code>ggplot()</code></p>
+<section id="relatório-automatizado-3" class="level4">
+<h4 class="anchored" data-anchor-id="relatório-automatizado-3">Relatório Automatizado</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vamos guardar os resultados do modelo em uma variável</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>means_ci_gmm_pulse <span class="ot">=</span> <span class="fu">emmeans</span>(modelo_gmm_pulse, <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">:</span>Tempo)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Código para criar nosso gráfico</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_ci_gmm_pulse), <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug)) <span class="sc">+</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>)) <span class="sc">+</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.8</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribuição normal"</span>,</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Tempo"</span>,</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Resp"</span>) <span class="sc">+</span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="lista_1_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="resultados-do-modelo-3" class="level4">
-<h4 class="anchored" data-anchor-id="resultados-do-modelo-3">Resultados do modelo</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gmm_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo_gmm_pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>We fitted a linear mixed model (estimated using REML and nlminb optimizer) to
 predict pulse with drug and Tempo (formula: pulse ~ drug + Tempo + drug *
@@ -990,85 +1228,300 @@ version of the dataset. 95% Confidence Intervals (CIs) and p-values were
 computed using a Wald t-distribution approximation.</code></pre>
 </div>
 </div>
+<hr>
 </section>
 </section>
 </section>
-<section id="violação-dos-pressupostos-o-que-pode-ser-feito" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="violação-dos-pressupostos-o-que-pode-ser-feito"><span class="header-section-number">1.4</span> Violação dos pressupostos: o que pode ser feito?</h2>
-<ul>
-<li><p><strong>Multicolinearidade</strong>: Identifique quais variáveis independentes estão altamente correlacionadas entre si. Considere remover uma das variáveis altamente correlacionadas ou combinar variáveis para criar índices compostos.</p></li>
-<li><p><strong>Normalidade dos Resíduos:</strong> Verifique a presença de padrões nos resíduos e considere transformações nos dados, como a transformação logarítmica. Considere a utilização de modelos mais robustos que não dependam da normalidade dos resíduos.</p></li>
-<li><p><strong>Homogeneidade de Variância:</strong> Se a variância dos resíduos não é constante, considere transformações nos dados ou na variável dependente.</p></li>
-<li><p><strong>Outliers</strong>: Identifique e investigue pontos de dados que se destacam nos resíduos. Avalie se a exclusão dos outliers é justificada ou se é necessário aplicar transformações aos dados. Considere modelos mais robustos que não sejam sensíveis a outliers.</p></li>
-<li><p><strong>Linearidade</strong>: Se a relação entre variáveis independentes e dependentes não é linear, considere transformações nos dados ou nas variáveis. Utilize técnicas de modelagem não linear.</p></li>
-<li><p><strong>Posterior Predictive Checks:</strong> Se houver discrepâncias entre dados reais e simulados nos checks pós-predição, reveja a especificação do modelo. Considere ajustes nas distribuições ou estruturas do modelo para melhorar o ajuste.</p></li>
-</ul>
-</section>
-<section id="conclusão" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="conclusão"><span class="header-section-number">1.5</span> Conclusão</h2>
-<p>Neste tutorial, exploramos como conduzir análises estatísticas no R utilizando diferentes abordagens, incluindo modelos de medidas repetidas, Generalized Estimating Equations (GEE) e Generalized Mixed Models (GMM). Essas técnicas nos permitem entender melhor o efeito do tempo e do grupo sobre as variáveis “resp” e “pulse” em nosso conjunto de dados.</p>
-<p>Lembre-se de que as tabelas e resultados aqui apresentados são apenas parte da análise completa. Assista aos vídeos das aulas para entender melhor a teoria.</p>
-</section>
-<section id="lista-1-resolvida-no-spss" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="lista-1-resolvida-no-spss"><span class="header-section-number">1.6</span> Lista 1 resolvida no SPSS</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/_KtjZcaMYhk" title="GLM Repeated Measures, GEE, GMM - Aula Prática #1 (SPSS)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</section>
-<section id="referências" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="referências"><span class="header-section-number">1.7</span> Referências</h2>
-<ul>
-<li><p><a href="https://www.datanovia.com/en/lessons/mauchlys-test-of-sphericity-in-r/">Mauchly’s Test of Sphericity in R</a></p></li>
-<li><p><a href="https://www.youtube.com/watch?v=dcWuHcC98EU&amp;t=196s">Pivoting multiple variables: A simpler (more complex?) way</a></p></li>
-<li><p><a href="https://www.youtube.com/watch?v=4-sqsCANxHU">Wide to long format part 2 - Pivoting with multivariate data</a></p></li>
-</ul>
-</section>
-<section id="versões-dos-pacotes" class="level2" data-number="1.8">
-<h2 data-number="1.8" class="anchored" data-anchor-id="versões-dos-pacotes"><span class="header-section-number">1.8</span> Versões dos pacotes</h2>
+<section id="sec-violacoes" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="sec-violacoes"><span class="header-section-number">1.5</span> 🔧 Violação dos Pressupostos: O Que Fazer?</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Guia de Soluções para Violações
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Quando seu modelo viola pressupostos, considere as seguintes estratégias:</p>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Multicolinearidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Normalidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Homogeneidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Outliers</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-5" role="tab" aria-controls="tabset-3-5" aria-selected="false">Linearidade</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-6" role="tab" aria-controls="tabset-3-6" aria-selected="false">Ajuste Global</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p><strong>Problema:</strong> Preditores altamente correlacionados entre si (VIF &gt; 10)</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><p><strong>Identificar correlações</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(bd_long[, <span class="fu">c</span>(<span class="st">"var1"</span>, <span class="st">"var2"</span>, <span class="st">"var3"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Remover variável redundante</strong></p>
+<ul>
+<li>Manter a mais teoricamente relevante</li>
+<li>Ou a com maior poder explicativo</li>
+</ul></li>
+<li><p><strong>Criar índices compostos</strong></p>
+<ul>
+<li>Média ou soma ponderada de variáveis correlacionadas</li>
+<li>Análise de componentes principais (PCA)</li>
+</ul></li>
+<li><p><strong>Centralizar variáveis</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>var_centered <span class="ot">&lt;-</span> <span class="fu">scale</span>(bd_long<span class="sc">$</span>var, <span class="at">scale =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p><strong>Problema:</strong> Resíduos não seguem distribuição normal</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><p><strong>Transformações de dados</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Logarítmica</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>resp_log <span class="ot">&lt;-</span> <span class="fu">log</span>(bd_long<span class="sc">$</span>resp <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Raiz quadrada</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>resp_sqrt <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(bd_long<span class="sc">$</span>resp)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Box-Cox</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>bc <span class="ot">&lt;-</span> <span class="fu">boxcox</span>(modelo1_resp)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> bc<span class="sc">$</span>x[<span class="fu">which.max</span>(bc<span class="sc">$</span>y)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Modelos robustos</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(robustbase)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>modelo_robusto <span class="ot">&lt;-</span> <span class="fu">lmrob</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo, <span class="at">data =</span> bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Modelos generalizados (GzLM)</strong></p>
+<ul>
+<li>Use distribuições mais apropriadas (Gamma, Poisson)</li>
+</ul></li>
+</ol>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p><strong>Problema:</strong> Variância não constante dos resíduos</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><p><strong>Transformação da variável resposta</strong></p>
+<ul>
+<li>Mesmas transformações da normalidade</li>
+</ul></li>
+<li><p><strong>Pesos heterocedásticos</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>modelo_hetero <span class="ot">&lt;-</span> <span class="fu">gls</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>drug),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Erros-padrão robustos</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coeftest</span>(modelo1_resp, <span class="at">vcov =</span> <span class="fu">vcovHC</span>(modelo1_resp, <span class="at">type =</span> <span class="st">"HC3"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+</div>
+<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<p><strong>Problema:</strong> Observações extremamente influentes</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><p><strong>Investigar outliers</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identificar outliers</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>outliers <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">cooks.distance</span>(modelo1_resp) <span class="sc">&gt;</span> <span class="dv">4</span><span class="sc">/</span><span class="fu">nrow</span>(bd_long))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>bd_long[outliers, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Análise de sensibilidade</strong></p>
+<ul>
+<li>Refazer análise com e sem outliers</li>
+<li>Reportar ambos os resultados</li>
+</ul></li>
+<li><p><strong>Modelos robustos</strong></p>
+<ul>
+<li>Menos sensíveis a outliers</li>
+</ul></li>
+<li><p><strong>Transformações</strong></p>
+<ul>
+<li>Reduzir impacto de valores extremos</li>
+</ul></li>
+</ol>
+</div>
+<div id="tabset-3-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-5-tab">
+<p><strong>Problema:</strong> Relação não-linear entre preditores e resposta</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><p><strong>Termos polinomiais</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>modelo_quad <span class="ot">&lt;-</span> <span class="fu">lm</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> <span class="fu">I</span>(Tempo<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Splines</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>modelo_spline <span class="ot">&lt;-</span> <span class="fu">lm</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> <span class="fu">bs</span>(Tempo, <span class="at">df =</span> <span class="dv">3</span>), </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><strong>Modelos aditivos generalizados (GAM)</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>modelo_gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(resp <span class="sc">~</span> drug <span class="sc">+</span> <span class="fu">s</span>(Tempo), </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+</div>
+<div id="tabset-3-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-6-tab">
+<p><strong>Problema:</strong> Modelo não se ajusta bem aos dados (Posterior Predictive)</p>
+<p><strong>Soluções:</strong></p>
+<ol type="1">
+<li><strong>Revisar especificação do modelo</strong>
+<ul>
+<li>Adicionar interações relevantes</li>
+<li>Incluir preditores omitidos</li>
+</ul></li>
+<li><strong>Mudar distribuição</strong>
+<ul>
+<li>De gaussian para Gamma, Poisson, etc.</li>
+</ul></li>
+<li><strong>Considerar não-linearidades</strong>
+<ul>
+<li>GAM, splines, polinômios</li>
+</ul></li>
+<li><strong>Modelos mais flexíveis</strong>
+<ul>
+<li>Random forests, boosting (exploratório)</li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+💡 Estratégia Geral
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Identifique</strong> todas as violações</li>
+<li><strong>Priorize</strong> as mais severas</li>
+<li><strong>Aplique</strong> soluções sequencialmente</li>
+<li><strong>Reavalie</strong> após cada mudança</li>
+<li><strong>Documente</strong> todas as tentativas</li>
+<li>Se tudo falhar, <strong>reconheça limitações</strong> do modelo</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="conclusão" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="conclusão"><span class="header-section-number">1.6</span> 📝 Conclusão</h2>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Resumo da Lista
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Neste tutorial, exploramos três abordagens complementares para análise de medidas repetidas:</p>
+<p><strong>GLM:</strong> Abordagem clássica, pressupõe esfericidade<br>
+<strong>GEE:</strong> Robusto à especificação de correlação, foco em efeitos populacionais<br>
+<strong>GMM:</strong> Modela variabilidade individual, permite estruturas hierárquicas</p>
+<p>Cada método tem vantagens específicas. A escolha depende de: - Estrutura dos dados - Pergunta de pesquisa - Pressupostos atendidos - Interpretação desejada</p>
+<p><strong>Próximos passos:</strong> Listas subsequentes compararão estes métodos em diferentes cenários.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="recursos-complementares" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="recursos-complementares"><span class="header-section-number">1.7</span> 📚 Recursos Complementares</h2>
+<section id="aula-em-vídeo-spss" class="level3">
+<h3 class="anchored" data-anchor-id="aula-em-vídeo-spss">Aula em Vídeo (SPSS)</h3>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/_KtjZcaMYhk" title="GLM Repeated Measures, GEE, GMM - Aula Prática #1 (SPSS)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<hr>
+</section>
+<section id="referências-recomendadas" class="level3">
+<h3 class="anchored" data-anchor-id="referências-recomendadas">Referências Recomendadas</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📖 Leituras Complementares
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Testes e pressupostos:</strong> - <a href="https://www.datanovia.com/en/lessons/mauchlys-test-of-sphericity-in-r/">Mauchly’s Test of Sphericity in R</a></p>
+<p><strong>Manipulação de dados:</strong> - <a href="https://www.youtube.com/watch?v=dcWuHcC98EU&amp;t=196s">Pivoting multiple variables - YouTube</a> - <a href="https://www.youtube.com/watch?v=4-sqsCANxHU">Wide to long format part 2 - YouTube</a></p>
+<p><strong>Modelos avançados:</strong> - Pinheiro &amp; Bates (2000). <em>Mixed-Effects Models in S and S-PLUS</em> - Fitzmaurice et al.&nbsp;(2011). <em>Applied Longitudinal Analysis</em> - West et al.&nbsp;(2014). <em>Linear Mixed Models: A Practical Guide</em></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="informações-de-sessão" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="informações-de-sessão"><span class="header-section-number">1.8</span> 🔧 Informações de Sessão</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analyses were conducted using the R Statistical language (version 4.3.1; R Core
-Team, 2023) on Windows 11 x64 (build 22621), using the packages lme4 (version
-1.1.34; Bates D et al., 2015), Matrix (version 1.6.0; Bates D et al., 2023),
-effectsize (version 0.8.6; Ben-Shachar MS et al., 2020), flexplot (version
-0.20.5; Fife D, 2024), effects (version 4.2.2; Fox J, Weisberg S, 2019),
-carData (version 3.0.5; Fox J et al., 2022), mvtnorm (version 1.2.3; Genz A,
-Bretz F, 2009), geepack (version 1.3.9; Halekoh U et al., 2006), TH.data
-(version 1.1.2; Hothorn T, 2023), multcomp (version 1.4.25; Hothorn T et al.,
-2008), rstatix (version 0.7.2; Kassambara A, 2023), emmeans (version 1.8.8;
-Lenth R, 2023), sjstats (version 0.18.2; Lüdecke D, 2022), parameters (version
-0.21.3; Lüdecke D et al., 2020), performance (version 0.10.8; Lüdecke D et al.,
-2021), easystats (version 0.6.0; Lüdecke D et al., 2022), see (version 0.8.1;
-Lüdecke D et al., 2021), insight (version 0.19.6; Lüdecke D et al., 2019),
-bayestestR (version 0.13.1; Makowski D et al., 2019), modelbased (version
-0.8.6; Makowski D et al., 2020), report (version 0.5.7; Makowski D et al.,
-2023), correlation (version 0.8.4; Makowski D et al., 2022), datawizard
-(version 0.9.0; Patil I et al., 2022), nlme (version 3.1.163; Pinheiro J et
-al., 2023), foreign (version 0.8.85; R Core Team, 2023), rempsyc (version
-0.1.6; Thériault R, 2023), survival (version 3.5.7; Therneau T, 2023), MASS
-(version 7.3.60; Venables WN, Ripley BD, 2002), ggplot2 (version 3.4.4; Wickham
-H, 2016), dplyr (version 1.1.3; Wickham H et al., 2023) and tidyr (version
-1.3.0; Wickham H et al., 2023).
+<pre><code>Analyses were conducted using the R Statistical language (version 4.4.2; R Core
+Team, 2024) on Windows 11 x64 (build 26100), using the packages lme4 (version
+1.1.37; Bates D et al., 2015), Matrix (version 1.7.1; Bates D et al., 2024),
+effectsize (version 1.0.1; Ben-Shachar MS et al., 2020), flexplot (version
+0.24.3; Fife, D, 2022), effects (version 4.2.4; Fox J, Weisberg S, 2019),
+carData (version 3.0.5; Fox J et al., 2022), mvtnorm (version 1.3.3; Genz A,
+Bretz F, 2009), geepack (version 1.3.13; Halekoh U et al., 2006), TH.data
+(version 1.1.3; Hothorn T, 2025), multcomp (version 1.4.28; Hothorn T et al.,
+2008), rstatix (version 0.7.2; Kassambara A, 2023), emmeans (version 1.11.0;
+Lenth R, 2025), sjstats (version 0.19.1; Lüdecke D, 2025), parameters (version
+0.28.3; Lüdecke D et al., 2020), performance (version 0.15.2; Lüdecke D et al.,
+2021), easystats (version 0.7.5; Lüdecke D et al., 2022), see (version 0.12.0;
+Lüdecke D et al., 2021), insight (version 1.4.4; Lüdecke D et al., 2019),
+bayestestR (version 0.17.0; Makowski D et al., 2019), modelbased (version
+0.13.1; Makowski D et al., 2025), report (version 0.6.3; Makowski D et al.,
+2023), correlation (version 0.8.8; Makowski D et al., 2022), datawizard
+(version 1.3.0; Patil I et al., 2022), nlme (version 3.1.166; Pinheiro J et
+al., 2024), foreign (version 0.8.87; R Core Team, 2024), rempsyc (version
+0.2.0; Thériault R, 2023), survival (version 3.7.0; Therneau T, 2024), MASS
+(version 7.3.61; Venables WN, Ripley BD, 2002), ggplot2 (version 4.0.1; Wickham
+H, 2016), dplyr (version 1.1.4; Wickham H et al., 2023) and tidyr (version
+1.3.1; Wickham H et al., 2024).
 
 References
 ----------
   - Bates D, Mächler M, Bolker B, Walker S (2015). "Fitting Linear Mixed-Effects
 Models Using lme4." _Journal of Statistical Software_, *67*(1), 1-48.
 doi:10.18637/jss.v067.i01 &lt;https://doi.org/10.18637/jss.v067.i01&gt;.
-  - Bates D, Maechler M, Jagan M (2023). _Matrix: Sparse and Dense Matrix Classes
-and Methods_. R package version 1.6-0,
+  - Bates D, Maechler M, Jagan M (2024). _Matrix: Sparse and Dense Matrix Classes
+and Methods_. R package version 1.7-1,
 &lt;https://CRAN.R-project.org/package=Matrix&gt;.
   - Ben-Shachar MS, Lüdecke D, Makowski D (2020). "effectsize: Estimation of
 Effect Size Indices and Standardized Parameters." _Journal of Open Source
 Software_, *5*(56), 2815. doi:10.21105/joss.02815
 &lt;https://doi.org/10.21105/joss.02815&gt;, &lt;https://doi.org/10.21105/joss.02815&gt;.
-  - Fife D (2024). _flexplot: Graphically Based Data Analysis Using 'flexplot'_.
-R package version 0.20.5.
+  - Fife, A. D (2022). "Flexplot: Graphically-based data analysis."
+_Psychological Methods_, *27*(4), -19. &lt;doi.org/10.1037/met0000424&gt;.
   - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, 3rd
 edition. Sage, Thousand Oaks CA.
-&lt;https://socialsciences.mcmaster.ca/jfox/Books/Companion/index.html&gt;. Fox J,
-Weisberg S (2018). "Visualizing Fit and Lack of Fit in Complex Regression
-Models with Predictor Effect Plots and Partial Residuals." _Journal of
-Statistical Software_, *87*(9), 1-27. doi:10.18637/jss.v087.i09
+&lt;https://www.john-fox.ca/Companion/index.html&gt;. Fox J, Weisberg S (2018).
+"Visualizing Fit and Lack of Fit in Complex Regression Models with Predictor
+Effect Plots and Partial Residuals." _Journal of Statistical Software_,
+*87*(9), 1-27. doi:10.18637/jss.v087.i09
 &lt;https://doi.org/10.18637/jss.v087.i09&gt;. Fox J (2003). "Effect Displays in R
 for Generalised Linear Models." _Journal of Statistical Software_, *8*(15),
 1-27. doi:10.18637/jss.v008.i15 &lt;https://doi.org/10.18637/jss.v008.i15&gt;. Fox J,
@@ -1086,17 +1539,19 @@ Heidelberg. ISBN 978-3-642-01688-2.
 Estimating Equations." _Journal of Statistical Software_, *15/2*, 1-11. Yan J,
 Fine JP (2004). "Estimating Equations for Association Structures." _Statistics
 in Medicine_, *23*, 859-880. Yan J (2002). "geepack: Yet Another Package for
-Generalized Estimating Equations." _R-News_, *2/3*, 12-14.
-  - Hothorn T (2023). _TH.data: TH's Data Archive_. R package version 1.1-2,
+Generalized Estimating Equations." _R-News_, *2/3*, 12-14. Xu, Z., Fine, P. J,
+Song, W., Yan, J. (2025). "On GEE for mean-variance-correlation models:
+Variance estimation and model selection." _Statistics in Medicine_, *44*, 1-2.
+  - Hothorn T (2025). _TH.data: TH's Data Archive_. R package version 1.1-3,
 &lt;https://CRAN.R-project.org/package=TH.data&gt;.
   - Hothorn T, Bretz F, Westfall P (2008). "Simultaneous Inference in General
 Parametric Models." _Biometrical Journal_, *50*(3), 346-363.
   - Kassambara A (2023). _rstatix: Pipe-Friendly Framework for Basic Statistical
 Tests_. R package version 0.7.2, &lt;https://CRAN.R-project.org/package=rstatix&gt;.
-  - Lenth R (2023). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
-R package version 1.8.8, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
-  - Lüdecke D (2022). _sjstats: Statistical Functions for Regression Models
-(Version 0.18.2)_. doi:10.5281/zenodo.1284472
+  - Lenth R (2025). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
+R package version 1.11.0, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
+  - Lüdecke D (2025). _sjstats: Statistical Functions for Regression Models
+(Version 0.19.1)_. doi:10.5281/zenodo.1284472
 &lt;https://doi.org/10.5281/zenodo.1284472&gt;,
 &lt;https://CRAN.R-project.org/package=sjstats&gt;.
   - Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). "Extracting, Computing
@@ -1107,9 +1562,11 @@ Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
 "performance: An R Package for Assessment, Comparison and Testing of
 Statistical Models." _Journal of Open Source Software_, *6*(60), 3139.
 doi:10.21105/joss.03139 &lt;https://doi.org/10.21105/joss.03139&gt;.
-  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Makowski D (2022). "easystats:
-Framework for Easy Statistical Modeling, Visualization, and Reporting." _CRAN_.
-R package, &lt;https://easystats.github.io/easystats/&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Bacher E, Thériault R, Makowski
+D (2022). "easystats: Framework for Easy Statistical Modeling, Visualization,
+and Reporting." _CRAN_. doi:10.32614/CRAN.package.easystats
+&lt;https://doi.org/10.32614/CRAN.package.easystats&gt;, R package,
+&lt;https://easystats.github.io/easystats/&gt;.
   - Lüdecke D, Patil I, Ben-Shachar M, Wiernik B, Waggoner P, Makowski D (2021).
 "see: An R Package for Visualizing Statistical Models." _Journal of Open Source
 Software_, *6*(64), 3393. doi:10.21105/joss.03393
@@ -1122,12 +1579,17 @@ and their Uncertainty, Existence and Significance within the Bayesian
 Framework." _Journal of Open Source Software_, *4*(40), 1541.
 doi:10.21105/joss.01541 &lt;https://doi.org/10.21105/joss.01541&gt;,
 &lt;https://joss.theoj.org/papers/10.21105/joss.01541&gt;.
-  - Makowski D, Ben-Shachar M, Patil I, Lüdecke D (2020). "Estimation of
-Model-Based Predictions, Contrasts and Means." _CRAN_.
-&lt;https://github.com/easystats/modelbased&gt;.
+  - Makowski D, Ben-Shachar M, Wiernik B, Patil I, Thériault R, Lüdecke D (2025).
+"modelbased: An R package to make the most out of your statistical models
+through marginal means, marginal effects, and model predictions." _Journal of
+Open Source Software_, *10*(109), 7969. doi:10.21105/joss.07969
+&lt;https://doi.org/10.21105/joss.07969&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.07969&gt;.
   - Makowski D, Lüdecke D, Patil I, Thériault R, Ben-Shachar M, Wiernik B (2023).
 "Automated Results Reporting as a Practical Tool to Improve Reproducibility and
 Methodological Best Practices Adoption." _CRAN_.
+doi:10.32614/CRAN.package.report
+&lt;https://doi.org/10.32614/CRAN.package.report&gt;,
 &lt;https://easystats.github.io/report/&gt;.
   - Makowski D, Wiernik B, Patil I, Lüdecke D, Ben-Shachar M (2022).
 "correlation: Methods for Correlation Analysis." Version 0.8.3,
@@ -1140,22 +1602,22 @@ R." _Journal of Open Source Software_, *5*(51), 2306. doi:10.21105/joss.02306
 "datawizard: An R Package for Easy Data Preparation and Statistical
 Transformations." _Journal of Open Source Software_, *7*(78), 4684.
 doi:10.21105/joss.04684 &lt;https://doi.org/10.21105/joss.04684&gt;.
-  - Pinheiro J, Bates D, R Core Team (2023). _nlme: Linear and Nonlinear Mixed
-Effects Models_. R package version 3.1-163,
+  - Pinheiro J, Bates D, R Core Team (2024). _nlme: Linear and Nonlinear Mixed
+Effects Models_. R package version 3.1-166,
 &lt;https://CRAN.R-project.org/package=nlme&gt;. Pinheiro JC, Bates DM (2000).
 _Mixed-Effects Models in S and S-PLUS_. Springer, New York. doi:10.1007/b98882
 &lt;https://doi.org/10.1007/b98882&gt;.
-  - R Core Team (2023). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
-'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-85,
+  - R Core Team (2024). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-87,
 &lt;https://CRAN.R-project.org/package=foreign&gt;.
-  - R Core Team (2023). _R: A Language and Environment for Statistical
+  - R Core Team (2024). _R: A Language and Environment for Statistical
 Computing_. R Foundation for Statistical Computing, Vienna, Austria.
 &lt;https://www.R-project.org/&gt;.
   - Thériault R (2023). "rempsyc: Convenience functions for psychology." _Journal
 of Open Source Software_, *8*(87), 5466. doi:10.21105/joss.05466
 &lt;https://doi.org/10.21105/joss.05466&gt;, &lt;https://doi.org/10.21105/joss.05466&gt;.
-  - Therneau T (2023). _A Package for Survival Analysis in R_. R package version
-3.5-7, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
+  - Therneau T (2024). _A Package for Survival Analysis in R_. R package version
+3.7-0, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
 Patricia M. Grambsch (2000). _Modeling Survival Data: Extending the Cox Model_.
 Springer, New York. ISBN 0-387-98784-3.
   - Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth
@@ -1165,10 +1627,23 @@ edition. Springer, New York. ISBN 0-387-95457-0,
 Springer-Verlag New York. ISBN 978-3-319-24277-4,
 &lt;https://ggplot2.tidyverse.org&gt;.
   - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar
-of Data Manipulation_. R package version 1.1.3,
+of Data Manipulation_. R package version 1.1.4,
 &lt;https://CRAN.R-project.org/package=dplyr&gt;.
-  - Wickham H, Vaughan D, Girlich M (2023). _tidyr: Tidy Messy Data_. R package
-version 1.3.0, &lt;https://CRAN.R-project.org/package=tidyr&gt;.</code></pre>
+  - Wickham H, Vaughan D, Girlich M (2024). _tidyr: Tidy Messy Data_. R package
+version 1.3.1, &lt;https://CRAN.R-project.org/package=tidyr&gt;.</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+💡 Reprodutibilidade
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sempre inclua <code>sessionInfo()</code> ao final de suas análises para documentar versões de pacotes e garantir reprodutibilidade!</p>
 </div>
 </div>
 
@@ -1211,18 +1686,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1254,11 +1718,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1268,8 +1771,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1281,7 +1793,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1325,6 +1960,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1350,6 +1986,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1411,17 +2073,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lms.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">GLM, GEE, GMM, GzLM</span>
+      <a href="./lms.html" class="pagination-link" aria-label="Modelos Lineares">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Modelos Lineares</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lista_2.html" class="pagination-link">
+      <a href="./lista_2.html" class="pagination-link" aria-label="Lista 2 - GEE">
         <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

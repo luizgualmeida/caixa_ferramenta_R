@@ -1,31 +1,43 @@
-# Lista 1 - GLM, GEE e GMM
+# Lista 1: GLM, GEE e GMM {.unnumbered}
 
-Baixe o banco **"[new drug respiratory&pulse](https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing)".** O objetivo desta primeira aula prática será entender como os testes são realizados no R. A comparação entre os diferentes métodos será objeto de listas de exercícios subsequentes.
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
+
+Nesta primeira lista prática, você aprenderá a implementar e interpretar três abordagens fundamentais para análise de medidas repetidas: **GLM**, **GEE** e **GMM**. O foco é compreender como cada método funciona no R, com comparações detalhadas em listas subsequentes.
+:::
+
+---
+
+## 📥 Dados e Materiais
+
+::: {.callout-important}
+## Download Necessário
+
+Faça o download do banco de dados **"[new drug respiratory&pulse](https://drive.google.com/file/d/145uyQOn_3Mk_CQxpu-pFKfm8u7DE257U/view?usp=sharing)"** e salve na pasta do seu projeto.
+:::
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
 #| include: false
-#| 
-library(emmeans)   # Cálculo de médias estimadas após análises estatísticas.
-library(ggplot2)   # Criação de gráficos
-library(lme4)      # Ajuste de modelos lineares mistos.
-library(nlme)      # Ajuste de modelos mistos não lineares.
-library(flexplot)  # Criação de gráficos flexíveis e personalizados.
-library(foreign)   # Importação/exportação de dados de outros formatos.
-library(tidyr)     # Manipulação de dados.
-library(dplyr)     # Manipulação e transformação de dados de maneira eficiente.
-library(multcomp)  # Correção de múltiplas comparações pós-teste.
-library(effects)   # Visualização de efeitos de modelos estatísticos.
-library(sjstats)   # Estatísticas descritivas e sumarização de modelos.
-library(rstatix)   # Análise estatística simplificada.
-library(geepack)   # Ajuste de modelos de equações de estimação generalizadas.
-library(performance) # Avaliação e melhoria do desempenho do modelo linear
-library(see)       # Simplificar a exploração de dados
-library(rempsyc)   # Métodos psicométricos e estatísticas relacionadas à psicometria
-library(easystats) # Simplifica a análise estatística
 
+# Lista de pacotes necessários
+pacotes <- c(
+  "emmeans", "ggplot2", "lme4", "nlme", "flexplot",
+  "foreign", "tidyr", "dplyr", "multcomp", "effects",
+  "sjstats", "rstatix", "geepack", "performance",
+  "see", "rempsyc", "easystats"
+)
+
+# Verificar e instalar pacotes faltantes
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
+
+# Carregar todos os pacotes
+invisible(lapply(pacotes, library, character.only = TRUE))
 ```
 
 ```{r}
@@ -34,443 +46,412 @@ library(easystats) # Simplifica a análise estatística
 #| message: false
 #| include: false
 
-original_wide = read.spss("bd_New drug_respiratory&pulse.sav", to.data.frame=TRUE) 
-head(original_wide)
-```
+# Preparação dos dados (oculto - já feito no capítulo anterior)
+original_wide <- read.spss("bd_New drug_respiratory&pulse.sav", to.data.frame = TRUE)
 
-```{r}
-#| echo: false
-#| include: false
 bd <- original_wide %>%
   rename_with(~gsub("(resp|pulse)(\\d+)", "\\1_\\2", .), -drug) %>%
   mutate(ID = row_number()) %>%
-  dplyr::select(ID, everything())  
+  select(ID, everything())
 
+bd_long <- pivot_longer(bd, 
+                        cols = resp_1:pulse_3, 
+                        names_to = c(".value", "Tempo"), 
+                        names_pattern = "(.+)_(.+)")
 
-head(bd)
+bd_long$Tempo <- factor(bd_long$Tempo)
+bd_long$ID <- factor(bd_long$ID)
 ```
 
-```{r}
-#| echo: false
-#| include: false
-bd_long = pivot_longer(bd, 
-                       cols = resp_1:pulse_3, 
-                       names_to = c(".value", "Tempo"), 
-                       names_pattern = "(.+)_(.+)")
+---
 
-head(bd_long)
-```
+## 📊 Parte 1: GLM (Modelo Linear Geral)
 
-```{r}
-#| echo: false
-#| include: false
-# Suponha que sua variável "Tempo" esteja em um dataframe chamado "seu_data_frame"
-bd_long$Tempo <- factor(bd_long$Tempo) 
-```
+### Modelo para "Resp"
 
-```{r}
-#| echo: false
-#| include: false
+Vamos ajustar um modelo de medidas repetidas para a variável respiratória:
 
-# Bloco para dados normalmente distribuídos
-set.seed(123)
-dados_normais <- rnorm(1000, mean = 0, sd = 1)
-
-# Função para criar histograma e Q-Q plot
-criar_graficos_normais <- function(dados, titulo) {
-  par(mfrow = c(1, 2))  # Organiza os gráficos em uma linha com duas colunas
-
-  # Histograma
-  hist(dados, main = paste("Histograma -", titulo), col = "lightblue", border = "black")
-
-  # Q-Q plot
-  qqnorm(dados, main = paste("Q-Q Plot -", titulo))
-  qqline(dados, col = 2)
-}
-
-# Crie os gráficos para dados normalmente distribuídos
-criar_graficos_normais(dados_normais, "Normal")
-
-# Restaure o layout gráfico padrão
-par(mfrow = c(1, 1))
-
-```
-
-```{r}
-#| echo: false
-#| include: false
-
-# Bloco para dados não normalmente distribuídos
-set.seed(123)
-dados_nao_normais <- abs(rnorm(1000, mean = 0, sd = 1))
-
-# Função para criar histograma e Q-Q plot
-criar_graficos_nao_normais <- function(dados, titulo) {
-  par(mfrow = c(1, 2))  # Organiza os gráficos em uma linha com duas colunas
-
-  # Histograma
-  hist(dados, main = paste("Histograma -", titulo), col = "lightcoral", border = "black")
-
-  # Q-Q plot
-  qqnorm(dados, main = paste("Q-Q Plot -", titulo))
-  qqline(dados, col = 2)
-}
-
-# Crie os gráficos para dados não normalmente distribuídos
-criar_graficos_nao_normais(dados_nao_normais, "Não Normal")
-
-# Restaure o layout gráfico padrão
-par(mfrow = c(1, 1))
-
-
-```
-
-## GLM
-
-<!-- **Descrição do General Linear Model (GLM) para Medidas Repetidas:**\ -->
-
-<!-- O GLM para medidas repetidas é uma técnica estatística que permite analisar dados em que as mesmas unidades (sujeitos ou grupos) são medidas em várias ocasiões ou sob diferentes condições. Ele é usado para investigar como as mudanças nas variáveis dependentes são afetadas por fatores independentes, levando em consideração a estrutura repetida dos dados. -->
-
-<!-- **Pressupostos do GLM para Medidas Repetidas:**\ -->
-
-<!-- Os pressupostos comuns do GLM para medidas repetidas incluem: -->
-
-<!-- 1.  Esfericidade: Assume-se que a matriz de variância-covariância das diferenças entre os níveis de um fator (ou condição) seja aproximadamente igual, o que é chamado de "esfericidade." A falta de esfericidade pode afetar os resultados. -->
-
-<!-- 2.  Normalidade dos resíduos: Como em muitas análises estatísticas, assume-se que os resíduos seguem uma distribuição normal. -->
-
-<!-- 3.  Linearidade: A relação entre as variáveis independentes e dependentes deve ser linear. -->
-
-<!-- **Vantagens do GLM para Medidas Repetidas:** -->
-
-<!-- -   Leva em consideração a estrutura repetida dos dados: Esse modelo é especialmente útil quando você tem medidas repetidas dentro dos mesmos sujeitos ou grupos. -->
-
-<!-- -   Permite investigar efeitos ao longo do tempo ou condições: É adequado para estudar como as mudanças em uma variável dependente são afetadas por fatores independentes em várias ocasiões ou condições. -->
-
-<!-- -   Pode incluir fatores interativos: É possível analisar interações entre fatores em um design experimental de medidas repetidas. -->
-
-<!-- **Desvantagens do GLM para Medidas Repetidas:** -->
-
-<!-- -   Sensibilidade à violação da esfericidade: A falta de esfericidadepode levar a resultados imprecisos, e correções como a correção de Greenhouse-Geisser podem ser necessárias. -->
-
-<!-- -   Complexidade da interpretação: Em designs com muitos níveis de fatores ou interações, a interpretação dos resultados pode se tornar complexa. -->
-
-<!-- -   Requer planejamento cuidadoso: A coleta de dados em um design de medidas repetidas requer planejamento cuidadoso e consideração dos efeitos de confusão. -->
-
-<!-- **Situações em que usar o GLM para Medidas Repetidas:** -->
-
-<!-- -   Experimentos com medidas repetidas: É apropriado para análise de experimentos onde as mesmas unidades são medidas em várias ocasiões ou sob diferentes condições. -->
-
-<!-- -   Estudos longitudinais: É útil para analisar dados longitudinais em que as mesmas medidas são coletadas em intervalos de tempo diferentes. -->
-
-<!-- -   Avaliação de tratamentos ou intervenções ao longo do tempo: Permite avaliar como um tratamento ou intervenção afeta as mudanças nas variáveis dependentes ao longo do tempo. -->
-
-<!-- O GLM para medidas repetidas é uma ferramenta poderosa para análise de dados com estrutura repetida, mas requer atenção aos pressupostos e planejamento adequado para a coleta de dados. É amplamente utilizado em pesquisas nas áreas de psicologia, medicina, ciências sociais e outras disciplinas onde medidas repetidas são comuns. -->
-
-### Análise para a Variável "resp"
-
-Vamos ajustar o seguinte modelo de medidas repetidas para a variável dependente "resp":
-
-$$ resp = \beta_0 + \beta_1drug + \beta_2Tempo + \beta_3drug*Tempo + \varepsilon $$
+$$
+\text{resp} = \beta_0 + \beta_1\text{drug} + \beta_2\text{Tempo} + \beta_3\text{drug} \times \text{Tempo} + \varepsilon
+$$
 
 ```{r}
 #| echo: true
 
-modelo1_resp = lm(resp ~ drug + Tempo + drug*Tempo, data = bd_long) 
+modelo1_resp <- lm(resp ~ drug + Tempo + drug*Tempo, 
+                   data = bd_long)
 
 summary(modelo1_resp)
 ```
 
-Como houve diferença apenas entre os grupos que receberam a droga e o placebo, não vamos realizar o post hoc
+::: {.callout-note collapse="true"}
+## 📖 Interpretando os Coeficientes
 
-#### Pressupostos do modelo lm(resp)
+- **Intercept:** Valor médio de resp no grupo referência (placebo) no tempo 1
+- **drug:** Diferença entre tratamento e placebo no tempo 1
+- **Tempo:** Mudança ao longo do tempo no grupo placebo
+- **drug:Tempo:** Como o efeito da droga muda ao longo do tempo (interação)
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-check_model(modelo1_resp, check = c("pp_check", "linearity"))
+**Significância estatística** é indicada pelos valores-p na coluna `Pr(>|t|)`.
+:::
 
-```
+---
 
--   **Posterior Predictive Checks:** utilizadas para identificar discrepâncias sistemáticas entre dados reais e simulados, auxiliando a avaliar se o tipo de modelo (família de distribuição) se ajusta adequadamente aos dados.
+#### Diagnóstico do Modelo
 
--   **Linearity Assumption:** o gráfico de Linearidade verifica a suposição de relação linear. No entanto, a dispersão dos pontos também indica possíveis heterocedasticidades (ou seja, variância não constante, daí o termo "ncv" para este gráfico), mostrando se os resíduos têm padrões não lineares. Esse gráfico ajuda a observar se os preditores têm uma relação não linear com o resultado, indicada aproximadamente pela linha de referência. Uma linha reta e horizontal sugere que a especificação do modelo parece estar adequada. Contudo, se a linha for em forma de U, alguns preditores provavelmente devem ser modelados como termos quadráticos.
+::: {.panel-tabset}
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-check_model(modelo1_resp, check = c("homogeneity", "outliers"))
-```
-
--   **Homogeneity of Variance:** verifica a suposição de variância igual (homocedasticidade). O padrão desejado é que os pontos se espalhem igualmente acima e abaixo de uma linha reta horizontal, sem desvios aparentes.
-
--   **Influential Observations**: identifica observações influentes. Se algum ponto estiver fora da distância de Cook (linhas tracejadas), é considerado uma observação influente.
+##### Predição e Linearidade
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-check_model(modelo1_resp, check = c("vif", "normality"))
 
-
+check_model(modelo1_resp, 
+            check = c("pp_check", "linearity"))
 ```
 
-**Multicollinearity:** verifica possíveis problemas de multicolinearidade entre os preditores. Em resumo, a multicolinearidade significa que, uma vez conhecido o efeito de um preditor, o valor de conhecer o outro preditor é relativamente baixo. Isso pode ocorrer quando uma terceira variável não observada tem um efeito causal em cada um dos dois preditores associados ao resultado. Nesses casos, a relação relevante seria entre a variável não observada e o resultado.
+**Posterior Predictive Check:**
+Compara dados observados (verde) com simulações do modelo (azul). Boa sobreposição indica ajuste adequado.
 
-**Normality of Residuals:** determina se os resíduos do modelo de regressão têm uma distribuição normal. Geralmente, os pontos devem seguir a linha. Desvios (principalmente nas caudas) indicam que o modelo não prevê bem o resultado para a faixa que apresenta maiores desvios da linha. Para modelos lineares generalizados, é exibido um gráfico Q-Q meio-normal dos resíduos padronizados de desvio absoluto, mas a interpretação do gráfico permanece a mesma.
+**Linearidade:**
+Linha horizontal sugere relação linear apropriada. Padrões em U indicam necessidade de termos quadráticos.
 
-#### Conclusão sobre os pressupostos
+##### Homogeneidade e Outliers
 
-Fica nítido que o modelo violou diversos pressupostos. Ao fim do capítulo você encontrará uma lista de ações que podem ser tomadas para cada uma das violações do modelo. Caso tudo mais falhe, apenas aceite que você tem um modelo ruim.
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
 
-::: callout-tip
-#### Tudo em um painel só!
+check_model(modelo1_resp, 
+            check = c("homogeneity", "outliers"))
+```
 
-Você pode utilizar a função `check_model()` sem especificar o parâmetro check. O resultado é um único painel com todas as análises. Nos exemplos anteriores os plots apareceram separados por questões didáticas e de formatação. Veja abaixo como fica o plot em painel.
+**Homogeneidade:**
+Pontos devem se distribuir uniformemente. Padrões (cone, curva) indicam heterocedasticidade.
+
+**Observações Influentes:**
+Pontos fora das linhas tracejadas (Distância de Cook) são observações influentes que merecem investigação.
+
+##### Colinearidade e Normalidade
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+check_model(modelo1_resp, 
+            check = c("vif", "normality"))
+```
+
+**VIF (Variance Inflation Factor):**
+- VIF < 5: Sem problemas
+- VIF 5-10: Colinearidade moderada
+- VIF > 10: Colinearidade severa
+
+**Normalidade dos Resíduos:**
+Pontos devem seguir a linha diagonal. Desvios nas caudas indicam problemas de predição nesses extremos.
+
+:::
+
+::: {.callout-warning}
+## ⚠️ Avaliação dos Pressupostos
+
+Este modelo apresenta violações em diversos pressupostos. Veja a [seção de soluções](#sec-violacoes) ao final deste capítulo para estratégias de correção.
+:::
+
+---
+
+#### Visualização Completa
+
+::: {.callout-tip}
+## 💡 Painel Completo de Diagnósticos
+
+Use `check_model()` sem especificar `check` para ver todos os diagnósticos em um único painel:
 :::
 
 ```{r}
-check_model(modelo1_resp)
+#| echo: true
+#| fig-height: 10
+#| fig-width: 12
 
+check_model(modelo1_resp)
 ```
 
-#### Plot do modelo lm(resp)
+---
 
-Agora vamos fazer um plot do modelo.
+#### Visualização do Modelo
 
 ```{r}
 #| echo: true
+#| message: false
+#| warning: false
+
 visualize(modelo1_resp, plot = "model")
 ```
 
-O código `visualize(modelo1_resp, plot = "model")` usa a função `visualize` do pacote `flexplot` para criar um gráfico que visualiza o modelo estatístico denominado `modelo1_resp`. Este gráfico é uma representação visual do modelo, ajudando a compreender a relação entre as variáveis independentes e a variável dependente no contexto da análise estatística em questão.
+---
 
-#### Escrevendo os Resultados com a função `report()`
+#### Relatório Automatizado
 
-::: {.callout-tip title="Grandes poderes..."}
-Podemos utilizar a função `report()` do pacote `easystat` que gerar um texto formatado para publicação e em inglês com os principais resultados de diversos modelos lineares! Com isso conseguimos diminuir erros de digitação, confusão com os estimadores e uma maior reprodutibilidade. Mas lembre-se! É **fundamental** você treinar como escrever os resultados. Use o poder do `report()` com sabedoria e sempre revise o texto gerado!
+::: {.callout-tip}
+## ⚡ Poder do `report()`
+
+A função `report()` do pacote `easystats` gera texto formatado para publicação em inglês, reduzindo erros de digitação e aumentando reprodutibilidade.
+
+**Importante:** Use com sabedoria! Sempre revise e compreenda os resultados antes de usar em publicações.
 :::
 
-#### Resultados
-
 ```{r}
+#| echo: true
+
 report(modelo1_resp)
 ```
 
-### Análise para a Variável "pulse"
+---
 
-Agora, ajustaremos o mesmo modelo para a variável dependente "pulse":
+### Modelo para "Pulse"
 
-$$ pulse= \beta_0 + \beta_1drug + \beta_2Tempo + \beta_3drug*Tempo + \varepsilon $$
+Agora ajustaremos o mesmo modelo para a variável de pulso:
+
+$$
+\text{pulse} = \beta_0 + \beta_1\text{drug} + \beta_2\text{Tempo} + \beta_3\text{drug} \times \text{Tempo} + \varepsilon
+$$
 
 ```{r}
 #| echo: true
-# Ajustando o modelo 
-modelo1_pulse = glm(pulse ~ drug + Tempo + drug*Tempo, data = bd_long) 
 
-summary(modelo1_pulse) 
+modelo1_pulse <- lm(pulse ~ drug + Tempo + drug*Tempo, 
+                    data = bd_long)
+
+summary(modelo1_pulse)
 ```
 
-*Descrição dos resultados*
+---
 
-#### Pressupostos do modelo
+#### Diagnóstico do Modelo
+
+::: {.panel-tabset}
+
+##### Predição e Linearidade
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-check_model(modelo1_pulse, check = c("pp_check", "linearity"))
+
+check_model(modelo1_pulse, 
+            check = c("pp_check", "linearity"))
 ```
+
+##### Homogeneidade e Outliers
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-check_model(modelo1_pulse, check = c("homogeneity", "outliers"))
+
+check_model(modelo1_pulse, 
+            check = c("homogeneity", "outliers"))
 ```
+
+##### Colinearidade e Normalidade
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-check_model(modelo1_pulse, check = c("vif", "normality"))
 
-
+check_model(modelo1_pulse, 
+            check = c("vif", "normality"))
 ```
 
-A interpretação dos resultados é a mesma para o modelo com a variável resp.
+:::
 
-#### Plot do modelo lm(pulse)
+---
 
-Agora vamos fazer um plot do modelo.
+#### Visualização do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 visualize(modelo1_pulse, plot = "model")
 ```
 
-#### Resultados
+#### Relatório Automatizado
 
 ```{r}
+#| echo: true
+
 report(modelo1_pulse)
 ```
 
-## GEE
+---
 
-### Análise para a Variável "Resp"
+## 📊 Parte 2: GEE (Equações de Estimação Generalizadas)
 
-Realizaremos uma análise usando Generalized Estimating Equations (GEE) para a variável "resp".
+### Modelo GEE para "Resp"
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-bd_long$ID = as.factor(bd_long$ID) 
-
-bd_long$Tempo = as.factor(bd_long$Tempo) 
-```
+GEE oferece estimativas robustas mesmo quando a estrutura de correlação não é perfeitamente especificada.
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Ajustando o modelo GEE para "resp" 
-modelo_gee_resp <- geeglm(resp ~ drug + Tempo + drug*Tempo,
-                          data = bd_long,
-                          id = ID,
-                          family = gaussian,
-                          corstr = "unstructured")
 
+modelo_gee_resp <- geeglm(
+  resp ~ drug + Tempo + drug*Tempo,
+  data = bd_long,
+  id = ID,
+  family = gaussian,
+  corstr = "unstructured"
+)
 
 summary(modelo_gee_resp)
 ```
 
-#### Pressupostos do modelo GEE (resp)
+::: {.callout-note collapse="true"}
+## 🔍 Parâmetros do GEE
 
-Agora vamos fazer um plot do histograma dos resíduos do modelo
+- **`id`:** Identificador do sujeito (observações repetidas)
+- **`family`:** Distribuição da variável resposta (gaussian, binomial, poisson)
+- **`corstr`:** Estrutura de correlação
+  - `"independence"`: Sem correlação
+  - `"exchangeable"`: Correlação constante
+  - `"ar1"`: Autorregressiva de ordem 1
+  - `"unstructured"`: Sem restrições (mais flexível)
+:::
+
+---
+
+#### Diagnóstico do Modelo GEE
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-check_model(modelo_gee_resp) 
+
+check_model(modelo_gee_resp)
 ```
 
-#### Plot do modelo GEE (resp)
-
-Agora vamos fazer um plot do modelo.
+#### Visualização do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 visualize(modelo_gee_resp, plot = "model")
 ```
 
-#### Resultados do modelo
+::: {.callout-warning}
+## ⚠️ Limitação do `report()`
 
-::: callout-warning
-A função `report()` não funciona para modelos GEE. Então treine para escrever os seus resultados!
+A função `report()` **não funciona** para modelos GEE. Pratique escrever seus resultados manualmente!
 :::
 
-<!-- ```{r} -->
+---
 
-<!-- report(modelo_gee_resp) -->
-
-<!-- ``` -->
-
-### Análise para a Variável "Pulse"
-
-Agora, realizaremos uma análise GEE para a variável "pulse".
+### Modelo GEE para "Pulse"
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-modelo_gee_pulse <- geeglm(pulse ~ drug + Tempo + drug*Tempo, 
-                           data = bd_long,         
-                           id = ID,                 
-                           family = gaussian,       
-                           corstr = "unstructured")  
 
-summary(modelo_gee_pulse) 
+modelo_gee_pulse <- geeglm(
+  pulse ~ drug + Tempo + drug*Tempo,
+  data = bd_long,
+  id = ID,
+  family = gaussian,
+  corstr = "unstructured"
+)
+
+summary(modelo_gee_pulse)
 ```
 
-#### Pressupostos do modelo GEE (pulse)
+---
 
-Agora vamos fazer um plot do histograma dos resíduos do modelo
+#### Diagnóstico do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 check_model(modelo_gee_pulse)
 ```
 
-#### Plot do modelo GEE (pulse)
-
-Agora vamos fazer um plot do modelo.
+#### Visualização do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 visualize(modelo_gee_pulse, plot = "model")
 ```
 
-#### Resultados do modelo
+---
 
-::: callout-warning
-A função `report()` não funciona para modelos GEE. Então treine para escrever os seus resultados!
-:::
+## 📊 Parte 3: GMM (Modelos Mistos Generalizados)
 
-<!-- ```{r} -->
+### Modelo GMM para "Resp"
 
-<!-- report(modelo_gee_pulse) -->
-
-<!-- ``` -->
-
-## GMM
-
-### Análise para a Variável "resp"
-
-Agora, realizaremos uma análise usando Generalized Mixed Models (GMM) para a variável "resp".
+Modelos mistos incorporam efeitos fixos e aleatórios, capturando variabilidade entre e dentro de sujeitos.
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-modelo_gmm_resp = lme(   fixed = resp ~ drug + Tempo + drug * Tempo,  
-                         random = ~1|ID, 
-                         data = bd_long ) 
 
+modelo_gmm_resp <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|ID,
+  data = bd_long
+)
 
-summary(modelo_gmm_resp) 
+summary(modelo_gmm_resp)
 ```
 
-#### Pressupostos do modelo GMM (resp)
+::: {.callout-note collapse="true"}
+## 🔍 Estrutura do Modelo Misto
 
-Agora vamos fazer um plot do histograma dos resíduos do modelo
+- **`fixed`:** Efeitos fixos (mesmos do GLM)
+- **`random = ~1|ID`:** Intercepto aleatório por sujeito
+  - Captura variabilidade baseline entre indivíduos
+  - `~1` indica apenas intercepto aleatório
+  - `|ID` agrupa por sujeito
+
+**Estruturas mais complexas:**
+- `~Tempo|ID`: Intercepto e slope aleatórios
+- `~1|Escola/Sala`: Hierarquia aninhada
+:::
+
+---
+
+#### Diagnóstico do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 check_model(modelo_gmm_resp)
 ```
 
-#### Plot do modelo GMM (resp)
+---
 
-Agora vamos fazer um plot do modelo.
+#### Visualização do Modelo
 
-::: callout-tip
-#### Dica!
+::: {.callout-tip}
+## 💡 Visualização Manual com ggplot2
 
-A função `visualize()` as vezes não funciona com determinados modelos. Vamos fazer o gráfico na mão utilizando a função `ggplot()` do pacote `ggplot2`
+A função `visualize()` nem sempre funciona com modelos complexos. Vamos criar gráficos manualmente com `ggplot2`:
 :::
 
 ```{r}
@@ -478,116 +459,359 @@ A função `visualize()` as vezes não funciona com determinados modelos. Vamos 
 #| message: false
 #| warning: false
 
-# Vamos guardar os resultados do modelo em uma variável
-means_ci_gmm_resp = emmeans(modelo_gmm_resp, specs = ~drug:Tempo)
+# Calcular médias marginais estimadas
+means_ci_gmm_resp <- emmeans(modelo_gmm_resp, 
+                              specs = ~drug:Tempo)
 
-# Código para criar nosso gráfico
-ggplot(as.data.frame(means_ci_gmm_resp), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
-  geom_point(position = position_dodge(0.8), size = 3) +
-  labs(title = "Distribuição normal",
-       x = "Tempo",
-       y = "Resp") +
-  theme_minimal()
-
+# Criar gráfico
+ggplot(as.data.frame(means_ci_gmm_resp), 
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
+                width = 0.2,
+                position = position_dodge(0.1)) +
+  geom_point(position = position_dodge(0.1), 
+             size = 3) +
+  geom_line(position = position_dodge(0.1)) +
+  labs(
+    title = "Efeito da Droga na Respiração ao Longo do Tempo",
+    subtitle = "Médias marginais estimadas com IC 95%",
+    x = "Tempo",
+    y = "Respiração (Resp)",
+    color = "Tratamento"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
 ```
 
-#### Resultados do modelo
+#### Relatório Automatizado
 
 ```{r}
+#| echo: true
+
 report(modelo_gmm_resp)
 ```
 
-### Análise para a Variável "Pulse"
+---
 
-Agora, realizaremos uma análise GMM para a variável "pulse".
+### Modelo GMM para "Pulse"
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Ajustando o modelo GMM para "pulse" 
-modelo_gmm_pulse = lme(   fixed = pulse ~ drug + Tempo + drug * Tempo,  
-                          random = ~1|ID,  
-                          data = bd_long ) 
 
-summary(modelo_gmm_pulse) 
+modelo_gmm_pulse <- lme(
+  fixed = pulse ~ drug + Tempo + drug*Tempo,
+  random = ~1|ID,
+  data = bd_long
+)
+
+summary(modelo_gmm_pulse)
 ```
 
-#### Pressupostos do modelo GMM (pulse)
+---
 
-Agora vamos fazer um plot do histograma dos resíduos do modelo
+#### Diagnóstico do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
 check_model(modelo_gmm_pulse)
 ```
 
-#### Plot do modelo GMM (pulse)
+---
 
-Agora vamos fazer um plot do modelo utilizando mais uma vez a função `ggplot()`
+#### Visualização do Modelo
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-# Vamos guardar os resultados do modelo em uma variável
-means_ci_gmm_pulse = emmeans(modelo_gmm_pulse, specs = ~drug:Tempo)
+# Calcular médias marginais
+means_ci_gmm_pulse <- emmeans(modelo_gmm_pulse, 
+                               specs = ~drug:Tempo)
 
-# Código para criar nosso gráfico
-ggplot(as.data.frame(means_ci_gmm_pulse), aes(x = Tempo, y = emmean, color = drug)) +
-  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, position = position_dodge(0.8)) +
-  geom_point(position = position_dodge(0.8), size = 3) +
-  labs(title = "Distribuição normal",
-       x = "Tempo",
-       y = "Resp") +
-  theme_minimal()
-
+# Criar gráfico
+ggplot(as.data.frame(means_ci_gmm_pulse),
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
+                width = 0.2,
+                position = position_dodge(0.1)) +
+  geom_point(position = position_dodge(0.1),
+             size = 3) +
+  geom_line(position = position_dodge(0.1)) +
+  labs(
+    title = "Efeito da Droga no Pulso ao Longo do Tempo",
+    subtitle = "Médias marginais estimadas com IC 95%",
+    x = "Tempo",
+    y = "Pulso (Pulse)",
+    color = "Tratamento"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
 ```
 
-#### Resultados do modelo
+#### Relatório Automatizado
 
 ```{r}
+#| echo: true
+
 report(modelo_gmm_pulse)
 ```
 
-## Violação dos pressupostos: o que pode ser feito?
+---
 
--   **Multicolinearidade**: Identifique quais variáveis independentes estão altamente correlacionadas entre si. Considere remover uma das variáveis altamente correlacionadas ou combinar variáveis para criar índices compostos.
+## 🔧 Violação dos Pressupostos: O Que Fazer? {#sec-violacoes}
 
--   **Normalidade dos Resíduos:** Verifique a presença de padrões nos resíduos e considere transformações nos dados, como a transformação logarítmica. Considere a utilização de modelos mais robustos que não dependam da normalidade dos resíduos.
+::: {.callout-important}
+## Guia de Soluções para Violações
 
--   **Homogeneidade de Variância:** Se a variância dos resíduos não é constante, considere transformações nos dados ou na variável dependente.
+Quando seu modelo viola pressupostos, considere as seguintes estratégias:
+:::
 
--   **Outliers**: Identifique e investigue pontos de dados que se destacam nos resíduos. Avalie se a exclusão dos outliers é justificada ou se é necessário aplicar transformações aos dados. Considere modelos mais robustos que não sejam sensíveis a outliers.
+::: {.panel-tabset}
 
--   **Linearidade**: Se a relação entre variáveis independentes e dependentes não é linear, considere transformações nos dados ou nas variáveis. Utilize técnicas de modelagem não linear.
+### Multicolinearidade
 
--   **Posterior Predictive Checks:** Se houver discrepâncias entre dados reais e simulados nos checks pós-predição, reveja a especificação do modelo. Considere ajustes nas distribuições ou estruturas do modelo para melhorar o ajuste.
+**Problema:** Preditores altamente correlacionados entre si (VIF > 10)
 
-## Conclusão
+**Soluções:**
 
-Neste tutorial, exploramos como conduzir análises estatísticas no R utilizando diferentes abordagens, incluindo modelos de medidas repetidas, Generalized Estimating Equations (GEE) e Generalized Mixed Models (GMM). Essas técnicas nos permitem entender melhor o efeito do tempo e do grupo sobre as variáveis "resp" e "pulse" em nosso conjunto de dados.
+1. **Identificar correlações**
+   ```{r}
+   #| eval: false
+   cor(bd_long[, c("var1", "var2", "var3")])
+   ```
 
-Lembre-se de que as tabelas e resultados aqui apresentados são apenas parte da análise completa. Assista aos vídeos das aulas para entender melhor a teoria.
+2. **Remover variável redundante**
+   - Manter a mais teoricamente relevante
+   - Ou a com maior poder explicativo
 
-## Lista 1 resolvida no SPSS
+3. **Criar índices compostos**
+   - Média ou soma ponderada de variáveis correlacionadas
+   - Análise de componentes principais (PCA)
+
+4. **Centralizar variáveis**
+   ```{r}
+   #| eval: false
+   bd_long$var_centered <- scale(bd_long$var, scale = FALSE)
+   ```
+
+### Normalidade
+
+**Problema:** Resíduos não seguem distribuição normal
+
+**Soluções:**
+
+1. **Transformações de dados**
+   ```{r}
+   #| eval: false
+   # Logarítmica
+   bd_long$resp_log <- log(bd_long$resp + 1)
+   
+   # Raiz quadrada
+   bd_long$resp_sqrt <- sqrt(bd_long$resp)
+   
+   # Box-Cox
+   library(MASS)
+   bc <- boxcox(modelo1_resp)
+   lambda <- bc$x[which.max(bc$y)]
+   ```
+
+2. **Modelos robustos**
+   ```{r}
+   #| eval: false
+   library(robustbase)
+   modelo_robusto <- lmrob(resp ~ drug + Tempo, data = bd_long)
+   ```
+
+3. **Modelos generalizados (GzLM)**
+   - Use distribuições mais apropriadas (Gamma, Poisson)
+
+### Homogeneidade
+
+**Problema:** Variância não constante dos resíduos
+
+**Soluções:**
+
+1. **Transformação da variável resposta**
+   - Mesmas transformações da normalidade
+
+2. **Pesos heterocedásticos**
+   ```{r}
+   #| eval: false
+   library(nlme)
+   modelo_hetero <- gls(
+     resp ~ drug + Tempo,
+     weights = varIdent(form = ~1|drug),
+     data = bd_long
+   )
+   ```
+
+3. **Erros-padrão robustos**
+   ```{r}
+   #| eval: false
+   library(sandwich)
+   library(lmtest)
+   coeftest(modelo1_resp, vcov = vcovHC(modelo1_resp, type = "HC3"))
+   ```
+
+### Outliers
+
+**Problema:** Observações extremamente influentes
+
+**Soluções:**
+
+1. **Investigar outliers**
+   ```{r}
+   #| eval: false
+   # Identificar outliers
+   outliers <- which(cooks.distance(modelo1_resp) > 4/nrow(bd_long))
+   bd_long[outliers, ]
+   ```
+
+2. **Análise de sensibilidade**
+   - Refazer análise com e sem outliers
+   - Reportar ambos os resultados
+
+3. **Modelos robustos**
+   - Menos sensíveis a outliers
+
+4. **Transformações**
+   - Reduzir impacto de valores extremos
+
+### Linearidade
+
+**Problema:** Relação não-linear entre preditores e resposta
+
+**Soluções:**
+
+1. **Termos polinomiais**
+   ```{r}
+   #| eval: false
+   modelo_quad <- lm(resp ~ drug + Tempo + I(Tempo^2), 
+                     data = bd_long)
+   ```
+
+2. **Splines**
+   ```{r}
+   #| eval: false
+   library(splines)
+   modelo_spline <- lm(resp ~ drug + bs(Tempo, df = 3), 
+                       data = bd_long)
+   ```
+
+3. **Modelos aditivos generalizados (GAM)**
+   ```{r}
+   #| eval: false
+   library(mgcv)
+   modelo_gam <- gam(resp ~ drug + s(Tempo), 
+                     data = bd_long)
+   ```
+
+### Ajuste Global
+
+**Problema:** Modelo não se ajusta bem aos dados (Posterior Predictive)
+
+**Soluções:**
+
+1. **Revisar especificação do modelo**
+   - Adicionar interações relevantes
+   - Incluir preditores omitidos
+
+2. **Mudar distribuição**
+   - De gaussian para Gamma, Poisson, etc.
+
+3. **Considerar não-linearidades**
+   - GAM, splines, polinômios
+
+4. **Modelos mais flexíveis**
+   - Random forests, boosting (exploratório)
+
+:::
+
+::: {.callout-tip}
+## 💡 Estratégia Geral
+
+1. **Identifique** todas as violações
+2. **Priorize** as mais severas
+3. **Aplique** soluções sequencialmente
+4. **Reavalie** após cada mudança
+5. **Documente** todas as tentativas
+6. Se tudo falhar, **reconheça limitações** do modelo
+:::
+
+---
+
+## 📝 Conclusão
+
+::: {.callout-note appearance="simple"}
+## Resumo da Lista
+
+Neste tutorial, exploramos três abordagens complementares para análise de medidas repetidas:
+
+**GLM:** Abordagem clássica, pressupõe esfericidade  
+**GEE:** Robusto à especificação de correlação, foco em efeitos populacionais  
+**GMM:** Modela variabilidade individual, permite estruturas hierárquicas
+
+Cada método tem vantagens específicas. A escolha depende de:
+- Estrutura dos dados
+- Pergunta de pesquisa
+- Pressupostos atendidos
+- Interpretação desejada
+
+**Próximos passos:** Listas subsequentes compararão estes métodos em diferentes cenários.
+:::
+
+---
+
+## 📚 Recursos Complementares
+
+### Aula em Vídeo (SPSS)
 
 {{< video https://www.youtube.com/watch?v=_KtjZcaMYhk&list=PLZjaOxYREinslupYDLvknGMB-U-Kl8G7k&index=1 title='GLM Repeated Measures, GEE, GMM - Aula Prática #1 (SPSS)' >}}
 
-## Referências
+---
 
--   [Mauchly's Test of Sphericity in R](https://www.datanovia.com/en/lessons/mauchlys-test-of-sphericity-in-r/)
+### Referências Recomendadas
 
--   [Pivoting multiple variables: A simpler (more complex?) way](https://www.youtube.com/watch?v=dcWuHcC98EU&t=196s)
+::: {.callout-note collapse="true"}
+## 📖 Leituras Complementares
 
--   [Wide to long format part 2 - Pivoting with multivariate data](https://www.youtube.com/watch?v=4-sqsCANxHU)
+**Testes e pressupostos:**
+- [Mauchly's Test of Sphericity in R](https://www.datanovia.com/en/lessons/mauchlys-test-of-sphericity-in-r/)
 
-## Versões dos pacotes
+**Manipulação de dados:**
+- [Pivoting multiple variables - YouTube](https://www.youtube.com/watch?v=dcWuHcC98EU&t=196s)
+- [Wide to long format part 2 - YouTube](https://www.youtube.com/watch?v=4-sqsCANxHU)
+
+**Modelos avançados:**
+- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*
+- Fitzmaurice et al. (2011). *Applied Longitudinal Analysis*
+- West et al. (2014). *Linear Mixed Models: A Practical Guide*
+:::
+
+---
+
+## 🔧 Informações de Sessão
 
 ```{r}
+#| echo: true
+
 report(sessionInfo())
 ```
+
+::: {.callout-tip}
+## 💡 Reprodutibilidade
+
+Sempre inclua `sessionInfo()` ao final de suas análises para documentar versões de pacotes e garantir reprodutibilidade!
+:::
