@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Técnicas e Métodos de Pesquisa no R - GLM, GEE, GMM, GzLM</title>
+<title>Modelos Lineares – Técnicas e Métodos de Pesquisa no R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,8 +96,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -104,12 +112,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">Modelos Lineares</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -119,8 +127,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./stickers/curso2_clean.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
         <div class="sidebar-tools-main">
@@ -142,14 +153,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introdução</span></a>
+ <span class="menu-text">Bem-vindo</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./lms.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Modelos Lineares</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -190,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./survival.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SURVIVAL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -213,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ARIMA</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -230,7 +241,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./SEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SEM</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -252,31 +263,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#resumo-sobre-os-modelos-lineares-abordados" id="toc-resumo-sobre-os-modelos-lineares-abordados" class="nav-link active" data-scroll-target="#resumo-sobre-os-modelos-lineares-abordados">Resumo sobre os modelos lineares abordados</a></li>
-  <li><a href="#principais-vantagens-dos-modelos-lineres-de-medidas-repetidas-em-comparação-com-a-anova" id="toc-principais-vantagens-dos-modelos-lineres-de-medidas-repetidas-em-comparação-com-a-anova" class="nav-link" data-scroll-target="#principais-vantagens-dos-modelos-lineres-de-medidas-repetidas-em-comparação-com-a-anova">Principais vantagens dos modelos lineres de medidas repetidas em comparação com a ANOVA</a></li>
-  <li><a href="#pacotes-que-vamos-utilizar" id="toc-pacotes-que-vamos-utilizar" class="nav-link" data-scroll-target="#pacotes-que-vamos-utilizar">Pacotes que vamos utilizar</a></li>
-  <li><a href="#banco-de-dados-script-e-lista-1" id="toc-banco-de-dados-script-e-lista-1" class="nav-link" data-scroll-target="#banco-de-dados-script-e-lista-1">Banco de dados, script e Lista 1</a></li>
-  <li><a href="#carregando-os-dados" id="toc-carregando-os-dados" class="nav-link" data-scroll-target="#carregando-os-dados">Carregando os Dados</a></li>
-  <li><a href="#transformando-o-banco-de-dados-de-wide-para-long" id="toc-transformando-o-banco-de-dados-de-wide-para-long" class="nav-link" data-scroll-target="#transformando-o-banco-de-dados-de-wide-para-long">Transformando o Banco de Dados de Wide para Long</a></li>
-  <li><a href="#alterando-o-tipo-da-variável-tempo" id="toc-alterando-o-tipo-da-variável-tempo" class="nav-link" data-scroll-target="#alterando-o-tipo-da-variável-tempo">Alterando o tipo da variável “Tempo”</a></li>
-  <li><a href="#pressupostos-da-variável-dependente" id="toc-pressupostos-da-variável-dependente" class="nav-link" data-scroll-target="#pressupostos-da-variável-dependente">Pressupostos da variável dependente</a>
+  <li><a href="#os-quatro-modelos" id="toc-os-quatro-modelos" class="nav-link active" data-scroll-target="#os-quatro-modelos">📊 Os Quatro Modelos</a></li>
+  <li><a href="#por-que-usar-modelos-de-medidas-repetidas" id="toc-por-que-usar-modelos-de-medidas-repetidas" class="nav-link" data-scroll-target="#por-que-usar-modelos-de-medidas-repetidas">🎯 Por que usar Modelos de Medidas Repetidas?</a></li>
+  <li><a href="#pacotes-necessários" id="toc-pacotes-necessários" class="nav-link" data-scroll-target="#pacotes-necessários">📦 Pacotes Necessários</a></li>
+  <li><a href="#materiais-para-download" id="toc-materiais-para-download" class="nav-link" data-scroll-target="#materiais-para-download">📥 Materiais para Download</a></li>
+  <li><a href="#preparação-dos-dados" id="toc-preparação-dos-dados" class="nav-link" data-scroll-target="#preparação-dos-dados">🔄 Preparação dos Dados</a>
   <ul class="collapse">
-  <li><a href="#dados-com-distribuição-normal" id="toc-dados-com-distribuição-normal" class="nav-link" data-scroll-target="#dados-com-distribuição-normal">Dados com distribuição normal</a></li>
-  <li><a href="#dados-com-distribuição-não-normal" id="toc-dados-com-distribuição-não-normal" class="nav-link" data-scroll-target="#dados-com-distribuição-não-normal">Dados com distribuição não-normal</a></li>
-  <li><a href="#shapiro-wilk-para-os-dados-com-distribuição-normal" id="toc-shapiro-wilk-para-os-dados-com-distribuição-normal" class="nav-link" data-scroll-target="#shapiro-wilk-para-os-dados-com-distribuição-normal">Shapiro-Wilk para os dados com distribuição normal</a></li>
-  <li><a href="#shapiro-wilk-para-os-dados-com-distribuição-não-normal" id="toc-shapiro-wilk-para-os-dados-com-distribuição-não-normal" class="nav-link" data-scroll-target="#shapiro-wilk-para-os-dados-com-distribuição-não-normal">Shapiro-Wilk para os dados com distribuição não-normal</a></li>
-  <li><a href="#densidade-distribuição-q-q-plot-da-variável-pulse" id="toc-densidade-distribuição-q-q-plot-da-variável-pulse" class="nav-link" data-scroll-target="#densidade-distribuição-q-q-plot-da-variável-pulse">Densidade (distribuição) + Q-Q plot da variável “Pulse”</a></li>
-  <li><a href="#esfericidade-da-variável-pulse" id="toc-esfericidade-da-variável-pulse" class="nav-link" data-scroll-target="#esfericidade-da-variável-pulse">Esfericidade da Variável “Pulse”</a></li>
-  <li><a href="#esfericidade-da-variável-resp" id="toc-esfericidade-da-variável-resp" class="nav-link" data-scroll-target="#esfericidade-da-variável-resp">Esfericidade da Variável “Resp”</a></li>
-  <li><a href="#gge-greenhouse-geisser-epsilon-e-o-hfe-huynh-feldt-epsilon" id="toc-gge-greenhouse-geisser-epsilon-e-o-hfe-huynh-feldt-epsilon" class="nav-link" data-scroll-target="#gge-greenhouse-geisser-epsilon-e-o-hfe-huynh-feldt-epsilon">GGe (Greenhouse-Geisser epsilon) e o HFe (Huynh-Feldt epsilon)</a></li>
+  <li><a href="#carregamento-inicial" id="toc-carregamento-inicial" class="nav-link" data-scroll-target="#carregamento-inicial">Carregamento Inicial</a></li>
+  <li><a href="#transformação-wide-long" id="toc-transformação-wide-long" class="nav-link" data-scroll-target="#transformação-wide-long">Transformação Wide → Long</a></li>
   </ul></li>
+  <li><a href="#verificação-de-pressupostos" id="toc-verificação-de-pressupostos" class="nav-link" data-scroll-target="#verificação-de-pressupostos">✅ Verificação de Pressupostos</a>
+  <ul class="collapse">
+  <li><a href="#normalidade-da-variável-dependente" id="toc-normalidade-da-variável-dependente" class="nav-link" data-scroll-target="#normalidade-da-variável-dependente">Normalidade da Variável Dependente</a></li>
+  <li><a href="#teste-de-shapiro-wilk" id="toc-teste-de-shapiro-wilk" class="nav-link" data-scroll-target="#teste-de-shapiro-wilk">Teste de Shapiro-Wilk</a></li>
+  <li><a href="#normalidade-das-variáveis-do-estudo" id="toc-normalidade-das-variáveis-do-estudo" class="nav-link" data-scroll-target="#normalidade-das-variáveis-do-estudo">Normalidade das Variáveis do Estudo</a></li>
+  </ul></li>
+  <li><a href="#esfericidade-medidas-repetidas" id="toc-esfericidade-medidas-repetidas" class="nav-link" data-scroll-target="#esfericidade-medidas-repetidas">🔄 Esfericidade (Medidas Repetidas)</a>
+  <ul class="collapse">
+  <li><a href="#teste-de-mauchly-para-pulse" id="toc-teste-de-mauchly-para-pulse" class="nav-link" data-scroll-target="#teste-de-mauchly-para-pulse">Teste de Mauchly para “Pulse”</a></li>
+  <li><a href="#teste-de-mauchly-para-resp" id="toc-teste-de-mauchly-para-resp" class="nav-link" data-scroll-target="#teste-de-mauchly-para-resp">Teste de Mauchly para “Resp”</a></li>
+  </ul></li>
+  <li><a href="#coeficientes-de-correção" id="toc-coeficientes-de-correção" class="nav-link" data-scroll-target="#coeficientes-de-correção">🔧 Coeficientes de Correção</a></li>
+  <li><a href="#resumo-dos-pressupostos" id="toc-resumo-dos-pressupostos" class="nav-link" data-scroll-target="#resumo-dos-pressupostos">🎓 Resumo dos Pressupostos</a></li>
+  <li><a href="#conceitos-chave" id="toc-conceitos-chave" class="nav-link" data-scroll-target="#conceitos-chave">📚 Conceitos-Chave</a></li>
   </ul>
 </nav>
     </div>
@@ -285,7 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">GLM, GEE, GMM, GzLM</h1>
+<h1 class="title">Modelos Lineares</h1>
 </div>
 
 
@@ -298,106 +314,174 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
 
-<section id="resumo-sobre-os-modelos-lineares-abordados" class="level2">
-<h2 class="anchored" data-anchor-id="resumo-sobre-os-modelos-lineares-abordados">Resumo sobre os modelos lineares abordados</h2>
+
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Visão Geral do Capítulo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Este capítulo apresenta quatro abordagens fundamentais para análise de dados longitudinais e correlacionados: <strong>GLM de Medidas Repetidas</strong>, <strong>GEE</strong>, <strong>GMM</strong> e <strong>GzLM</strong>. Cada modelo possui características específicas que os tornam adequados para diferentes desenhos de pesquisa.</p>
+</div>
+</div>
+<hr>
+<section id="os-quatro-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="os-quatro-modelos">📊 Os Quatro Modelos</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">GLM - Medidas Repetidas</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">GEE - Equações Estimadas</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">GMM - Modelos Mistos</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">GzLM - Lineares Generalizados</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><strong>Modelo Linear Geral de Medidas Repetidas</strong></p>
+<p>Extensão do modelo linear tradicional projetado especificamente para dados com observações correlacionadas ao longo do tempo.</p>
+<p><strong>Quando usar:</strong> - Estudos longitudinais com medições repetidas - Mesmos participantes avaliados em múltiplos momentos - Necessidade de modelar estrutura de covariância entre medições</p>
+<p><strong>Exemplo prático:</strong> Acompanhamento de pacientes em tratamento médico, medindo regularmente biomarcadores para observar mudanças ao longo do tempo.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><strong>Generalized Estimated Equations</strong></p>
+<p>Abordagem robusta para dados longitudinais que fornece estimativas eficientes mesmo quando a especificação da covariância não é perfeita.</p>
+<p><strong>Quando usar:</strong> - Estudos observacionais longitudinais - Ensaios clínicos com medições correlacionadas - Estudos epidemiológicos multicêntricos</p>
+<p><strong>Exemplo prático:</strong> Investigação da eficácia de programa de intervenção em saúde onde observações estão correlacionadas dentro de grupos de participantes.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p><strong>Modelos Mistos e Hierárquicos</strong></p>
+<p>Combinam componentes fixos e aleatórios, ideais para dados com estrutura hierárquica ou multicêntrica.</p>
+<p><strong>Quando usar:</strong> - Dados com estrutura hierárquica - Estudos multicêntricos - Observações agrupadas em diferentes níveis</p>
+<p><strong>Exemplo prático:</strong> Avaliação de desempenho acadêmico onde alunos (nível 1) estão agrupados em salas (nível 2) e escolas (nível 3), considerando efeitos individuais e contextuais.</p>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<p><strong>Generalized Linear Models</strong></p>
+<p>Extensão dos modelos lineares para variáveis resposta não-normais, permitindo diferentes distribuições e funções de ligação.</p>
+<p><strong>Quando usar:</strong> - Dados de contagem (Poisson) - Dados binários (Logística) - Dados com distribuição não-normal</p>
+<p><strong>Exemplo prático:</strong> Análise de número de eventos adversos (contagem) em ensaio clínico ou modelagem de probabilidade de sucesso em tratamento (binário).</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="por-que-usar-modelos-de-medidas-repetidas" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-usar-modelos-de-medidas-repetidas">🎯 Por que usar Modelos de Medidas Repetidas?</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Vantagens sobre ANOVA Tradicional
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Os modelos lineares modernos oferecem melhorias substanciais sobre a ANOVA clássica:</p>
+<ol type="1">
+<li><strong>Modelagem Flexível</strong>
 <ul>
-<li><p><strong>Modelo Linear Geral (GLM) de Medidas Repetidas:</strong> O Modelo Linear Geral de Medidas Repetidas é uma extensão do modelo linear geral tradicional, projetado para lidar com dados repetidos ao longo do tempo. Ele é utilizado quando há correlação entre as observações, como em estudos longitudinais, e permite modelar a estrutura de covariância entre as medições repetidas.</p>
-<ul>
-<li><p><strong>Desenho de Estudo Sugerido:</strong></p>
-<ul>
-<li>Um estudo longitudinal com medições repetidas ao longo do tempo em um grupo de participantes.</li>
+<li>Múltiplos fatores independentes em um único modelo</li>
+<li>Análise de interações complexas</li>
+<li>Estruturas de covariância personalizadas</li>
 </ul></li>
-<li><p><strong>Exemplo:</strong></p>
+<li><strong>Robustez a Violações</strong>
 <ul>
-<li>Acompanhamento de pacientes com uma condição médica específica, medindo regularmente os níveis de uma variável biológica para observar mudanças ao longo do tratamento.</li>
+<li>Dados desequilibrados</li>
+<li>Heterogeneidade de variâncias</li>
+<li>Desvios da normalidade</li>
 </ul></li>
-</ul></li>
-<li><p><strong>Generalized Estimated Equations (GEE):</strong> As Equações Estimadas Generalizadas (GEE) são uma abordagem estatística para análise de dados longitudinais ou correlacionados. Elas proporcionam uma estrutura robusta para lidar com a dependência entre as observações, permitindo estimativas eficientes dos parâmetros, mesmo quando a especificação da covariância não é precisa.</p>
+<li><strong>Controle Estatístico</strong>
 <ul>
-<li><p><strong>Desenho de Estudo Sugerido:</strong></p>
+<li>Inclusão de covariáveis</li>
+<li>Ajuste para variáveis confundidoras</li>
+<li>Maior precisão nas estimativas</li>
+</ul></li>
+<li><strong>Poder Estatístico</strong>
 <ul>
-<li>Um estudo observacional ou ensaio clínico longitudinal onde as medições podem ser correlacionadas, como em estudos epidemiológicos.</li>
+<li>Aproveitamento da correlação entre medidas</li>
+<li>Detecção de efeitos com amostras menores</li>
+<li>Análise eficiente de designs complexos</li>
 </ul></li>
-<li><p><strong>Exemplo:</strong></p>
+<li><strong>Versatilidade</strong>
 <ul>
-<li>Investigação sobre a eficácia de um programa de intervenção de saúde em que as observações estão correlacionadas dentro dos grupos de participantes.</li>
+<li>Variáveis dependentes contínuas ou categóricas</li>
+<li>Diferentes distribuições de probabilidade</li>
+<li>Estruturas temporais variadas</li>
 </ul></li>
-</ul></li>
-<li><p><strong>Modelos Mistos e Hierárquicos (GMM):</strong> Os Modelos Mistos e Hierárquicos, também conhecidos como Modelos de Efeitos Misto, combinam componentes fixos e aleatórios para modelar tanto a variabilidade fixa quanto a aleatória nos dados. Esses modelos são particularmente úteis quando há hierarquia nos dados, como em estudos multicêntricos, onde as observações podem ser agrupadas em diferentes níveis (por exemplo, centros de pesquisa). Eles permitem capturar a variabilidade tanto dentro quanto entre os grupos, oferecendo uma abordagem flexível para análise de dados complexos.</p>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="pacotes-necessários" class="level2">
+<h2 class="anchored" data-anchor-id="pacotes-necessários">📦 Pacotes Necessários</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelagem e análise</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)        <span class="co"># Modelos lineares mistos</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)        <span class="co"># Modelos não-lineares mistos</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)     <span class="co"># Equações de estimação generalizadas</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Médias e comparações</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)     <span class="co"># Médias estimadas marginais</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)    <span class="co"># Comparações múltiplas</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)     <span class="co"># Visualização de efeitos</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Estatísticas e diagnósticos</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance) <span class="co"># Diagnósticos de modelos</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjstats)     <span class="co"># Estatísticas descritivas</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)     <span class="co"># Análises simplificadas</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)         <span class="co"># Testes complementares</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Manipulação de dados</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)       <span class="co"># Transformação de dados</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)       <span class="co"># Organização de dados</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)     <span class="co"># Importação SPSS/Stata</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualização</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)    <span class="co"># Gráficos flexíveis</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(see)         <span class="co"># Visualizações do easystats</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Suites integradas</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)   <span class="co"># Suite completa de análise</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rempsyc)     <span class="co"># Métodos psicométricos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+<section id="materiais-para-download" class="level2">
+<h2 class="anchored" data-anchor-id="materiais-para-download">📥 Materiais para Download</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Arquivos Necessários
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Faça o download do pacote completo abaixo e <strong>descompacte todos os arquivos na pasta do seu projeto</strong>.</p>
+<p><strong>Conteúdo do pacote:</strong></p>
 <ul>
-<li><p><strong>Desenho de Estudo Sugerido:</strong></p>
-<ul>
-<li>Estudos multicêntricos ou experimentos com estrutura hierárquica, onde as unidades de observação estão agrupadas em diferentes níveis.</li>
-</ul></li>
-<li><p><strong>Exemplo:</strong></p>
-<ul>
-<li>Avaliação do desempenho acadêmico de alunos em escolas, onde os alunos (nível inferior) estão agrupados em salas de aula (níveis superiores), considerando o efeito tanto do ensino individual quanto do ambiente escolar.</li>
-</ul></li>
-</ul></li>
+<li><code>bd_New drug_respiratory&amp;pulse.sav</code> - Banco de dados principal</li>
+<li><code>Lista 1.R</code> - Script parcialmente preenchido para prática</li>
+<li><code>lista_1.docx</code> - Exercícios para resolução</li>
 </ul>
-</section>
-<section id="principais-vantagens-dos-modelos-lineres-de-medidas-repetidas-em-comparação-com-a-anova" class="level2">
-<h2 class="anchored" data-anchor-id="principais-vantagens-dos-modelos-lineres-de-medidas-repetidas-em-comparação-com-a-anova">Principais vantagens dos modelos lineres de medidas repetidas em comparação com a ANOVA</h2>
-<ol type="1">
-<li><p><strong>Modelagem flexível:</strong> O GLM permite modelar e analisar experimentos com medidas repetidas de forma mais flexível. Você pode incluir múltiplos fatores independentes (variáveis independentes) em um único modelo e estudar suas interações, o que é especialmente útil em experimentos complexos.</p></li>
-<li><p><strong>Tratamento de dados desequilibrados:</strong> O GLM pode lidar eficazmente com desequilíbrio nas amostras ou tamanhos diferentes de grupos, o que é comum em experimentos do mundo real. A ANOVA tradicional é mais sensível a desequilíbrio.</p></li>
-<li><p><strong>Modelagem de covariáveis:</strong> O GLM permite incorporar covariáveis (variáveis de controle) em sua análise para controlar o efeito de variáveis que não são o foco principal do estudo. Isso melhora a precisão das estimativas dos efeitos de interesse.</p></li>
-<li><p><strong>Correções para violações de pressupostos:</strong> Quando os pressupostos da ANOVA, como a homogeneidade de variâncias ou normalidade dos resíduos, são violados, o GLM oferece opções para corrigir ou lidar com essas violações, tornando os resultados mais robustos.</p></li>
-<li><p><strong>Modelagem de medidas contínuas e categóricas:</strong> O GLM pode acomodar variáveis dependentes contínuas e categóricas (nominais ou ordinais), o que é útil em situações em que a variável dependente é de natureza diferente.</p></li>
-<li><p><strong>Maior poder estatístico:</strong> O GLM pode ser mais poderoso do que a ANOVA em situações em que as medidas repetidas têm alta correlação entre si, permitindo detectar diferenças significativas mesmo com tamanhos de amostra menores.</p></li>
-<li><p><strong>Análise de interações complexas:</strong> O GLM é especialmente eficaz na análise de interações complexas entre fatores independentes em designs experimentais com medidas repetidas, o que é difícil de realizar com a ANOVA.</p></li>
-</ol>
-</section>
-<section id="pacotes-que-vamos-utilizar" class="level2">
-<h2 class="anchored" data-anchor-id="pacotes-que-vamos-utilizar">Pacotes que vamos utilizar</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)   <span class="co"># Cálculo de médias estimadas após análises estatísticas.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)      <span class="co"># Ajuste de modelos lineares mistos.</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)      <span class="co"># Ajuste de modelos mistos não lineares.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)  <span class="co"># Criação de gráficos flexíveis e personalizados.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)   <span class="co"># Importação/exportação de dados de outros formatos.</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)     <span class="co"># Manipulação de dados.</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)     <span class="co"># Manipulação e transformação de dados de maneira eficiente.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)  <span class="co"># Correção de múltiplas comparações pós-teste.</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)   <span class="co"># Visualização de efeitos de modelos estatísticos.</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjstats)   <span class="co"># Estatísticas descritivas e sumarização de modelos.</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#library(tm)        # Análise de texto e mineração de texto.</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#library(car)       # Análise de regressão e diagnóstico de regressão.</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#library(pwr)       # Cálculo do poder estatístico em estudos de amostragem.</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)   <span class="co"># Análise estatística simplificada.</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)   <span class="co"># Ajuste de modelos de equações de estimação generalizadas.</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#library(htmltools) # Ferramentas para trabalhar com HTML.</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#library(mime)      # Ferramentas para manipulação de tipos MIME.</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance) <span class="co"># Avaliação e melhoria do desempenho do modelo linear</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(see)       <span class="co"># Simplificar a exploração de dados</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rempsyc)   <span class="co"># Métodos psicométricos e estatísticas relacionadas à psicometria</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats) <span class="co"># Simplifica a análise estatística</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="banco-de-dados-script-e-lista-1" class="level2">
-<h2 class="anchored" data-anchor-id="banco-de-dados-script-e-lista-1">Banco de dados, script e Lista 1</h2>
-<p>Faça o download do arquivo compactado abaixo.</p>
-<div class="cell">
-<div class="cell-output-display">
-<a href="data:application/zip;base64,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" download="Lista 1.zip">Download Lista 1.zip</a>
 </div>
 </div>
-<p>Lembre-se de descompactar os três arquivos na <strong>mesma pasta do projeto</strong> que você acabou de criar!</p>
-<p>O arquivo compactado contém:</p>
-<ol type="1">
-<li><p><code>bd_New drug_respiratory&amp;pulse.sav</code>: Este é o arquivo de banco de dados que será usado ao longo do tutorial. Ele contém os dados que serão analisados e explorados durante os exercícios.</p></li>
-<li><p><code>lista1_parcial.R</code>: Este arquivo .R contém o script parcialmente preenchido para praticar e estudar os códigos abordados no tutorial. Você pode usar este script como um guia interativo para aprender e executar as análises estatísticas.</p></li>
-<li><p>A <code>"Lista de Exercícios 1"</code> contém os exercícios para serem resolvidos.</p></li>
-</ol>
+<hr>
 </section>
-<section id="carregando-os-dados" class="level2">
-<h2 class="anchored" data-anchor-id="carregando-os-dados">Carregando os Dados</h2>
-<p>Vamos começar carregando o conjunto de dados original e realizando algumas transformações para tornar possível nossas análises.</p>
+<section id="preparação-dos-dados" class="level2">
+<h2 class="anchored" data-anchor-id="preparação-dos-dados">🔄 Preparação dos Dados</h2>
+<section id="carregamento-inicial" class="level3">
+<h3 class="anchored" data-anchor-id="carregamento-inicial">Carregamento Inicial</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>original_wide <span class="ot">=</span> <span class="fu">read.spss</span>(<span class="st">"bd_New drug_respiratory&amp;pulse.sav"</span>, <span class="at">to.data.frame=</span><span class="cn">TRUE</span>) </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(original_wide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Importar dados do SPSS</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>original_wide <span class="ot">&lt;-</span> <span class="fu">read.spss</span>(<span class="st">"bd_New drug_respiratory&amp;pulse.sav"</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">to.data.frame =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar estrutura</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(original_wide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      drug resp1 resp2 resp3 pulse1 pulse2 pulse3
 1 New Drug   3.4   3.3   3.3    2.2    2.1    2.1
@@ -408,23 +492,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 6 New Drug   3.3   3.3   3.3    2.0    2.1    2.4</code></pre>
 </div>
 </div>
-<p>O código fornecido tem como objetivo carregar um conjunto de dados a partir de um arquivo SPSS chamado “bd_New drug_respiratory&amp;pulse.sav” e exibir as primeiras linhas desse conjunto de dados.</p>
-<ol type="1">
-<li><p><code>original_wide = read.spss("bd_New drug_respiratory&amp;pulse.sav", to.data.frame=TRUE)</code>: Esta linha de código utiliza a função <code>read.spss</code> para ler o arquivo SPSS “bd_New drug_respiratory&amp;pulse.sav” e convertê-lo em um objeto de data frame do R. A opção <code>to.data.frame=TRUE</code> especifica que queremos que os dados sejam armazenados em um data frame.</p></li>
-<li><p><code>head(original_wide)</code>: Após a leitura do conjunto de dados, esta linha de código utiliza a função <code>head</code> para mostrar as primeiras linhas do data frame <code>original_wide</code>. Isso ajuda a visualizar rapidamente os dados e verificar sua estrutura.</p></li>
-</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sobre a função <code>read.spss()</code>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Origem:</strong> Pacote <code>foreign</code></li>
+<li><strong>Parâmetro <code>to.data.frame = TRUE</code>:</strong> Converte para data frame do R</li>
+<li><strong>Alternativa:</strong> Pacote <code>haven</code> com <code>read_sav()</code> (mais moderno)</li>
+</ul>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="transformando-o-banco-de-dados-de-wide-para-long" class="level2">
-<h2 class="anchored" data-anchor-id="transformando-o-banco-de-dados-de-wide-para-long">Transformando o Banco de Dados de Wide para Long</h2>
-<p>Para tornar possível algumas análises, precisamos transformar o banco de dados de formato “wide” para “long”. Isso nos permitirá realizar análises de medidas repetidas.</p>
+<section id="transformação-wide-long" class="level3">
+<h3 class="anchored" data-anchor-id="transformação-wide-long">Transformação Wide → Long</h3>
+<p>Para análises de medidas repetidas, precisamos converter os dados de formato <strong>wide</strong> (uma linha por sujeito) para <strong>long</strong> (uma linha por observação).</p>
+<section id="passo-1-renomear-colunas" class="level4">
+<h4 class="anchored" data-anchor-id="passo-1-renomear-colunas">Passo 1: Renomear Colunas</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> original_wide <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span><span class="fu">gsub</span>(<span class="st">"(resp|pulse)(</span><span class="sc">\\</span><span class="st">d+)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1_</span><span class="sc">\\</span><span class="st">2"</span>, .), <span class="sc">-</span>drug) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(ID, <span class="fu">everything</span>())  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ID, <span class="fu">everything</span>())</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  ID     drug resp_1 resp_2 resp_3 pulse_1 pulse_2 pulse_3
 1  1 New Drug    3.4    3.3    3.3     2.2     2.1     2.1
@@ -435,22 +536,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 6  6 New Drug    3.3    3.3    3.3     2.0     2.1     2.4</code></pre>
 </div>
 </div>
-<p>Os códigos fornecidos têm como objetivo renomear colunas e transformar um conjunto de dados de formato “wide” para “long”, onde uma expressão regular está sendo utilizada para facilitar esse processo.</p>
-<p>Uma expressão regular, ou regex, é uma sequência de caracteres que define um padrão de busca em texto, permitindo operações avançadas de busca e manipulação. Elas são amplamente usadas na programação para validação, extração e transformação de dados em texto.</p>
-<p>No primeiro trecho de código, estamos renomeando as colunas do conjunto de dados <code>original_wide</code>. Aqui, a expressão regular <code>(resp|pulse)(\\d+)</code> está sendo usada na função <code>gsub</code>. Vamos explicar essa expressão regular:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🔍 Entendendo a Expressão Regular
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A regex <code>(resp|pulse)(\\d+)</code> funciona assim:</p>
 <ul>
-<li><p><code>(resp|pulse)</code>: Isso corresponde à palavra “resp” OU “pulse”. O operador <code>|</code> atua como uma escolha, permitindo que corresponda a uma das duas palavras.</p></li>
-<li><p><code>(\\d+)</code>: Isso corresponde a um ou mais dígitos numéricos. O <code>\\d+</code> é usado para extrair os números que seguem “resp” ou “pulse”.</p></li>
+<li><code>(resp|pulse)</code> - Captura “resp” <strong>OU</strong> “pulse”</li>
+<li><code>(\\d+)</code> - Captura um ou mais dígitos</li>
 </ul>
-<p>A expressão regular <code>(resp|pulse)(\\d+)</code> funciona para identificar colunas com nomes como “resp1”, “resp2”, “pulse1”, “pulse2” etc. A função <code>gsub</code> substitui esses nomes de colunas por um novo formato, onde mantém “resp” ou “pulse” e adiciona o número correspondente. Por exemplo, “resp1” será renomeado para “resp_1”, “pulse2” será renomeado para “pulse_2” e assim por diante.</p>
-<p>Isso é útil para o próximo passo porque torna mais fácil identificar e separar os dados de resp e pulse em diferentes colunas. Além disso, os números extraídos da expressão regular serão usados para criar a variável “Tempo”, que indicará as medidas repetidas ao longo do tempo.</p>
+<p><strong>Transformação:</strong> - <code>resp1</code> → <code>resp_1</code> - <code>pulse2</code> → <code>pulse_2</code></p>
+<p>Isso facilita a separação posterior em variável e tempo!</p>
+</div>
+</div>
+</div>
+</section>
+<section id="passo-2-pivotar-para-formato-long" class="level4">
+<h4 class="anchored" data-anchor-id="passo-2-pivotar-para-formato-long">Passo 2: Pivotar para Formato Long</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bd_long <span class="ot">=</span> <span class="fu">pivot_longer</span>(bd, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">cols =</span> resp_1<span class="sc">:</span>pulse_3, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"Tempo"</span>), </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">names_pattern =</span> <span class="st">"(.+)_(.+)"</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bd_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  bd,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> resp_1<span class="sc">:</span>pulse_3,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"Tempo"</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_pattern =</span> <span class="st">"(.+)_(.+)"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bd_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 5
      ID drug     Tempo  resp pulse
@@ -463,99 +582,118 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 6     2 New Drug 3       3.3   2.2</code></pre>
 </div>
 </div>
-<p>No segundo trecho de código, estamos usando a função <code>pivot_longer</code> para transformar o conjunto de dados <code>bd</code> de formato “wide” para “long”. A opção <code>names_pattern</code> usa a expressão regular <code>(.)_(.)</code> para dividir os nomes das colunas em duas partes:</p>
-<ul>
-<li><p><code>(.+)</code>: Isso corresponde a qualquer sequência de caracteres, representando os nomes originais das colunas.</p></li>
-<li><p><code>_(.+)</code>: Isso corresponde ao caractere sublinhado “_” seguido de qualquer sequência de caracteres. Essa parte será usada para identificar os valores correspondentes nas colunas no formato “long”.</p></li>
-</ul>
-<p>Portanto, a expressão regular <code>(.)_(.)</code> ajuda a extrair informações dos nomes das colunas originais e organizá-las adequadamente no formato “long” do conjunto de dados <code>bd_long</code>, onde a primeira parte é armazenada na coluna <code>"Tempo"</code> e a segunda parte é usada para identificar os valores correspondentes na coluna <code>"valor"</code> (geralmente representada como <code>.value</code> no R).</p>
-</section>
-<section id="alterando-o-tipo-da-variável-tempo" class="level2">
-<h2 class="anchored" data-anchor-id="alterando-o-tipo-da-variável-tempo">Alterando o tipo da variável “Tempo”</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Suponha que sua variável "Tempo" esteja em um dataframe chamado "seu_data_frame"</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>Tempo <span class="ot">&lt;-</span> <span class="fu">factor</span>(bd_long<span class="sc">$</span>Tempo) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>O código assume que a variável <code>"Tempo"</code> está no dataframe chamado <code>"bd_long"</code>. Ele usa a função <code>factor()</code> para converter a variável “Tempo” em uma variável categórica. A conversão para uma variável categórica é útil quando você deseja tratar “Tempo” como uma variável de fator com níveis distintos em vez de uma variável numérica contínua. Essa transformação pode ser útil em análises estatísticas que envolvam categorias ou grupos de tempo, como em modelos de medidas repetidas.</p>
-</section>
-<section id="pressupostos-da-variável-dependente" class="level2">
-<h2 class="anchored" data-anchor-id="pressupostos-da-variável-dependente">Pressupostos da variável dependente</h2>
-<p>A distribuição dos dados da variável independente é fundamental para inferências estatísticas robustas. Quando os dados seguem uma distribuição normal, isso implica que a maioria das observações está centralizada em torno da média, proporcionando uma simetria e previsibilidade desejáveis. Esta normalidade é frequentemente pressuposta em muitos métodos estatísticos clássicos. Ao observar o histograma da variável independente, esperamos ver uma forma de sino simétrica. No Q-Q plot, quando os dados são normalmente distribuídos, os pontos devem seguir aproximadamente uma linha diagonal. Em contrapartida, quando os dados não são normalmente distribuídos, o histograma pode revelar assimetria ou padrões diferentes, e o Q-Q plot apresentará desvios significativos da linha diagonal, indicando divergências da normalidade. Analisar a normalidade dos dados e interpretar o Q-Q plot ajuda a guiar a escolha adequada de métodos estatísticos e a compreender possíveis limitações na inferência.</p>
-<p>Abaixo exemplos de distribuições normais, não normais e seus respectivos gráicos de disperção e Q-Q plot.</p>
-<section id="dados-com-distribuição-normal" class="level3">
-<h3 class="anchored" data-anchor-id="dados-com-distribuição-normal">Dados com distribuição normal</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bloco para dados normalmente distribuídos</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dados_normais <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para criar histograma e Q-Q plot</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>criar_graficos_normais <span class="ot">&lt;-</span> <span class="cf">function</span>(dados, titulo) {</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))  <span class="co"># Organiza os gráficos em uma linha com duas colunas</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Histograma</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(dados, <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Histograma -"</span>, titulo), <span class="at">col =</span> <span class="st">"lightblue"</span>, <span class="at">border =</span> <span class="st">"black"</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Q-Q plot</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqnorm</span>(dados, <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Q-Q Plot -"</span>, titulo))</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqline</span>(dados, <span class="at">col =</span> <span class="dv">2</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie os gráficos para dados normalmente distribuídos</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">criar_graficos_normais</span>(dados_normais, <span class="st">"Normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="lms_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restaure o layout gráfico padrão</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="dados-com-distribuição-não-normal" class="level3">
-<h3 class="anchored" data-anchor-id="dados-com-distribuição-não-normal">Dados com distribuição não-normal</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bloco para dados não normalmente distribuídos</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>dados_nao_normais <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Função para criar histograma e Q-Q plot</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>criar_graficos_nao_normais <span class="ot">&lt;-</span> <span class="cf">function</span>(dados, titulo) {</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))  <span class="co"># Organiza os gráficos em uma linha com duas colunas</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Histograma</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(dados, <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Histograma -"</span>, titulo), <span class="at">col =</span> <span class="st">"lightcoral"</span>, <span class="at">border =</span> <span class="st">"black"</span>)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Q-Q plot</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqnorm</span>(dados, <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Q-Q Plot -"</span>, titulo))</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqline</span>(dados, <span class="at">col =</span> <span class="dv">2</span>)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie os gráficos para dados não normalmente distribuídos</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">criar_graficos_nao_normais</span>(dados_nao_normais, <span class="st">"Não Normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="lms_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restaure o layout gráfico padrão</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Além das análises visuais dos gráficos, temos também o teste de Shapiro-Wilk. A hipótese nula no teste de Shapiro-Wilk é que a variável analisada segue uma distribuição normal. Em termos mais formais, a hipótese nula (H0) é:</p>
-<p>H0:Os dados são provenientes de uma distribuição normal.</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="Cuidado!">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Cuidado!
+Estrutura do <code>pivot_longer()</code>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Se o p-valor for <strong>maior que 0,05</strong>, não há evidências suficientes para rejeitar a hipótese nula, <strong>indicando que os dados podem ser considerados normalmente distribuídos</strong>. Por outro lado, um p-valor <strong>menor que 0,05</strong> sugere que há evidências significativas contra a hipótese nula, <strong>indicando não normalidade nos dados</strong>. É importante considerar o contexto do estudo ao interpretar os resultados e ter em mente que o teste pode ser sensível a tamanhos amostrais muito grandes, resultando em rejeições mesmo para desvios pequenos da normalidade.</p>
+<ul>
+<li><strong><code>cols</code>:</strong> Colunas a transformar</li>
+<li><strong><code>.value</code>:</strong> Nome da coluna vem da primeira parte</li>
+<li><strong><code>Tempo</code>:</strong> Criada da segunda parte do nome</li>
+<li><strong><code>names_pattern</code>:</strong> Regex para dividir nomes</li>
+</ul>
 </div>
 </div>
-<p>Podemos verificar o teste de Shapiro-Wilk para os dois exemplos anteriores e treinar a leitura dos resultados</p>
 </section>
-<section id="shapiro-wilk-para-os-dados-com-distribuição-normal" class="level3">
-<h3 class="anchored" data-anchor-id="shapiro-wilk-para-os-dados-com-distribuição-normal">Shapiro-Wilk para os dados com distribuição normal</h3>
+<section id="passo-3-converter-tempo-em-fator" class="level4">
+<h4 class="anchored" data-anchor-id="passo-3-converter-tempo-em-fator">Passo 3: Converter Tempo em Fator</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bd_long<span class="sc">$</span>Tempo <span class="ot">&lt;-</span> <span class="fu">factor</span>(bd_long<span class="sc">$</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="verificação-de-pressupostos" class="level2">
+<h2 class="anchored" data-anchor-id="verificação-de-pressupostos">✅ Verificação de Pressupostos</h2>
+<section id="normalidade-da-variável-dependente" class="level3">
+<h3 class="anchored" data-anchor-id="normalidade-da-variável-dependente">Normalidade da Variável Dependente</h3>
+<p>A distribuição normal é pressuposto fundamental em muitos testes estatísticos.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Distribuição Normal</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Distribuição Não-Normal</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dados_normais <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar visualizações</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dados_normais, </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Distribuição Normal"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>, </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Q-Q Plot</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(dados_normais, <span class="at">main =</span> <span class="st">"Q-Q Plot - Normal"</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(dados_normais, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lms_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Características:</strong> - Histograma em forma de sino - Q-Q plot segue linha diagonal - Simetria em torno da média</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dados_nao_normais <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dados_nao_normais,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Distribuição Assimétrica"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightcoral"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(dados_nao_normais, <span class="at">main =</span> <span class="st">"Q-Q Plot - Não Normal"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(dados_nao_normais, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lms_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Características:</strong> - Assimetria evidente - Desvios da linha no Q-Q plot - Concentração em uma região</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="teste-de-shapiro-wilk" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-shapiro-wilk">Teste de Shapiro-Wilk</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hipóteses do Teste
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>H₀:</strong> Os dados seguem distribuição normal<br>
+<strong>H₁:</strong> Os dados NÃO seguem distribuição normal</p>
+<p><strong>Decisão:</strong> - p &gt; 0,05 → Não rejeita H₀ (assume normalidade) - p &lt; 0,05 → Rejeita H₀ (evidência de não-normalidade)</p>
+<p>⚠️ <strong>Atenção:</strong> Com amostras muito grandes, pequenos desvios podem ser significativos.</p>
+</div>
+</div>
+<p><strong>Exemplo com dados normais:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(dados_normais)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -566,10 +704,7 @@ data:  dados_normais
 W = 0.99838, p-value = 0.4765</code></pre>
 </div>
 </div>
-<p>O valor de p é maior do que 0,05, portanto podemos assumir que os dados possuem distribuição normal.</p>
-</section>
-<section id="shapiro-wilk-para-os-dados-com-distribuição-não-normal" class="level3">
-<h3 class="anchored" data-anchor-id="shapiro-wilk-para-os-dados-com-distribuição-não-normal">Shapiro-Wilk para os dados com distribuição não-normal</h3>
+<p><strong>Exemplo com dados não-normais:</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(dados_nao_normais)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -580,23 +715,28 @@ data:  dados_nao_normais
 W = 0.92344, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>O valor de p é menor do que 0,05, portanto podemos assumir que os dados possuem distribuição não-normal.</p>
-<p>Vamos agora verificar a distribuição, o Q-Q plot e o teste de Shapiro-Wilk das variáveis Resp e Pulse do nosso banco de dados.</p>
+<hr>
 </section>
-<section id="densidade-distribuição-q-q-plot-da-variável-pulse" class="level3">
-<h3 class="anchored" data-anchor-id="densidade-distribuição-q-q-plot-da-variável-pulse">Densidade (distribuição) + Q-Q plot da variável “Pulse”</h3>
-<p>Para verificar a distribuição e o Q-Q plot vamos utilizar a função <code>nice_normality()</code> do pacote <code>rempsyc</code>, que cria os dois gráficos em poucas linhas de código!</p>
+<section id="normalidade-das-variáveis-do-estudo" class="level3">
+<h3 class="anchored" data-anchor-id="normalidade-das-variáveis-do-estudo">Normalidade das Variáveis do Estudo</h3>
+<section id="variável-pulse" class="level4">
+<h4 class="anchored" data-anchor-id="variável-pulse">Variável “Pulse”</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nice_normality</span>(<span class="at">data =</span> bd_long, </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">variable =</span> <span class="st">"pulse"</span>,  </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">histogram =</span> <span class="cn">TRUE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualização combinada</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nice_normality</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"pulse"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">histogram =</span> <span class="cn">TRUE</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lms_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="lms_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>Shapiro-Wilk para a variável pulse:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(bd_long<span class="sc">$</span>pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste formal</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(bd_long<span class="sc">$</span>pulse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Shapiro-Wilk normality test
@@ -605,32 +745,50 @@ data:  bd_long$pulse
 W = 0.90791, p-value = 0.005655</code></pre>
 </div>
 </div>
-<p>Tanto pela análise gráfica quanto pelo teste de Shapiro-Wilk podemos observar que a variável “Pulse” não pussui distribuião normal.</p>
-</section>
-<section id="esfericidade-da-variável-pulse" class="level3">
-<h3 class="anchored" data-anchor-id="esfericidade-da-variável-pulse">Esfericidade da Variável “Pulse”</h3>
-<p>Em casos de medidas repetidas também precisamos avaliar a esfericidade intra-sujeito ao longo do tempo. A esfericidade intra-sujeitos avalia se as variações nas diferenças entre as medidas ao longo do tempo são consistentes para todas as combinações de momentos. Se essa homogeneidade não for atendida, ajustes como a correção de Greenhouse-Geisser ou Huynh-Feldt podem ser necessários para garantir conclusões estatisticamente válidas. Essas correções ajustam os graus de liberdade dos testes para lidar com a falta de esfericidade intra-sujeitos.</p>
-<p>Vamos verificar a esfericidade da variável “pulse” usando o teste de Mauchly.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pulse_mauchly <span class="ot">=</span> <span class="fu">anova_test</span>(<span class="at">data =</span> bd_long, </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">dv =</span> pulse, </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">wid =</span> ID, </span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">within =</span> Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p>Os códigos fornecidos têm como objetivo realizar um teste de Mauchly para verificar a esfericidade da variável “pulse” em um conjunto de dados no formato longo (<code>bd_long</code>). Vamos explicar o que cada linha de código faz:</p>
-<ol type="1">
-<li><p><code>pulse_mauchly = anova_test(data = bd_long, dv = pulse, wid = ID, within = Tempo)</code>: Esta linha de código executa o teste de Mauchly para verificar a esfericidade da variável “pulse”. A função <code>anova_test</code> é usada para realizar esse teste. Os argumentos passados para a função são:</p>
-<ul>
-<li><p><code>data</code>: O conjunto de dados no formato longo (<code>bd_long</code>), onde os dados estão organizados em formato apropriado para análises de medidas repetidas.</p></li>
-<li><p><code>dv</code>: A variável dependente sendo analisada, que neste caso é “pulse”.</p></li>
-<li><p><code>wid</code>: A variável de identificação única (<code>ID</code>), que indica quais observações pertencem ao mesmo sujeito.</p></li>
-<li><p><code>within</code>: A variável categórica que representa o fator dentro dos sujeitos, neste caso, “Tempo”.</p></li>
-</ul></li>
-<li><p><code>pulse_mauchly</code>: Esta linha de código armazena os resultados do teste de Mauchly na variável <code>pulse_mauchly</code>. Os resultados incluem estatísticas relacionadas à esfericidade e os valores associados (valor-p).</p></li>
-</ol>
-<p>Vamos interpretar os resultados da análise de esfericidade usando o Teste de Mauchly:</p>
+<div class="callout-title-container flex-fill">
+Interpretação
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tanto a análise gráfica quanto o teste de Shapiro-Wilk indicam que <strong>pulse não possui distribuição normal</strong>.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="esfericidade-medidas-repetidas" class="level2">
+<h2 class="anchored" data-anchor-id="esfericidade-medidas-repetidas">🔄 Esfericidade (Medidas Repetidas)</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+O que é Esfericidade?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <strong>esfericidade</strong> avalia se as variâncias das diferenças entre todos os pares de medidas repetidas são homogêneas.</p>
+<p><strong>Violação de esfericidade:</strong> - Infla erro Tipo I (falsos positivos) - Requer correções nos graus de liberdade - Comum em medidas repetidas</p>
+</div>
+</div>
+<section id="teste-de-mauchly-para-pulse" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-mauchly-para-pulse">Teste de Mauchly para “Pulse”</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pulse_mauchly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pulse_mauchly <span class="ot">&lt;-</span> <span class="fu">anova_test</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dv =</span> pulse,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">wid =</span> ID,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">within =</span> Tempo</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>pulse_mauchly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ANOVA Table (type III tests)
 
@@ -647,29 +805,37 @@ $`Sphericity Corrections`
 1  Tempo 0.82 1.64, 18.04 0.061           0.945 1.89, 20.78 0.052          </code></pre>
 </div>
 </div>
-<p><strong>ANOVA Table (type III tests): Effect (Efeito):</strong> “Tempo”. DFn e DFd: Graus de liberdade para o numerador (DFn) e denominador (DFd) da estatística F. F e p: Estatística F e valor p associado ao efeito “Tempo”. p&lt;.05: Indica se o valor p é menor que 0,05, sugerindo significância estatística. ges (generalized eta-squared): Uma medida da força do efeito.</p>
-<ul>
-<li><strong>Interpretação</strong>: O efeito “Tempo” apresentou uma estatística F de 3,48 com um valor p de 0,049, indicando uma possível significância estatística. O valor p é menor que 0,05, sugerindo que há diferenças significativas entre os níveis de tempo.</li>
-</ul>
-<p><strong>Mauchly’s Test for Sphericity: Effect (Efeito):</strong> “Tempo”. W (Estátistica de Mauchly): 0,781. p: Valor p associado ao teste de Mauchly.</p>
-<ul>
-<li><strong>Interpretação</strong>: O teste de Mauchly avalia a esfericidade. Para o efeito “Tempo”, o valor p é 0,29, indicando que não há evidência estatística para rejeitar a esfericidade. Ou seja, a esfericidade não é violada.</li>
-</ul>
-<p><strong>Sphericity Corrections: Effect (Efeito):</strong> “Tempo”. GGe (Greenhouse-Geisser epsilon): 0,82. DF[GG] e p[GG]: Graus de liberdade e valor p corrigidos pelo método Greenhouse-Geisser. HFe (Huynh-Feldt epsilon): 0,945. DF[HF] e p[HF]: Graus de liberdade e valor p corrigidos pelo método Huynh-Feldt.</p>
-<ul>
-<li>Interpretação: Se a esfericidade fosse violada, você usaria essas correções para ajustar os graus de liberdade e valores p.&nbsp;Os valores de GGe e HFe estão próximos de 1, indicando que a esfericidade não foi severamente violada. Os valores p corrigidos são 0,061 (GGe) e 0,052 (HFe), indicando que mesmo com a correção, o efeito “Tempo” pode ainda ser significativo.</li>
-</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Interpretando os Resultados
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>ANOVA Table:</strong> - <strong>F</strong> = 3,48, <strong>p</strong> = 0,049 → Efeito significativo de Tempo - <strong>ges</strong> = medida de tamanho de efeito</p>
+<p><strong>Teste de Mauchly:</strong> - <strong>W</strong> = 0,781, <strong>p</strong> = 0,29 → Esfericidade NÃO violada</p>
+<p><strong>Correções (quando necessárias):</strong> - <strong>GGe</strong> = 0,82 → Correção de Greenhouse-Geisser - <strong>HFe</strong> = 0,945 → Correção de Huynh-Feldt</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="esfericidade-da-variável-resp" class="level3">
-<h3 class="anchored" data-anchor-id="esfericidade-da-variável-resp">Esfericidade da Variável “Resp”</h3>
-<p>Da mesma forma, vamos verificar a esfericidade da variável “resp” usando o teste de Mauchly.</p>
+<section id="teste-de-mauchly-para-resp" class="level3">
+<h3 class="anchored" data-anchor-id="teste-de-mauchly-para-resp">Teste de Mauchly para “Resp”</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>resp_mauchly <span class="ot">=</span> <span class="fu">anova_test</span>(<span class="at">data =</span> bd_long, </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">dv =</span> resp, </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">wid =</span> ID,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">within =</span> Tempo)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>resp_mauchly </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>resp_mauchly <span class="ot">&lt;-</span> <span class="fu">anova_test</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> bd_long,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dv =</span> resp,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">wid =</span> ID,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">within =</span> Tempo</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>resp_mauchly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ANOVA Table (type III tests)
 
@@ -686,42 +852,169 @@ $`Sphericity Corrections`
 1  Tempo 0.667 1.33, 14.68 0.629           0.725 1.45, 15.94 0.646          </code></pre>
 </div>
 </div>
-<p>Vamos interpretar os resultados da segunda análise de esfericidade:</p>
-<p><strong>ANOVA Table (type III tests): Effect (Efeito):</strong> “Tempo”. DFn e DFd: Graus de liberdade para o numerador (DFn) e denominador (DFd) da estatística F. F e p: Estatística F e valor p associado ao efeito “Tempo”. p&lt;.05: Indica se o valor p é menor que 0,05, sugerindo significância estatística. ges (generalized eta-squared): Uma medida da força do efeito.</p>
-<ul>
-<li><strong>Interpretação</strong>: O efeito “Tempo” apresentou uma estatística F de 0,344 com um valor p de 0,713, indicando que não há evidência estatística para rejeitar a hipótese nula. O valor p é maior que 0,05, sugerindo que não há diferenças significativas entre os níveis de tempo.</li>
-</ul>
-<p><strong>Mauchly’s Test for Sphericity: Effect (Efeito):</strong> “Tempo”. W (Estátistica de Mauchly): 0,501. p e p&lt;.05: Valor p associado ao teste de Mauchly e indicação de significância.</p>
-<ul>
-<li><strong>Interpretação</strong>: O teste de Mauchly indica que a esfericidade foi violada, pois o valor p é menor que 0,05. Isso sugere que as covariâncias das diferenças entre os níveis de tempo não são iguais.</li>
-</ul>
-<p><strong>Sphericity Corrections: Effect (Efeito): “Tempo”.</strong> GGe (Greenhouse-Geisser epsilon): 0,667. DF[GG] e p[GG]: Graus de liberdade e valor p corrigidos pelo método Greenhouse-Geisser. HFe (Huynh-Feldt epsilon): 0,725. DF[HF] e p[HF]: Graus de liberdade e valor p corrigidos pelo método Huynh-Feldt.</p>
-<ul>
-<li><strong>Interpretação</strong>: As correções (GGe e HFe) sugerem que, mesmo com a correção para a violação da esfericidade, o efeito “Tempo” não é significativo. Os valores p corrigidos são 0,629 (GGe) e 0,646 (HFe), indicando que a falta de esfericidade afeta a significância do efeito “Tempo”.</li>
-</ul>
-<p>Os resultados indicam que a esfericidade foi violada, e mesmo com as correções, não há evidências significativas para o efeito “Tempo”. Isso destaca a importância de considerar a esfericidade ao interpretar os resultados de análises de variância com medidas repetidas.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+⚠️ Esfericidade Violada!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Teste de Mauchly:</strong> - <strong>W</strong> = 0,501, <strong>p</strong> &lt; 0,05 → Esfericidade VIOLADA</p>
+<p><strong>Implicações:</strong> - Graus de liberdade devem ser corrigidos - Usar valores p corrigidos (GGe ou HFe) - GGe = 0,667 (redução de ~33%) - HFe = 0,725 (redução de ~27,5%)</p>
+<p><strong>Resultado após correção:</strong> - Efeito de Tempo permanece não-significativo</p>
+</div>
+</div>
+<hr>
 </section>
-<section id="gge-greenhouse-geisser-epsilon-e-o-hfe-huynh-feldt-epsilon" class="level3">
-<h3 class="anchored" data-anchor-id="gge-greenhouse-geisser-epsilon-e-o-hfe-huynh-feldt-epsilon">GGe (Greenhouse-Geisser epsilon) e o HFe (Huynh-Feldt epsilon)</h3>
-<p>O GGe (Greenhouse-Geisser epsilon) e o HFe (Huynh-Feldt epsilon) são coeficientes de correção usados em análises de variância com medidas repetidas para lidar com a violação da esfericidade intra-sujeitos. Esses coeficientes ajustam os graus de liberdade dos testes estatísticos para compensar a falta de esfericidade, ajudando a evitar conclusões incorretas sobre a significância dos efeitos.</p>
-<ul>
-<li><p><strong>Greenhouse-Geisser epsilon (GGe):</strong> Este coeficiente é uma estimativa da magnitude da não esfericidade intra-sujeitos. O GGe é usado para corrigir os graus de liberdade dos testes estatísticos, tornando-os mais conservadores quando a esfericidade é violada. Um GGe próximo de 1 indica menos violação da esfericidade.</p></li>
-<li><p><strong>Huynh-Feldt epsilon (HFe):</strong> Similar ao GGe, o HFe é outro coeficiente de correção. Ele é um ajuste mais conservador que o GGe. Seu valor próximo de 1 indica menos violação da esfericidade. O HFe é geralmente mais utilizado quando os tamanhos amostrais são pequenos.</p></li>
-</ul>
-<p>No contexto da variável Resp:</p>
-<ul>
-<li><p><strong>GGe:</strong> 0,667 - Indica que, após a correção de Greenhouse-Geisser, os graus de liberdade foram reduzidos em cerca de 33% para compensar a violação da esfericidade intra-sujeitos.</p></li>
-<li><p><strong>HFe:</strong> 0,725 - Similar ao GGe, o HFe fornece outra correção mais conservadora. Neste caso, os graus de liberdade são reduzidos em aproximadamente 27,5%.</p></li>
-</ul>
-<p>Já no contexto da variável Pulse:</p>
-<ul>
-<li><p>GGe = 0,82 - Indica que, após a correção de Greenhouse-Geisser, os graus de liberdade foram reduzidos em cerca de 18% para compensar a violação da esfericidade intra-sujeitos.</p></li>
-<li><p>HFe = 0,945 - Indica que, após a correção de Huynh-Feldt, os graus de liberdade foram reduzidos em cerca de 5,5% para compensar a violação da esfericidade intra-sujeitos.</p></li>
-</ul>
-<p>Agora finalmente vamos para a lista de exercícios, começando com o GLM e continuando na sequencia com o GEE e GMM.</p>
+</section>
+<section id="coeficientes-de-correção" class="level2">
+<h2 class="anchored" data-anchor-id="coeficientes-de-correção">🔧 Coeficientes de Correção</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Greenhouse-Geisser (GGe)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Huynh-Feldt (HFe)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Quando Usar Qual?</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p><strong>Características:</strong> - Correção mais conservadora - Recomendado quando GGe &lt; 0,75 - Reduz graus de liberdade proporcionalmente</p>
+<p><strong>Interpretação:</strong> - GGe próximo de 1 → Pouca violação - GGe &lt; 0,75 → Violação substancial</p>
+<p><strong>Exemplo (Resp):</strong> - GGe = 0,667 → Redução de 33% nos GL</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p><strong>Características:</strong> - Menos conservador que GGe - Melhor para amostras pequenas - Pode exceder 1 (truncado em 1)</p>
+<p><strong>Interpretação:</strong> - HFe próximo de 1 → Pouca violação - Diferença com GGe indica severidade</p>
+<p><strong>Exemplo (Resp):</strong> - HFe = 0,725 → Redução de 27,5% nos GL</p>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Recomendação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GGe &gt; 0,75</td>
+<td>Qualquer correção</td>
+</tr>
+<tr class="even">
+<td>GGe &lt; 0,75</td>
+<td>Preferir GGe</td>
+</tr>
+<tr class="odd">
+<td>Amostra pequena</td>
+<td>Considerar HFe</td>
+</tr>
+<tr class="even">
+<td>p próximo de 0,05</td>
+<td>Comparar ambos</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="resumo-dos-pressupostos" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-dos-pressupostos">🎓 Resumo dos Pressupostos</h2>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Checklist de Verificação
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 21%">
+<col style="width: 18%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pressuposto</th>
+<th>Pulse</th>
+<th>Resp</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normalidade</td>
+<td>❌ Violado</td>
+<td>-</td>
+<td>Considerar transformação ou GLM robusto</td>
+</tr>
+<tr class="even">
+<td>Esfericidade</td>
+<td>✅ OK</td>
+<td>❌ Violado</td>
+<td>Usar correções GGe/HFe</td>
+</tr>
+<tr class="odd">
+<td>Homogeneidade</td>
+<td>-</td>
+<td>-</td>
+<td>Verificar com Levene (próximo capítulo)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Próximos passos:</strong> Agora que verificamos os pressupostos, podemos prosseguir para as análises GLM, GEE e GMM!</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="conceitos-chave" class="level2">
+<h2 class="anchored" data-anchor-id="conceitos-chave">📚 Conceitos-Chave</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Glossário Rápido
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Wide vs Long:</strong> - Wide: Uma linha por sujeito, múltiplas colunas de tempo - Long: Uma linha por observação, coluna de tempo</p>
+<p><strong>Esfericidade:</strong> - Homogeneidade das variâncias das diferenças - Crítico para ANOVA de medidas repetidas</p>
+<p><strong>GGe/HFe:</strong> - Correções para violação de esfericidade - Ajustam graus de liberdade</p>
+<p><strong>Q-Q Plot:</strong> - Quantis observados vs esperados - Linha diagonal = normalidade perfeita</p>
+</div>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🚀 Pronto para Análises!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Com os dados preparados e pressupostos verificados, você está pronto para explorar:</p>
+<ol type="1">
+<li><strong>GLM</strong> - Modelo Linear Geral</li>
+<li><strong>GEE</strong> - Equações de Estimação Generalizadas<br>
+</li>
+<li><strong>GMM</strong> - Modelos Mistos</li>
+<li><strong>GzLM</strong> - Modelos Lineares Generalizados</li>
+</ol>
+<p>Siga para os próximos capítulos onde implementaremos cada modelo em detalhe!</p>
+</div>
+</div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -760,18 +1053,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -803,11 +1085,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -817,8 +1138,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -830,7 +1160,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -874,6 +1327,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -899,6 +1353,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -960,17 +1440,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introdução</span>
+      <a href="./index.html" class="pagination-link" aria-label="Bem-vindo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Bem-vindo</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lista_1.html" class="pagination-link">
+      <a href="./lista_1.html" class="pagination-link" aria-label="Lista 1 - GLM, GEE e GMM">
         <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

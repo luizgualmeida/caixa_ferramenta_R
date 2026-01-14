@@ -1,384 +1,567 @@
-# GLM, GEE, GMM, GzLM
+# Modelos Lineares {.unnumbered}
 
-## Resumo sobre os modelos lineares abordados
+::: {.callout-note appearance="simple" icon=false}
+## Visão Geral do Capítulo
 
--   **Modelo Linear Geral (GLM) de Medidas Repetidas:** O Modelo Linear Geral de Medidas Repetidas é uma extensão do modelo linear geral tradicional, projetado para lidar com dados repetidos ao longo do tempo. Ele é utilizado quando há correlação entre as observações, como em estudos longitudinais, e permite modelar a estrutura de covariância entre as medições repetidas.
+Este capítulo apresenta quatro abordagens fundamentais para análise de dados longitudinais e correlacionados: **GLM de Medidas Repetidas**, **GEE**, **GMM** e **GzLM**. Cada modelo possui características específicas que os tornam adequados para diferentes desenhos de pesquisa.
+:::
 
-    -   **Desenho de Estudo Sugerido:**
+---
 
-        -   Um estudo longitudinal com medições repetidas ao longo do tempo em um grupo de participantes.
+## 📊 Os Quatro Modelos
 
-    -   **Exemplo:**
+::: {.panel-tabset}
 
-        -   Acompanhamento de pacientes com uma condição médica específica, medindo regularmente os níveis de uma variável biológica para observar mudanças ao longo do tratamento.
+### GLM - Medidas Repetidas
 
--   **Generalized Estimated Equations (GEE):** As Equações Estimadas Generalizadas (GEE) são uma abordagem estatística para análise de dados longitudinais ou correlacionados. Elas proporcionam uma estrutura robusta para lidar com a dependência entre as observações, permitindo estimativas eficientes dos parâmetros, mesmo quando a especificação da covariância não é precisa.
+**Modelo Linear Geral de Medidas Repetidas**
 
-    -   **Desenho de Estudo Sugerido:**
+Extensão do modelo linear tradicional projetado especificamente para dados com observações correlacionadas ao longo do tempo.
 
-        -   Um estudo observacional ou ensaio clínico longitudinal onde as medições podem ser correlacionadas, como em estudos epidemiológicos.
+**Quando usar:**
+- Estudos longitudinais com medições repetidas
+- Mesmos participantes avaliados em múltiplos momentos
+- Necessidade de modelar estrutura de covariância entre medições
 
-    -   **Exemplo:**
+**Exemplo prático:**
+Acompanhamento de pacientes em tratamento médico, medindo regularmente biomarcadores para observar mudanças ao longo do tempo.
 
-        -   Investigação sobre a eficácia de um programa de intervenção de saúde em que as observações estão correlacionadas dentro dos grupos de participantes.
+### GEE - Equações Estimadas
 
--   **Modelos Mistos e Hierárquicos (GMM):** Os Modelos Mistos e Hierárquicos, também conhecidos como Modelos de Efeitos Misto, combinam componentes fixos e aleatórios para modelar tanto a variabilidade fixa quanto a aleatória nos dados. Esses modelos são particularmente úteis quando há hierarquia nos dados, como em estudos multicêntricos, onde as observações podem ser agrupadas em diferentes níveis (por exemplo, centros de pesquisa). Eles permitem capturar a variabilidade tanto dentro quanto entre os grupos, oferecendo uma abordagem flexível para análise de dados complexos.
+**Generalized Estimated Equations**
 
-    -   **Desenho de Estudo Sugerido:**
+Abordagem robusta para dados longitudinais que fornece estimativas eficientes mesmo quando a especificação da covariância não é perfeita.
 
-        -   Estudos multicêntricos ou experimentos com estrutura hierárquica, onde as unidades de observação estão agrupadas em diferentes níveis.
+**Quando usar:**
+- Estudos observacionais longitudinais
+- Ensaios clínicos com medições correlacionadas
+- Estudos epidemiológicos multicêntricos
 
-    -   **Exemplo:**
+**Exemplo prático:**
+Investigação da eficácia de programa de intervenção em saúde onde observações estão correlacionadas dentro de grupos de participantes.
 
-        -   Avaliação do desempenho acadêmico de alunos em escolas, onde os alunos (nível inferior) estão agrupados em salas de aula (níveis superiores), considerando o efeito tanto do ensino individual quanto do ambiente escolar.
+### GMM - Modelos Mistos
 
-## Principais vantagens dos modelos lineres de medidas repetidas em comparação com a ANOVA
+**Modelos Mistos e Hierárquicos**
 
-1.  **Modelagem flexível:** O GLM permite modelar e analisar experimentos com medidas repetidas de forma mais flexível. Você pode incluir múltiplos fatores independentes (variáveis independentes) em um único modelo e estudar suas interações, o que é especialmente útil em experimentos complexos.
+Combinam componentes fixos e aleatórios, ideais para dados com estrutura hierárquica ou multicêntrica.
 
-2.  **Tratamento de dados desequilibrados:** O GLM pode lidar eficazmente com desequilíbrio nas amostras ou tamanhos diferentes de grupos, o que é comum em experimentos do mundo real. A ANOVA tradicional é mais sensível a desequilíbrio.
+**Quando usar:**
+- Dados com estrutura hierárquica
+- Estudos multicêntricos
+- Observações agrupadas em diferentes níveis
 
-3.  **Modelagem de covariáveis:** O GLM permite incorporar covariáveis (variáveis de controle) em sua análise para controlar o efeito de variáveis que não são o foco principal do estudo. Isso melhora a precisão das estimativas dos efeitos de interesse.
+**Exemplo prático:**
+Avaliação de desempenho acadêmico onde alunos (nível 1) estão agrupados em salas (nível 2) e escolas (nível 3), considerando efeitos individuais e contextuais.
 
-4.  **Correções para violações de pressupostos:** Quando os pressupostos da ANOVA, como a homogeneidade de variâncias ou normalidade dos resíduos, são violados, o GLM oferece opções para corrigir ou lidar com essas violações, tornando os resultados mais robustos.
+### GzLM - Lineares Generalizados
 
-5.  **Modelagem de medidas contínuas e categóricas:** O GLM pode acomodar variáveis dependentes contínuas e categóricas (nominais ou ordinais), o que é útil em situações em que a variável dependente é de natureza diferente.
+**Generalized Linear Models**
 
-6.  **Maior poder estatístico:** O GLM pode ser mais poderoso do que a ANOVA em situações em que as medidas repetidas têm alta correlação entre si, permitindo detectar diferenças significativas mesmo com tamanhos de amostra menores.
+Extensão dos modelos lineares para variáveis resposta não-normais, permitindo diferentes distribuições e funções de ligação.
 
-7.  **Análise de interações complexas:** O GLM é especialmente eficaz na análise de interações complexas entre fatores independentes em designs experimentais com medidas repetidas, o que é difícil de realizar com a ANOVA.
+**Quando usar:**
+- Dados de contagem (Poisson)
+- Dados binários (Logística)
+- Dados com distribuição não-normal
 
-## Pacotes que vamos utilizar
+**Exemplo prático:**
+Análise de número de eventos adversos (contagem) em ensaio clínico ou modelagem de probabilidade de sucesso em tratamento (binário).
+
+:::
+
+---
+
+## 🎯 Por que usar Modelos de Medidas Repetidas?
+
+::: {.callout-tip}
+## Vantagens sobre ANOVA Tradicional
+
+Os modelos lineares modernos oferecem melhorias substanciais sobre a ANOVA clássica:
+
+1. **Modelagem Flexível**
+   - Múltiplos fatores independentes em um único modelo
+   - Análise de interações complexas
+   - Estruturas de covariância personalizadas
+
+2. **Robustez a Violações**
+   - Dados desequilibrados
+   - Heterogeneidade de variâncias
+   - Desvios da normalidade
+
+3. **Controle Estatístico**
+   - Inclusão de covariáveis
+   - Ajuste para variáveis confundidoras
+   - Maior precisão nas estimativas
+
+4. **Poder Estatístico**
+   - Aproveitamento da correlação entre medidas
+   - Detecção de efeitos com amostras menores
+   - Análise eficiente de designs complexos
+
+5. **Versatilidade**
+   - Variáveis dependentes contínuas ou categóricas
+   - Diferentes distribuições de probabilidade
+   - Estruturas temporais variadas
+:::
+
+---
+
+## 📦 Pacotes Necessários
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-library(emmeans)   # Cálculo de médias estimadas após análises estatísticas.
-library(lme4)      # Ajuste de modelos lineares mistos.
-library(nlme)      # Ajuste de modelos mistos não lineares.
-library(flexplot)  # Criação de gráficos flexíveis e personalizados.
-library(foreign)   # Importação/exportação de dados de outros formatos.
-library(tidyr)     # Manipulação de dados.
-library(dplyr)     # Manipulação e transformação de dados de maneira eficiente.
-library(multcomp)  # Correção de múltiplas comparações pós-teste.
-library(effects)   # Visualização de efeitos de modelos estatísticos.
-library(sjstats)   # Estatísticas descritivas e sumarização de modelos.
-#library(tm)        # Análise de texto e mineração de texto.
-#library(car)       # Análise de regressão e diagnóstico de regressão.
-#library(pwr)       # Cálculo do poder estatístico em estudos de amostragem.
-library(rstatix)   # Análise estatística simplificada.
-library(geepack)   # Ajuste de modelos de equações de estimação generalizadas.
-#library(htmltools) # Ferramentas para trabalhar com HTML.
-#library(mime)      # Ferramentas para manipulação de tipos MIME.
-library(performance) # Avaliação e melhoria do desempenho do modelo linear
-library(see)       # Simplificar a exploração de dados
-library(rempsyc)   # Métodos psicométricos e estatísticas relacionadas à psicometria
-library(easystats) # Simplifica a análise estatística
 
+# Modelagem e análise
+library(lme4)        # Modelos lineares mistos
+library(nlme)        # Modelos não-lineares mistos
+library(geepack)     # Equações de estimação generalizadas
+
+# Médias e comparações
+library(emmeans)     # Médias estimadas marginais
+library(multcomp)    # Comparações múltiplas
+library(effects)     # Visualização de efeitos
+
+# Estatísticas e diagnósticos
+library(performance) # Diagnósticos de modelos
+library(sjstats)     # Estatísticas descritivas
+library(rstatix)     # Análises simplificadas
+library(car)         # Testes complementares
+
+# Manipulação de dados
+library(dplyr)       # Transformação de dados
+library(tidyr)       # Organização de dados
+library(foreign)     # Importação SPSS/Stata
+
+# Visualização
+library(flexplot)    # Gráficos flexíveis
+library(see)         # Visualizações do easystats
+
+# Suites integradas
+library(easystats)   # Suite completa de análise
+library(rempsyc)     # Métodos psicométricos
 ```
 
-## Banco de dados, script e Lista 1
+---
 
-Faça o download do arquivo compactado abaixo.
+## 📥 Materiais para Download
+
+::: {.callout-important}
+## Arquivos Necessários
+
+Faça o download do pacote completo abaixo e **descompacte todos os arquivos na pasta do seu projeto**.
 
 ```{r}
 #| echo: false
+#| eval: false
 
-
-xfun::embed_files(c('Lista 1.R', 'bd_New drug_respiratory&pulse.sav', 'lista_1.docx')) 
+xfun::embed_files(c('Lista 1.R', 
+                    'bd_New drug_respiratory&pulse.sav', 
+                    'lista_1.docx'))
 ```
 
-Lembre-se de descompactar os três arquivos na **mesma pasta do projeto** que você acabou de criar!
+**Conteúdo do pacote:**
 
-O arquivo compactado contém:
+- `bd_New drug_respiratory&pulse.sav` - Banco de dados principal
+- `Lista 1.R` - Script parcialmente preenchido para prática
+- `lista_1.docx` - Exercícios para resolução
+:::
 
-1.  `bd_New drug_respiratory&pulse.sav`: Este é o arquivo de banco de dados que será usado ao longo do tutorial. Ele contém os dados que serão analisados e explorados durante os exercícios.
+---
 
-2.  `lista1_parcial.R`: Este arquivo .R contém o script parcialmente preenchido para praticar e estudar os códigos abordados no tutorial. Você pode usar este script como um guia interativo para aprender e executar as análises estatísticas.
+## 🔄 Preparação dos Dados
 
-3.  A `"Lista de Exercícios 1"` contém os exercícios para serem resolvidos.
-
-## Carregando os Dados
-
-Vamos começar carregando o conjunto de dados original e realizando algumas transformações para tornar possível nossas análises.
+### Carregamento Inicial
 
 ```{r}
 #| echo: true
 #| warning: false
 #| message: false
 
-original_wide = read.spss("bd_New drug_respiratory&pulse.sav", to.data.frame=TRUE) 
+# Importar dados do SPSS
+original_wide <- read.spss("bd_New drug_respiratory&pulse.sav", 
+                           to.data.frame = TRUE)
+
+# Visualizar estrutura
 head(original_wide)
 ```
 
-O código fornecido tem como objetivo carregar um conjunto de dados a partir de um arquivo SPSS chamado "bd_New drug_respiratory&pulse.sav" e exibir as primeiras linhas desse conjunto de dados.
+::: {.callout-note collapse="true"}
+## Sobre a função `read.spss()`
 
-1.  `original_wide = read.spss("bd_New drug_respiratory&pulse.sav", to.data.frame=TRUE)`: Esta linha de código utiliza a função `read.spss` para ler o arquivo SPSS "bd_New drug_respiratory&pulse.sav" e convertê-lo em um objeto de data frame do R. A opção `to.data.frame=TRUE` especifica que queremos que os dados sejam armazenados em um data frame.
+- **Origem:** Pacote `foreign`
+- **Parâmetro `to.data.frame = TRUE`:** Converte para data frame do R
+- **Alternativa:** Pacote `haven` com `read_sav()` (mais moderno)
+:::
 
-2.  `head(original_wide)`: Após a leitura do conjunto de dados, esta linha de código utiliza a função `head` para mostrar as primeiras linhas do data frame `original_wide`. Isso ajuda a visualizar rapidamente os dados e verificar sua estrutura.
+---
 
-## Transformando o Banco de Dados de Wide para Long
+### Transformação Wide → Long
 
-Para tornar possível algumas análises, precisamos transformar o banco de dados de formato "wide" para "long". Isso nos permitirá realizar análises de medidas repetidas.
+Para análises de medidas repetidas, precisamos converter os dados de formato **wide** (uma linha por sujeito) para **long** (uma linha por observação).
+
+#### Passo 1: Renomear Colunas
 
 ```{r}
 #| echo: true
+
 bd <- original_wide %>%
   rename_with(~gsub("(resp|pulse)(\\d+)", "\\1_\\2", .), -drug) %>%
   mutate(ID = row_number()) %>%
-  dplyr::select(ID, everything())  
-
+  select(ID, everything())
 
 head(bd)
 ```
 
-Os códigos fornecidos têm como objetivo renomear colunas e transformar um conjunto de dados de formato "wide" para "long", onde uma expressão regular está sendo utilizada para facilitar esse processo.
+::: {.callout-tip collapse="true"}
+## 🔍 Entendendo a Expressão Regular
 
-Uma expressão regular, ou regex, é uma sequência de caracteres que define um padrão de busca em texto, permitindo operações avançadas de busca e manipulação. Elas são amplamente usadas na programação para validação, extração e transformação de dados em texto.
+A regex `(resp|pulse)(\\d+)` funciona assim:
 
-No primeiro trecho de código, estamos renomeando as colunas do conjunto de dados `original_wide`. Aqui, a expressão regular `(resp|pulse)(\\d+)` está sendo usada na função `gsub`. Vamos explicar essa expressão regular:
+- `(resp|pulse)` - Captura "resp" **OU** "pulse"
+- `(\\d+)` - Captura um ou mais dígitos
 
--   `(resp|pulse)`: Isso corresponde à palavra "resp" OU "pulse". O operador `|` atua como uma escolha, permitindo que corresponda a uma das duas palavras.
+**Transformação:**
+- `resp1` → `resp_1`
+- `pulse2` → `pulse_2`
 
--   `(\\d+)`: Isso corresponde a um ou mais dígitos numéricos. O `\\d+` é usado para extrair os números que seguem "resp" ou "pulse".
+Isso facilita a separação posterior em variável e tempo!
+:::
 
-A expressão regular `(resp|pulse)(\\d+)` funciona para identificar colunas com nomes como "resp1", "resp2", "pulse1", "pulse2" etc. A função `gsub` substitui esses nomes de colunas por um novo formato, onde mantém "resp" ou "pulse" e adiciona o número correspondente. Por exemplo, "resp1" será renomeado para "resp_1", "pulse2" será renomeado para "pulse_2" e assim por diante.
-
-Isso é útil para o próximo passo porque torna mais fácil identificar e separar os dados de resp e pulse em diferentes colunas. Além disso, os números extraídos da expressão regular serão usados para criar a variável "Tempo", que indicará as medidas repetidas ao longo do tempo.
+#### Passo 2: Pivotar para Formato Long
 
 ```{r}
 #| echo: true
-bd_long = pivot_longer(bd, 
-                       cols = resp_1:pulse_3, 
-                       names_to = c(".value", "Tempo"), 
-                       names_pattern = "(.+)_(.+)")
+
+bd_long <- pivot_longer(
+  bd,
+  cols = resp_1:pulse_3,
+  names_to = c(".value", "Tempo"),
+  names_pattern = "(.+)_(.+)"
+)
 
 head(bd_long)
 ```
 
-No segundo trecho de código, estamos usando a função `pivot_longer` para transformar o conjunto de dados `bd` de formato "wide" para "long". A opção `names_pattern` usa a expressão regular `(.)_(.)` para dividir os nomes das colunas em duas partes:
+::: {.callout-note}
+## Estrutura do `pivot_longer()`
 
--   `(.+)`: Isso corresponde a qualquer sequência de caracteres, representando os nomes originais das colunas.
+- **`cols`:** Colunas a transformar
+- **`.value`:** Nome da coluna vem da primeira parte
+- **`Tempo`:** Criada da segunda parte do nome
+- **`names_pattern`:** Regex para dividir nomes
+:::
 
--   `_(.+)`: Isso corresponde ao caractere sublinhado "\_" seguido de qualquer sequência de caracteres. Essa parte será usada para identificar os valores correspondentes nas colunas no formato "long".
-
-Portanto, a expressão regular `(.)_(.)` ajuda a extrair informações dos nomes das colunas originais e organizá-las adequadamente no formato "long" do conjunto de dados `bd_long`, onde a primeira parte é armazenada na coluna `"Tempo"` e a segunda parte é usada para identificar os valores correspondentes na coluna `"valor"` (geralmente representada como `.value` no R).
-
-## Alterando o tipo da variável "Tempo"
+#### Passo 3: Converter Tempo em Fator
 
 ```{r}
 #| echo: true
-# Suponha que sua variável "Tempo" esteja em um dataframe chamado "seu_data_frame"
-bd_long$Tempo <- factor(bd_long$Tempo) 
+
+bd_long$Tempo <- factor(bd_long$Tempo)
 ```
 
-O código assume que a variável `"Tempo"` está no dataframe chamado `"bd_long"`. Ele usa a função `factor()` para converter a variável "Tempo" em uma variável categórica. A conversão para uma variável categórica é útil quando você deseja tratar "Tempo" como uma variável de fator com níveis distintos em vez de uma variável numérica contínua. Essa transformação pode ser útil em análises estatísticas que envolvam categorias ou grupos de tempo, como em modelos de medidas repetidas.
+---
 
-## Pressupostos da variável dependente
+## ✅ Verificação de Pressupostos
 
-A distribuição dos dados da variável independente é fundamental para inferências estatísticas robustas. Quando os dados seguem uma distribuição normal, isso implica que a maioria das observações está centralizada em torno da média, proporcionando uma simetria e previsibilidade desejáveis. Esta normalidade é frequentemente pressuposta em muitos métodos estatísticos clássicos. Ao observar o histograma da variável independente, esperamos ver uma forma de sino simétrica. No Q-Q plot, quando os dados são normalmente distribuídos, os pontos devem seguir aproximadamente uma linha diagonal. Em contrapartida, quando os dados não são normalmente distribuídos, o histograma pode revelar assimetria ou padrões diferentes, e o Q-Q plot apresentará desvios significativos da linha diagonal, indicando divergências da normalidade. Analisar a normalidade dos dados e interpretar o Q-Q plot ajuda a guiar a escolha adequada de métodos estatísticos e a compreender possíveis limitações na inferência.
+### Normalidade da Variável Dependente
 
-Abaixo exemplos de distribuições normais, não normais e seus respectivos gráicos de disperção e Q-Q plot.
+A distribuição normal é pressuposto fundamental em muitos testes estatísticos.
 
-### Dados com distribuição normal
+::: {.panel-tabset}
+
+#### Distribuição Normal
 
 ```{r}
-# Bloco para dados normalmente distribuídos
+#| echo: true
+
 set.seed(123)
 dados_normais <- rnorm(1000, mean = 0, sd = 1)
 
-# Função para criar histograma e Q-Q plot
-criar_graficos_normais <- function(dados, titulo) {
-  par(mfrow = c(1, 2))  # Organiza os gráficos em uma linha com duas colunas
+# Criar visualizações
+par(mfrow = c(1, 2))
 
-  # Histograma
-  hist(dados, main = paste("Histograma -", titulo), col = "lightblue", border = "black")
+# Histograma
+hist(dados_normais, 
+     main = "Distribuição Normal",
+     col = "lightblue", 
+     border = "black")
 
-  # Q-Q plot
-  qqnorm(dados, main = paste("Q-Q Plot -", titulo))
-  qqline(dados, col = 2)
-}
+# Q-Q Plot
+qqnorm(dados_normais, main = "Q-Q Plot - Normal")
+qqline(dados_normais, col = "red", lwd = 2)
 
-# Crie os gráficos para dados normalmente distribuídos
-criar_graficos_normais(dados_normais, "Normal")
-
-# Restaure o layout gráfico padrão
 par(mfrow = c(1, 1))
-
 ```
 
-### Dados com distribuição não-normal
+**Características:**
+- Histograma em forma de sino
+- Q-Q plot segue linha diagonal
+- Simetria em torno da média
+
+#### Distribuição Não-Normal
 
 ```{r}
-# Bloco para dados não normalmente distribuídos
+#| echo: true
+
 set.seed(123)
 dados_nao_normais <- abs(rnorm(1000, mean = 0, sd = 1))
 
-# Função para criar histograma e Q-Q plot
-criar_graficos_nao_normais <- function(dados, titulo) {
-  par(mfrow = c(1, 2))  # Organiza os gráficos em uma linha com duas colunas
+par(mfrow = c(1, 2))
 
-  # Histograma
-  hist(dados, main = paste("Histograma -", titulo), col = "lightcoral", border = "black")
+hist(dados_nao_normais,
+     main = "Distribuição Assimétrica",
+     col = "lightcoral",
+     border = "black")
 
-  # Q-Q plot
-  qqnorm(dados, main = paste("Q-Q Plot -", titulo))
-  qqline(dados, col = 2)
-}
+qqnorm(dados_nao_normais, main = "Q-Q Plot - Não Normal")
+qqline(dados_nao_normais, col = "red", lwd = 2)
 
-# Crie os gráficos para dados não normalmente distribuídos
-criar_graficos_nao_normais(dados_nao_normais, "Não Normal")
-
-# Restaure o layout gráfico padrão
 par(mfrow = c(1, 1))
-
-
 ```
 
-Além das análises visuais dos gráficos, temos também o teste de Shapiro-Wilk. A hipótese nula no teste de Shapiro-Wilk é que a variável analisada segue uma distribuição normal. Em termos mais formais, a hipótese nula (H0) é:
+**Características:**
+- Assimetria evidente
+- Desvios da linha no Q-Q plot
+- Concentração em uma região
 
-H0:Os dados são provenientes de uma distribuição normal.
-
-::: {.callout-warning title="Cuidado!"}
-Se o p-valor for **maior que 0,05**, não há evidências suficientes para rejeitar a hipótese nula, **indicando que os dados podem ser considerados normalmente distribuídos**. Por outro lado, um p-valor **menor que 0,05** sugere que há evidências significativas contra a hipótese nula, **indicando não normalidade nos dados**. É importante considerar o contexto do estudo ao interpretar os resultados e ter em mente que o teste pode ser sensível a tamanhos amostrais muito grandes, resultando em rejeições mesmo para desvios pequenos da normalidade.
 :::
 
-Podemos verificar o teste de Shapiro-Wilk para os dois exemplos anteriores e treinar a leitura dos resultados
+---
 
-### Shapiro-Wilk para os dados com distribuição normal
+### Teste de Shapiro-Wilk
+
+::: {.callout-note}
+## Hipóteses do Teste
+
+**H₀:** Os dados seguem distribuição normal  
+**H₁:** Os dados NÃO seguem distribuição normal
+
+**Decisão:**
+- p > 0,05 → Não rejeita H₀ (assume normalidade)
+- p < 0,05 → Rejeita H₀ (evidência de não-normalidade)
+
+⚠️ **Atenção:** Com amostras muito grandes, pequenos desvios podem ser significativos.
+:::
+
+**Exemplo com dados normais:**
 
 ```{r}
+#| echo: true
+
 shapiro.test(dados_normais)
 ```
 
-O valor de p é maior do que 0,05, portanto podemos assumir que os dados possuem distribuição normal.
-
-### Shapiro-Wilk para os dados com distribuição não-normal
+**Exemplo com dados não-normais:**
 
 ```{r}
+#| echo: true
+
 shapiro.test(dados_nao_normais)
 ```
 
-O valor de p é menor do que 0,05, portanto podemos assumir que os dados possuem distribuição não-normal.
+---
 
-Vamos agora verificar a distribuição, o Q-Q plot e o teste de Shapiro-Wilk das variáveis Resp e Pulse do nosso banco de dados.
+### Normalidade das Variáveis do Estudo
 
-### Densidade (distribuição) + Q-Q plot da variável "Pulse"
-
-Para verificar a distribuição e o Q-Q plot vamos utilizar a função `nice_normality()` do pacote `rempsyc`, que cria os dois gráficos em poucas linhas de código!
+#### Variável "Pulse"
 
 ```{r}
-#| echo: true 
-nice_normality(data = bd_long, 
-               variable = "pulse",  
-               histogram = TRUE) 
-```
+#| echo: true
 
-Shapiro-Wilk para a variável pulse:
+# Visualização combinada
+nice_normality(
+  data = bd_long,
+  variable = "pulse",
+  histogram = TRUE
+)
 
-```{r}
+# Teste formal
 shapiro.test(bd_long$pulse)
 ```
 
-Tanto pela análise gráfica quanto pelo teste de Shapiro-Wilk podemos observar que a variável "Pulse" não pussui distribuião normal.
+::: {.callout-warning}
+## Interpretação
 
-### Esfericidade da Variável "Pulse"
+Tanto a análise gráfica quanto o teste de Shapiro-Wilk indicam que **pulse não possui distribuição normal**.
+:::
 
-Em casos de medidas repetidas também precisamos avaliar a esfericidade intra-sujeito ao longo do tempo. A esfericidade intra-sujeitos avalia se as variações nas diferenças entre as medidas ao longo do tempo são consistentes para todas as combinações de momentos. Se essa homogeneidade não for atendida, ajustes como a correção de Greenhouse-Geisser ou Huynh-Feldt podem ser necessários para garantir conclusões estatisticamente válidas. Essas correções ajustam os graus de liberdade dos testes para lidar com a falta de esfericidade intra-sujeitos.
+---
 
-Vamos verificar a esfericidade da variável "pulse" usando o teste de Mauchly.
+## 🔄 Esfericidade (Medidas Repetidas)
+
+::: {.callout-important}
+## O que é Esfericidade?
+
+A **esfericidade** avalia se as variâncias das diferenças entre todos os pares de medidas repetidas são homogêneas.
+
+**Violação de esfericidade:**
+- Infla erro Tipo I (falsos positivos)
+- Requer correções nos graus de liberdade
+- Comum em medidas repetidas
+:::
+
+### Teste de Mauchly para "Pulse"
 
 ```{r}
 #| echo: true
-pulse_mauchly = anova_test(data = bd_long, 
-                           dv = pulse, 
-                           wid = ID, 
-                           within = Tempo)
 
+pulse_mauchly <- anova_test(
+  data = bd_long,
+  dv = pulse,
+  wid = ID,
+  within = Tempo
+)
 
-```
-
-Os códigos fornecidos têm como objetivo realizar um teste de Mauchly para verificar a esfericidade da variável "pulse" em um conjunto de dados no formato longo (`bd_long`). Vamos explicar o que cada linha de código faz:
-
-1.  `pulse_mauchly = anova_test(data = bd_long, dv = pulse, wid = ID, within = Tempo)`: Esta linha de código executa o teste de Mauchly para verificar a esfericidade da variável "pulse". A função `anova_test` é usada para realizar esse teste. Os argumentos passados para a função são:
-
-    -   `data`: O conjunto de dados no formato longo (`bd_long`), onde os dados estão organizados em formato apropriado para análises de medidas repetidas.
-
-    -   `dv`: A variável dependente sendo analisada, que neste caso é "pulse".
-
-    -   `wid`: A variável de identificação única (`ID`), que indica quais observações pertencem ao mesmo sujeito.
-
-    -   `within`: A variável categórica que representa o fator dentro dos sujeitos, neste caso, "Tempo".
-
-2.  `pulse_mauchly`: Esta linha de código armazena os resultados do teste de Mauchly na variável `pulse_mauchly`. Os resultados incluem estatísticas relacionadas à esfericidade e os valores associados (valor-p).
-
-Vamos interpretar os resultados da análise de esfericidade usando o Teste de Mauchly:
-
-```{r}
 pulse_mauchly
 ```
 
-**ANOVA Table (type III tests): Effect (Efeito):** "Tempo". DFn e DFd: Graus de liberdade para o numerador (DFn) e denominador (DFd) da estatística F. F e p: Estatística F e valor p associado ao efeito "Tempo". p\<.05: Indica se o valor p é menor que 0,05, sugerindo significância estatística. ges (generalized eta-squared): Uma medida da força do efeito.
+::: {.callout-tip collapse="true"}
+## 📊 Interpretando os Resultados
 
--   **Interpretação**: O efeito "Tempo" apresentou uma estatística F de 3,48 com um valor p de 0,049, indicando uma possível significância estatística. O valor p é menor que 0,05, sugerindo que há diferenças significativas entre os níveis de tempo.
+**ANOVA Table:**
+- **F** = 3,48, **p** = 0,049 → Efeito significativo de Tempo
+- **ges** = medida de tamanho de efeito
 
-**Mauchly's Test for Sphericity: Effect (Efeito):** "Tempo". W (Estátistica de Mauchly): 0,781. p: Valor p associado ao teste de Mauchly.
+**Teste de Mauchly:**
+- **W** = 0,781, **p** = 0,29 → Esfericidade NÃO violada
 
--   **Interpretação**: O teste de Mauchly avalia a esfericidade. Para o efeito "Tempo", o valor p é 0,29, indicando que não há evidência estatística para rejeitar a esfericidade. Ou seja, a esfericidade não é violada.
+**Correções (quando necessárias):**
+- **GGe** = 0,82 → Correção de Greenhouse-Geisser
+- **HFe** = 0,945 → Correção de Huynh-Feldt
+:::
 
-**Sphericity Corrections: Effect (Efeito):** "Tempo". GGe (Greenhouse-Geisser epsilon): 0,82. DF\[GG\] e p\[GG\]: Graus de liberdade e valor p corrigidos pelo método Greenhouse-Geisser. HFe (Huynh-Feldt epsilon): 0,945. DF\[HF\] e p\[HF\]: Graus de liberdade e valor p corrigidos pelo método Huynh-Feldt.
+---
 
--   Interpretação: Se a esfericidade fosse violada, você usaria essas correções para ajustar os graus de liberdade e valores p. Os valores de GGe e HFe estão próximos de 1, indicando que a esfericidade não foi severamente violada. Os valores p corrigidos são 0,061 (GGe) e 0,052 (HFe), indicando que mesmo com a correção, o efeito "Tempo" pode ainda ser significativo.
-
-### Esfericidade da Variável "Resp"
-
-Da mesma forma, vamos verificar a esfericidade da variável "resp" usando o teste de Mauchly.
+### Teste de Mauchly para "Resp"
 
 ```{r}
 #| echo: true
-resp_mauchly = anova_test(data = bd_long, 
-                          dv = resp, 
-                          wid = ID,
-                          within = Tempo)
 
-resp_mauchly 
+resp_mauchly <- anova_test(
+  data = bd_long,
+  dv = resp,
+  wid = ID,
+  within = Tempo
+)
+
+resp_mauchly
 ```
 
-Vamos interpretar os resultados da segunda análise de esfericidade:
+::: {.callout-warning}
+## ⚠️ Esfericidade Violada!
 
-**ANOVA Table (type III tests): Effect (Efeito):** "Tempo". DFn e DFd: Graus de liberdade para o numerador (DFn) e denominador (DFd) da estatística F. F e p: Estatística F e valor p associado ao efeito "Tempo". p\<.05: Indica se o valor p é menor que 0,05, sugerindo significância estatística. ges (generalized eta-squared): Uma medida da força do efeito.
+**Teste de Mauchly:**
+- **W** = 0,501, **p** < 0,05 → Esfericidade VIOLADA
 
--   **Interpretação**: O efeito "Tempo" apresentou uma estatística F de 0,344 com um valor p de 0,713, indicando que não há evidência estatística para rejeitar a hipótese nula. O valor p é maior que 0,05, sugerindo que não há diferenças significativas entre os níveis de tempo.
+**Implicações:**
+- Graus de liberdade devem ser corrigidos
+- Usar valores p corrigidos (GGe ou HFe)
+- GGe = 0,667 (redução de ~33%)
+- HFe = 0,725 (redução de ~27,5%)
 
-**Mauchly's Test for Sphericity: Effect (Efeito):** "Tempo". W (Estátistica de Mauchly): 0,501. p e p\<.05: Valor p associado ao teste de Mauchly e indicação de significância.
+**Resultado após correção:**
+- Efeito de Tempo permanece não-significativo
+:::
 
--   **Interpretação**: O teste de Mauchly indica que a esfericidade foi violada, pois o valor p é menor que 0,05. Isso sugere que as covariâncias das diferenças entre os níveis de tempo não são iguais.
+---
 
-**Sphericity Corrections: Effect (Efeito): "Tempo".** GGe (Greenhouse-Geisser epsilon): 0,667. DF\[GG\] e p\[GG\]: Graus de liberdade e valor p corrigidos pelo método Greenhouse-Geisser. HFe (Huynh-Feldt epsilon): 0,725. DF\[HF\] e p\[HF\]: Graus de liberdade e valor p corrigidos pelo método Huynh-Feldt.
+## 🔧 Coeficientes de Correção
 
--   **Interpretação**: As correções (GGe e HFe) sugerem que, mesmo com a correção para a violação da esfericidade, o efeito "Tempo" não é significativo. Os valores p corrigidos são 0,629 (GGe) e 0,646 (HFe), indicando que a falta de esfericidade afeta a significância do efeito "Tempo".
+::: {.panel-tabset}
 
-Os resultados indicam que a esfericidade foi violada, e mesmo com as correções, não há evidências significativas para o efeito "Tempo". Isso destaca a importância de considerar a esfericidade ao interpretar os resultados de análises de variância com medidas repetidas.
+### Greenhouse-Geisser (GGe)
 
-### GGe (Greenhouse-Geisser epsilon) e o HFe (Huynh-Feldt epsilon)
+**Características:**
+- Correção mais conservadora
+- Recomendado quando GGe < 0,75
+- Reduz graus de liberdade proporcionalmente
 
-O GGe (Greenhouse-Geisser epsilon) e o HFe (Huynh-Feldt epsilon) são coeficientes de correção usados em análises de variância com medidas repetidas para lidar com a violação da esfericidade intra-sujeitos. Esses coeficientes ajustam os graus de liberdade dos testes estatísticos para compensar a falta de esfericidade, ajudando a evitar conclusões incorretas sobre a significância dos efeitos.
+**Interpretação:**
+- GGe próximo de 1 → Pouca violação
+- GGe < 0,75 → Violação substancial
 
--   **Greenhouse-Geisser epsilon (GGe):** Este coeficiente é uma estimativa da magnitude da não esfericidade intra-sujeitos. O GGe é usado para corrigir os graus de liberdade dos testes estatísticos, tornando-os mais conservadores quando a esfericidade é violada. Um GGe próximo de 1 indica menos violação da esfericidade.
+**Exemplo (Resp):**
+- GGe = 0,667 → Redução de 33% nos GL
 
--   **Huynh-Feldt epsilon (HFe):** Similar ao GGe, o HFe é outro coeficiente de correção. Ele é um ajuste mais conservador que o GGe. Seu valor próximo de 1 indica menos violação da esfericidade. O HFe é geralmente mais utilizado quando os tamanhos amostrais são pequenos.
+### Huynh-Feldt (HFe)
 
-No contexto da variável Resp:
+**Características:**
+- Menos conservador que GGe
+- Melhor para amostras pequenas
+- Pode exceder 1 (truncado em 1)
 
--   **GGe:** 0,667 - Indica que, após a correção de Greenhouse-Geisser, os graus de liberdade foram reduzidos em cerca de 33% para compensar a violação da esfericidade intra-sujeitos.
+**Interpretação:**
+- HFe próximo de 1 → Pouca violação
+- Diferença com GGe indica severidade
 
--   **HFe:** 0,725 - Similar ao GGe, o HFe fornece outra correção mais conservadora. Neste caso, os graus de liberdade são reduzidos em aproximadamente 27,5%.
+**Exemplo (Resp):**
+- HFe = 0,725 → Redução de 27,5% nos GL
 
-Já no contexto da variável Pulse:
+### Quando Usar Qual?
 
--   GGe = 0,82 - Indica que, após a correção de Greenhouse-Geisser, os graus de liberdade foram reduzidos em cerca de 18% para compensar a violação da esfericidade intra-sujeitos.
+| Situação | Recomendação |
+|----------|--------------|
+| GGe > 0,75 | Qualquer correção |
+| GGe < 0,75 | Preferir GGe |
+| Amostra pequena | Considerar HFe |
+| p próximo de 0,05 | Comparar ambos |
 
--   HFe = 0,945 - Indica que, após a correção de Huynh-Feldt, os graus de liberdade foram reduzidos em cerca de 5,5% para compensar a violação da esfericidade intra-sujeitos.
+:::
 
-Agora finalmente vamos para a lista de exercícios, começando com o GLM e continuando na sequencia com o GEE e GMM.
+---
+
+## 🎓 Resumo dos Pressupostos
+
+::: {.callout-note appearance="simple"}
+## Checklist de Verificação
+
+| Pressuposto | Pulse | Resp | Ação |
+|-------------|-------|------|------|
+| Normalidade | ❌ Violado | - | Considerar transformação ou GLM robusto |
+| Esfericidade | ✅ OK | ❌ Violado | Usar correções GGe/HFe |
+| Homogeneidade | - | - | Verificar com Levene (próximo capítulo) |
+
+**Próximos passos:** Agora que verificamos os pressupostos, podemos prosseguir para as análises GLM, GEE e GMM!
+:::
+
+---
+
+## 📚 Conceitos-Chave
+
+::: {.callout-tip collapse="true"}
+## Glossário Rápido
+
+**Wide vs Long:**
+- Wide: Uma linha por sujeito, múltiplas colunas de tempo
+- Long: Uma linha por observação, coluna de tempo
+
+**Esfericidade:**
+- Homogeneidade das variâncias das diferenças
+- Crítico para ANOVA de medidas repetidas
+
+**GGe/HFe:**
+- Correções para violação de esfericidade
+- Ajustam graus de liberdade
+
+**Q-Q Plot:**
+- Quantis observados vs esperados
+- Linha diagonal = normalidade perfeita
+:::
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🚀 Pronto para Análises!
+
+Com os dados preparados e pressupostos verificados, você está pronto para explorar:
+
+1. **GLM** - Modelo Linear Geral
+2. **GEE** - Equações de Estimação Generalizadas  
+3. **GMM** - Modelos Mistos
+4. **GzLM** - Modelos Lineares Generalizados
+
+Siga para os próximos capítulos onde implementaremos cada modelo em detalhe!
+:::
