@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -82,7 +116,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introdução</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Bem-vindo</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -120,7 +154,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Introdução</span></a>
+ <span class="menu-text">Bem-vindo</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -237,18 +271,25 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a>
+  <li><a href="#bem-vindo" id="toc-bem-vindo" class="nav-link active" data-scroll-target="#bem-vindo">Bem-vindo</a>
   <ul class="collapse">
-  <li><a href="#sobre-as-aulas" id="toc-sobre-as-aulas" class="nav-link" data-scroll-target="#sobre-as-aulas">Sobre as aulas</a></li>
-  <li><a href="#sobre-o-tutorial" id="toc-sobre-o-tutorial" class="nav-link" data-scroll-target="#sobre-o-tutorial">Sobre o tutorial</a></li>
-  <li><a href="#r-e-rstudio" id="toc-r-e-rstudio" class="nav-link" data-scroll-target="#r-e-rstudio">R e Rstudio</a></li>
-  <li><a href="#aulas-práticas-gravadas" id="toc-aulas-práticas-gravadas" class="nav-link" data-scroll-target="#aulas-práticas-gravadas">Aulas práticas gravadas</a></li>
-  <li><a href="#boas-práticas-no-rstudio" id="toc-boas-práticas-no-rstudio" class="nav-link" data-scroll-target="#boas-práticas-no-rstudio">Boas práticas no Rstudio</a>
+  <li><a href="#origem-do-conteúdo" id="toc-origem-do-conteúdo" class="nav-link" data-scroll-target="#origem-do-conteúdo">📚 Origem do Conteúdo</a></li>
+  <li><a href="#o-que-você-vai-aprender" id="toc-o-que-você-vai-aprender" class="nav-link" data-scroll-target="#o-que-você-vai-aprender">🎯 O que Você Vai Aprender</a></li>
+  <li><a href="#pré-requisitos" id="toc-pré-requisitos" class="nav-link" data-scroll-target="#pré-requisitos">⚠️ Pré-requisitos</a></li>
+  <li><a href="#configurando-seu-ambiente" id="toc-configurando-seu-ambiente" class="nav-link" data-scroll-target="#configurando-seu-ambiente">🛠️ Configurando seu Ambiente</a>
   <ul class="collapse">
-  <li><a href="#criando-o-projeto-e-alocando-os-arquivos" id="toc-criando-o-projeto-e-alocando-os-arquivos" class="nav-link" data-scroll-target="#criando-o-projeto-e-alocando-os-arquivos">Criando o projeto e alocando os arquivos</a></li>
+  <li><a href="#instalando-r-e-rstudio" id="toc-instalando-r-e-rstudio" class="nav-link" data-scroll-target="#instalando-r-e-rstudio">Instalando R e RStudio</a></li>
+  <li><a href="#estrutura-recomendada-de-projeto" id="toc-estrutura-recomendada-de-projeto" class="nav-link" data-scroll-target="#estrutura-recomendada-de-projeto">Estrutura Recomendada de Projeto</a></li>
   </ul></li>
-  <li><a href="#instalando-e-carregando-os-pacotes" id="toc-instalando-e-carregando-os-pacotes" class="nav-link" data-scroll-target="#instalando-e-carregando-os-pacotes">Instalando e carregando os pacotes</a></li>
-  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  <li><a href="#gerenciamento-de-pacotes" id="toc-gerenciamento-de-pacotes" class="nav-link" data-scroll-target="#gerenciamento-de-pacotes">📦 Gerenciamento de Pacotes</a>
+  <ul class="collapse">
+  <li><a href="#instalação-apenas-uma-vez" id="toc-instalação-apenas-uma-vez" class="nav-link" data-scroll-target="#instalação-apenas-uma-vez">Instalação (apenas uma vez)</a></li>
+  <li><a href="#carregamento-a-cada-sessão" id="toc-carregamento-a-cada-sessão" class="nav-link" data-scroll-target="#carregamento-a-cada-sessão">Carregamento (a cada sessão)</a></li>
+  <li><a href="#lista-de-pacotes-principais" id="toc-lista-de-pacotes-principais" class="nav-link" data-scroll-target="#lista-de-pacotes-principais">Lista de Pacotes Principais</a></li>
+  </ul></li>
+  <li><a href="#material-de-apoio" id="toc-material-de-apoio" class="nav-link" data-scroll-target="#material-de-apoio">📹 Material de Apoio</a></li>
+  <li><a href="#boas-práticas-de-reprodutibilidade" id="toc-boas-práticas-de-reprodutibilidade" class="nav-link" data-scroll-target="#boas-práticas-de-reprodutibilidade">🤝 Boas Práticas de Reprodutibilidade</a></li>
+  <li><a href="#recursos-adicionais" id="toc-recursos-adicionais" class="nav-link" data-scroll-target="#recursos-adicionais">📚 Recursos Adicionais</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -287,46 +328,101 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introdução" class="level1 unnumbered">
-<h1 class="unnumbered">Introdução</h1>
-<p>Tutorial produzido com base nas <a href="https://www.youtube.com/watch?v=_KtjZcaMYhk&amp;list=PLZjaOxYREinslupYDLvknGMB-U-Kl8G7k">aulas práticas</a> da disciplina “<a href="https://www.youtube.com/watch?v=IsrBkJKcLwo&amp;list=PLZjaOxYREinv_M_2nc-BIwptMbfIFipQj&amp;pp=iAQB">Estatística Aplicada a Psicobiologia II - 2023</a>”, ministrada pelo Professor Altay Lino de Souza e oferecida pelo Departamento de Psicobiologia da UNIFESP.</p>
-<section id="sobre-as-aulas" class="level2">
-<h2 class="anchored" data-anchor-id="sobre-as-aulas">Sobre as aulas</h2>
-<p>As aulas são gravadas e disponibilizadas gratuitamente por meio de lives no canal <a href="www.youtube.com/cientistica">Cientística &amp; Podcast Naruhodo</a> do YouTube. Destacando aqui o agradecimento mais do que especial para a Maria Lucia Oliveira De Souza Formigoni, por tornar possível a disciplina.</p>
+<section id="bem-vindo" class="level1 unnumbered">
+<h1 class="unnumbered">Bem-vindo</h1>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sobre este Tutorial
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Este tutorial oferece uma introdução prática à análise estatística de dados no R, baseado nas aulas da disciplina “Estatística Aplicada a Psicobiologia II - 2023”, ministrada pelo Professor Altay Lino de Souza no Departamento de Psicobiologia da UNIFESP.</p>
+<p><strong>Público-alvo:</strong> Estudantes de pós-graduação, pesquisadores e profissionais que buscam aprimorar suas habilidades em análise de dados.</p>
+</div>
+</div>
+<hr>
+<section id="origem-do-conteúdo" class="level2">
+<h2 class="anchored" data-anchor-id="origem-do-conteúdo">📚 Origem do Conteúdo</h2>
+<p>As aulas são disponibilizadas gratuitamente através de lives no canal <a href="https://www.youtube.com/cientistica">Cientística &amp; Podcast Naruhodo</a> do YouTube. Você pode acessar a <a href="https://www.youtube.com/watch?v=_KtjZcaMYhk&amp;list=PLZjaOxYREinslupYDLvknGMB-U-Kl8G7k">playlist completa das aulas práticas</a> e a <a href="https://www.youtube.com/watch?v=IsrBkJKcLwo&amp;list=PLZjaOxYREinv_M_2nc-BIwptMbfIFipQj">playlist da disciplina completa</a>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Agradecimento Especial
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Agradecimento especial à Professora Maria Lucia Oliveira De Souza Formigoni por tornar possível a realização desta disciplina.</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="sobre-o-tutorial" class="level2">
-<h2 class="anchored" data-anchor-id="sobre-o-tutorial">Sobre o tutorial</h2>
-<p>Este tutorial tem como objetivo oferecer uma introdução prática à análise estatística de dados no R, utilizando diversos bancos de dados para cada tipo de anáise. O público-alvo abrange estudantes de <a href="#0">Estatística Aplicada a Psicobiologia II</a>, pós-graduandos e pesquisadores que buscam aprimorar suas habilidades em análise de dados. É recomendado ter conhecimento básico em estatística, particularmente <a href="#0">Estatística Aplicada a Psicobiologia I</a>, e alguma familiaridade com o ambiente R para acompanhar este tutorial. Abordaremos as seguintes análises:</p>
+<section id="o-que-você-vai-aprender" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-você-vai-aprender">🎯 O que Você Vai Aprender</h2>
+<p>Este tutorial cobre análises estatísticas avançadas organizadas nos seguintes módulos:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Preparação de Dados</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Modelos Lineares</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Análise de Sobrevida</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Análises Avançadas</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <ul>
-<li><p>Transformação de dados para análises</p></li>
-<li><p>Modelos lineares:</p>
+<li>Transformação e manipulação de dados</li>
+<li>Boas práticas de organização</li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <ul>
-<li><p>Modelo linear geral (GLM ) de medidas repetidas</p></li>
-<li><p>Generalized Estimated Equations (GEE)</p></li>
-<li><p>Modelos mistos e hierárquicos (GMM)</p></li>
-<li><p>Generalized linear models (GzLM)</p></li>
+<li><strong>GLM</strong> - Modelo Linear Geral de medidas repetidas</li>
+<li><strong>GEE</strong> - Equações de Estimação Generalizadas</li>
+<li><strong>GMM</strong> - Modelos Mistos e Hierárquicos</li>
+<li><strong>GzLM</strong> - Modelos Lineares Generalizados</li>
+</ul>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<ul>
+<li>Kaplan-Meier</li>
+<li>Regressão de Cox</li>
+<li>Cox com covariáveis tempo-dependentes</li>
+</ul>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<ul>
+<li><strong>Séries Temporais</strong> - Modelos ARIMA</li>
+<li><strong>SEM</strong> - Modelagem de Equações Estruturais
+<ul>
+<li>Path Analysis</li>
+<li>Análise Fatorial Confirmatória (CFA)</li>
+<li>Moderação e Mediação</li>
 </ul></li>
 </ul>
-<!-- -->
-<ul>
-<li><p>Análise de sobrevida</p>
-<ul>
-<li><p>Kaplan-Meier</p></li>
-<li><p>Regressão de Cox</p></li>
-<li><p>Cox Tempo dependente</p></li>
-</ul></li>
-</ul>
-<!-- -->
-<ul>
-<li><p>Séries temporais (ARIMA)</p></li>
-<li><p>Modelagem de Equação Estrutural (SEM)</p>
-<ul>
-<li><p>Path analysis</p></li>
-<li><p>Confrmatory Factor Analysis (CFA)</p></li>
-<li><p>Moderação e mediação</p></li>
-</ul></li>
-</ul>
-<p>Ao fim de cada capítulos, nas seções intituladas “Extras”, vamos mostrar dicas sobre pacotes que podem ser úteis para suas análises, mas que não estão disponíveis no SPSS ou no Jamovi.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Seção “Extras”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ao final de cada capítulo, você encontrará a seção <strong>Extras</strong> com dicas sobre pacotes úteis que não estão disponíveis no SPSS ou Jamovi.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="pré-requisitos" class="level2">
+<h2 class="anchored" data-anchor-id="pré-requisitos">⚠️ Pré-requisitos</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -337,77 +433,218 @@ Importante!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>O material apresentado aqui é <strong>complementar</strong> às aulas teóricas e práticas. É imprescindível que você assista às aulas antes de resolver os exercícios no R.</p>
-</div>
-</div>
-</section>
-<section id="r-e-rstudio" class="level2">
-<h2 class="anchored" data-anchor-id="r-e-rstudio">R e Rstudio</h2>
-<p>Embora as aulas práticas tenham sido gravadas utilizando o SPSS, o intuito do tutorial é replicar as análises no R, que é gratuito! Portanto você precisa baixar o R e o Rstudio.</p>
-<p><a href="https://cran.r-project.org/bin/windows/base/">Download do R</a><br>
-<a href="https://posit.co/downloads/">Download do Rstudio</a></p>
-</section>
-<section id="aulas-práticas-gravadas" class="level2">
-<h2 class="anchored" data-anchor-id="aulas-práticas-gravadas">Aulas práticas gravadas</h2>
-<p>Os vídeos das aulas práticas no SPSS foram anexados ao fim de cada capítulo para que você possa ter uma referência do tipo de análise realizada. Em alguns casos você notarão que os resultados não serão idênticos no SPSS e no R. Isso ocorre devido aos diferentes algorítimos de estimação de coeficientes utilizados nos programas. O importante é você sempre reportar como a análise foi feita, quais programas e sempre que possível, disponibilizar o código ou o passo-a-passo utilizado para realizar a análise.</p>
-</section>
-<section id="boas-práticas-no-rstudio" class="level2">
-<h2 class="anchored" data-anchor-id="boas-práticas-no-rstudio">Boas práticas no Rstudio</h2>
-<p>Criar um projeto separado para cada tipo de análise no R é uma prática recomendada porque mantém o ambiente organizado, evita conflitos entre projetos, facilita a colaboração e torna a reprodução e compartilhamento de trabalho mais eficientes.</p>
-<section id="criando-o-projeto-e-alocando-os-arquivos" class="level3">
-<h3 class="anchored" data-anchor-id="criando-o-projeto-e-alocando-os-arquivos">Criando o projeto e alocando os arquivos</h3>
-<p>Para criar um novo projeto no R, siga estes passos simples:</p>
+<p>Este material é <strong>complementar</strong> às aulas teóricas e práticas. É fundamental que você:</p>
 <ol type="1">
-<li><p>Abra o RStudio.</p></li>
-<li><p>Vá até a guia “File” (Arquivo) e selecione “New Project” (Novo Projeto).</p></li>
-<li><p>Escolha um diretório para o seu projeto, onde todas as pastas e arquivos relacionados a ele serão armazenados. Isso ajudará na organização.</p></li>
-<li><p>Clique em “Create Project” (Criar Projeto).</p></li>
+<li>Assista às aulas correspondentes antes de trabalhar com os exercícios</li>
+<li>Tenha conhecimento básico em estatística (preferencialmente Estatística Aplicada a Psicobiologia I)</li>
+<li>Possua familiaridade mínima com o ambiente R</li>
 </ol>
-<p>Feito isso você terá um novo projeto configurado. Qualquer arquivo que você deseje usar para o tutorial deve ser colocado dentro da pasta desse projeto. Isso garantirá que todos os caminhos e referências aos arquivos sejam relativos ao diretório do projeto, facilitando a portabilidade e compartilhamento do tutorial.</p>
-<p>Com esses passos, você terá um ambiente de projeto limpo e organizado para trabalhar com seus arquivos e conduzir seu tutorial no R.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="configurando-seu-ambiente" class="level2">
+<h2 class="anchored" data-anchor-id="configurando-seu-ambiente">🛠️ Configurando seu Ambiente</h2>
+<section id="instalando-r-e-rstudio" class="level3">
+<h3 class="anchored" data-anchor-id="instalando-r-e-rstudio">Instalando R e RStudio</h3>
+<p>Embora as aulas originais utilizem SPSS, este tutorial replica todas as análises no R — que é <strong>gratuito e open source</strong>!</p>
+<div class="grid">
+<section id="r-base" class="level4 g-col-6">
+<h4 class="anchored" data-anchor-id="r-base">R (Base)</h4>
+<p><a href="https://cran.r-project.org/bin/windows/base/"><img src="https://www.r-project.org/logo/Rlogo.svg" class="img-fluid" width="80"></a></p>
+<p><a href="https://cran.r-project.org/bin/windows/base/">📥 Download do R</a></p>
+</section>
+<section id="rstudio-ide" class="level4 g-col-6">
+<h4 class="anchored" data-anchor-id="rstudio-ide">RStudio (IDE)</h4>
+<p><a href="https://posit.co/downloads/"><img src="https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo.svg" class="img-fluid" width="120"></a></p>
+<p><a href="https://posit.co/downloads/">📥 Download do RStudio</a></p>
+</section>
+</div>
+</section>
+<section id="estrutura-recomendada-de-projeto" class="level3">
+<h3 class="anchored" data-anchor-id="estrutura-recomendada-de-projeto">Estrutura Recomendada de Projeto</h3>
+<p>Organizar seus projetos adequadamente facilita a reprodutibilidade e colaboração:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">meu_projeto/</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> meu_projeto.Rproj</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> dados/</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── raw/          <span class="co"># Dados originais (não modificar)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   └── processed/    <span class="co"># Dados processados</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> scripts/</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   └── analises.R</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> outputs/</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   ├── figuras/</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">│</span>   └── tabelas/</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> README.md</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Como Criar um Projeto no RStudio
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Abra o RStudio</li>
+<li>Vá em <strong>File → New Project</strong></li>
+<li>Escolha <strong>New Directory → New Project</strong></li>
+<li>Defina o nome e localização do projeto</li>
+<li>Clique em <strong>Create Project</strong></li>
+</ol>
+<p><strong>Vantagens:</strong> - Caminhos relativos automáticos - Facilita compartilhamento - Mantém ambiente organizado - Evita conflitos entre projetos</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
 </section>
-<section id="instalando-e-carregando-os-pacotes" class="level2">
-<h2 class="anchored" data-anchor-id="instalando-e-carregando-os-pacotes">Instalando e carregando os pacotes</h2>
-<p>No início de cada capítulo, você encontrará uma lista completa dos pacotes necessários para reproduzir as análises correspondentes.</p>
-<p>Para instalar um pacote, basta executar o comando <code>install.packages("nome_do_pacote")</code> uma única vez.</p>
-<p>Por exemplo: <code>install.packages("effects")</code>. Este comando instalará o pacote “effects”, que contém funções para calcular os estimadores de modelos lineares. É importante colocar o nome do pacote entre aspas (” “)</p>
-<p>Após a instalação do pacote, será necessário carregá-lo sempre que desejar utilizar alguma função associada a ele. Para isso basta executar o comando library(nome_do_pacote). Note que aqui não há a necessidade de colocar o nome do pacote entre aspas.</p>
-<p>Exemplo: library(effects).</p>
-<p>Pronto! Agora você está familiarizado com o processo de instalação e carregamento dos pacotes que serão utilizados ao longo deste tutorial. Pode-se fazer uma analogia com uma biblioteca: adquirir os livros seria como instalar os pacotes (<code>install.packages</code>), e retirar um livro da prateleira seria como carregar o pacote (<code>library</code>) quando necessário.</p>
-<!-- ```{r} -->
-<!-- install.packages("A3") -->
-<!-- ``` -->
-<!-- ```{r} -->
-<!-- #| message: false -->
-<!-- #| warning: false -->
-<!-- library(emmeans)   # Cálculo de médias estimadas após análises estatísticas. -->
-<!-- library(lme4)      # Ajuste de modelos lineares mistos. -->
-<!-- library(nlme)      # Ajuste de modelos mistos não lineares. -->
-<!-- library(flexplot)  # Criação de gráficos flexíveis e personalizados. -->
-<!-- library(foreign)   # Importação/exportação de dados de outros formatos. -->
-<!-- library(tidyr)     # Manipulação de dados. -->
-<!-- library(dplyr)     # Manipulação e transformação de dados de maneira eficiente. -->
-<!-- library(multcomp)  # Correção de múltiplas comparações pós-teste. -->
-<!-- library(effects)   # Visualização de efeitos de modelos estatísticos. -->
-<!-- library(sjstats)   # Estatísticas descritivas e sumarização de modelos. -->
-<!-- library(tm)        # Análise de texto e mineração de texto. -->
-<!-- library(car)       # Análise de regressão e diagnóstico de regressão. -->
-<!-- library(pwr)       # Cálculo do poder estatístico em estudos de amostragem. -->
-<!-- library(rstatix)   # Análise estatística simplificada. -->
-<!-- library(geepack)   # Ajuste de modelos de equações de estimação generalizadas. -->
-<!-- library(htmltools) # Ferramentas para trabalhar com HTML. -->
-<!-- library(mime)      # Ferramentas para manipulação de tipos MIME. -->
-<!-- library(performance) # Avaliação e melhoria do desempenho do modelo linear -->
-<!-- library(see) # Simplificar a exploração de dados -->
-<!-- library(rempsyc) # Métodos psicométricos e estatísticas relacionadas à psicometria -->
-<!-- library(easystats) # Simplifica a análise estatística -->
-<!-- ``` -->
+<section id="gerenciamento-de-pacotes" class="level2">
+<h2 class="anchored" data-anchor-id="gerenciamento-de-pacotes">📦 Gerenciamento de Pacotes</h2>
+<section id="instalação-apenas-uma-vez" class="level3">
+<h3 class="anchored" data-anchor-id="instalação-apenas-uma-vez">Instalação (apenas uma vez)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar um pacote</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar múltiplos pacotes</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pacotes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"lme4"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(pacotes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="referências" class="level2">
-<h2 class="anchored" data-anchor-id="referências">Referências</h2>
-<!-- <https://quarto.org/docs/authoring/videos.html> -->
-<p><a href="https://r4ds.hadley.nz/" class="uri">https://r4ds.hadley.nz/</a></p>
+<section id="carregamento-a-cada-sessão" class="level3">
+<h3 class="anchored" data-anchor-id="carregamento-a-cada-sessão">Carregamento (a cada sessão)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar biblioteca</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+💡 Analogia
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pense nos pacotes como livros em uma biblioteca:</p>
+<ul>
+<li><strong><code>install.packages()</code></strong> = Comprar/adquirir o livro</li>
+<li><strong><code>library()</code></strong> = Pegar o livro da prateleira para usar</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="lista-de-pacotes-principais" class="level3">
+<h3 class="anchored" data-anchor-id="lista-de-pacotes-principais">Lista de Pacotes Principais</h3>
+<p>No início de cada capítulo, você encontrará uma lista específica dos pacotes necessários. Aqui está uma visão geral dos principais:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Manipulação</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Visualização</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Modelagem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">Estatísticas</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)      <span class="co"># Manipulação de dados</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)      <span class="co"># Organização de dados</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)    <span class="co"># Importação de dados</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)    <span class="co"># Gráficos elegantes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)   <span class="co"># Visualização flexível</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)    <span class="co"># Efeitos de modelos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)       <span class="co"># Modelos mistos</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)       <span class="co"># Modelos não-lineares</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)    <span class="co"># GEE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)        <span class="co"># Análise de regressão</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)    <span class="co"># Médias estimadas</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)   <span class="co"># Comparações múltiplas</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)    <span class="co"># Análises simplificadas</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)  <span class="co"># Suite completa</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="material-de-apoio" class="level2">
+<h2 class="anchored" data-anchor-id="material-de-apoio">📹 Material de Apoio</h2>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Aulas em Vídeo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Os vídeos das aulas práticas no SPSS estão disponíveis ao final de cada capítulo para referência.</p>
+<p><strong>Nota:</strong> Pequenas diferenças nos resultados entre SPSS e R podem ocorrer devido a algoritmos diferentes de estimação. O importante é sempre <strong>documentar</strong> seu método de análise.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="boas-práticas-de-reprodutibilidade" class="level2">
+<h2 class="anchored" data-anchor-id="boas-práticas-de-reprodutibilidade">🤝 Boas Práticas de Reprodutibilidade</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Checklist para Análises Reproduzíveis
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="task-list">
+<li><label><input type="checkbox">Use projetos do RStudio</label></li>
+<li><label><input type="checkbox">Documente versões de pacotes (<code>sessionInfo()</code>)</label></li>
+<li><label><input type="checkbox">Comente seu código adequadamente</label></li>
+<li><label><input type="checkbox">Nunca modifique dados originais</label></li>
+<li><label><input type="checkbox">Use caminhos relativos (não absolutos)</label></li>
+<li><label><input type="checkbox">Compartilhe código e dados quando possível</label></li>
+<li><label><input type="checkbox">Reporte métodos detalhadamente</label></li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="recursos-adicionais" class="level2">
+<h2 class="anchored" data-anchor-id="recursos-adicionais">📚 Recursos Adicionais</h2>
+<p>Para aprofundar seus conhecimentos:</p>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science</a> - Livro gratuito online</li>
+<li><a href="https://quarto.org/docs/authoring/">Quarto Documentation</a> - Documentação oficial</li>
+<li><a href="https://posit.co/resources/cheatsheets/">RStudio Cheatsheets</a> - Guias de referência rápida</li>
+</ul>
+<hr>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pronto para Começar?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Agora que seu ambiente está configurado, você está pronto para explorar os próximos capítulos! Cada um apresenta análises específicas com exemplos práticos e exercícios.</p>
+<p><strong>Dica:</strong> Trabalhe ativamente com os códigos — não apenas leia, execute e experimente!</p>
+</div>
+</div>
 
 
 </section>

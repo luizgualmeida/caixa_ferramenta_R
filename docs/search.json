@@ -4,9 +4,9 @@
     "href": "index.html",
     "title": "Técnicas e Métodos de Pesquisa no R",
     "section": "",
-    "text": "Introdução\nTutorial produzido com base nas aulas práticas da disciplina “Estatística Aplicada a Psicobiologia II - 2023”, ministrada pelo Professor Altay Lino de Souza e oferecida pelo Departamento de Psicobiologia da UNIFESP.",
+    "text": "Bem-vindo",
     "crumbs": [
-      "Introdução"
+      "Bem-vindo"
     ]
   },
   {
@@ -709,6 +709,86 @@
     "text": "Pressupostos da Cox regression\nA Regressão de Cox é uma técnica robusta, mas, como qualquer método estatístico, possui alguns pressupostos importantes. Os principais pressupostos da Regressão de Cox são:\nOs pressupostos de 2 a 6 são inerentes ao desenho do experimento e do acompanhamento durante as observações. O único que vamos abordar aqui no tutorial é o de proporcionalidade dos riscos.",
     "crumbs": [
       "SURVIVAL"
+    ]
+  },
+  {
+    "objectID": "index.html#origem-do-conteúdo",
+    "href": "index.html#origem-do-conteúdo",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "📚 Origem do Conteúdo",
+    "text": "📚 Origem do Conteúdo\nAs aulas são disponibilizadas gratuitamente através de lives no canal Cientística & Podcast Naruhodo do YouTube. Você pode acessar a playlist completa das aulas práticas e a playlist da disciplina completa.\n\n\n\n\n\n\nAgradecimento Especial\n\n\n\n\n\nAgradecimento especial à Professora Maria Lucia Oliveira De Souza Formigoni por tornar possível a realização desta disciplina.",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#o-que-você-vai-aprender",
+    "href": "index.html#o-que-você-vai-aprender",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "🎯 O que Você Vai Aprender",
+    "text": "🎯 O que Você Vai Aprender\nEste tutorial cobre análises estatísticas avançadas organizadas nos seguintes módulos:\n\nPreparação de DadosModelos LinearesAnálise de SobrevidaAnálises Avançadas\n\n\n\nTransformação e manipulação de dados\nBoas práticas de organização\n\n\n\n\nGLM - Modelo Linear Geral de medidas repetidas\nGEE - Equações de Estimação Generalizadas\nGMM - Modelos Mistos e Hierárquicos\nGzLM - Modelos Lineares Generalizados\n\n\n\n\nKaplan-Meier\nRegressão de Cox\nCox com covariáveis tempo-dependentes\n\n\n\n\nSéries Temporais - Modelos ARIMA\nSEM - Modelagem de Equações Estruturais\n\nPath Analysis\nAnálise Fatorial Confirmatória (CFA)\nModeração e Mediação\n\n\n\n\n\n\n\n\n\n\n\nSeção “Extras”\n\n\n\nAo final de cada capítulo, você encontrará a seção Extras com dicas sobre pacotes úteis que não estão disponíveis no SPSS ou Jamovi.",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#pré-requisitos",
+    "href": "index.html#pré-requisitos",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "⚠️ Pré-requisitos",
+    "text": "⚠️ Pré-requisitos\n\n\n\n\n\n\nImportante!\n\n\n\nEste material é complementar às aulas teóricas e práticas. É fundamental que você:\n\nAssista às aulas correspondentes antes de trabalhar com os exercícios\nTenha conhecimento básico em estatística (preferencialmente Estatística Aplicada a Psicobiologia I)\nPossua familiaridade mínima com o ambiente R",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#configurando-seu-ambiente",
+    "href": "index.html#configurando-seu-ambiente",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "🛠️ Configurando seu Ambiente",
+    "text": "🛠️ Configurando seu Ambiente\n\nInstalando R e RStudio\nEmbora as aulas originais utilizem SPSS, este tutorial replica todas as análises no R — que é gratuito e open source!\n\n\nR (Base)\n\n📥 Download do R\n\n\nRStudio (IDE)\n\n📥 Download do RStudio\n\n\n\n\nEstrutura Recomendada de Projeto\nOrganizar seus projetos adequadamente facilita a reprodutibilidade e colaboração:\nmeu_projeto/\n├── meu_projeto.Rproj\n├── dados/\n│   ├── raw/          # Dados originais (não modificar)\n│   └── processed/    # Dados processados\n├── scripts/\n│   └── analises.R\n├── outputs/\n│   ├── figuras/\n│   └── tabelas/\n└── README.md\n\n\n\n\n\n\nComo Criar um Projeto no RStudio\n\n\n\n\n\n\nAbra o RStudio\nVá em File → New Project\nEscolha New Directory → New Project\nDefina o nome e localização do projeto\nClique em Create Project\n\nVantagens: - Caminhos relativos automáticos - Facilita compartilhamento - Mantém ambiente organizado - Evita conflitos entre projetos",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#gerenciamento-de-pacotes",
+    "href": "index.html#gerenciamento-de-pacotes",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "📦 Gerenciamento de Pacotes",
+    "text": "📦 Gerenciamento de Pacotes\n\nInstalação (apenas uma vez)\n\n# Instalar um pacote\ninstall.packages(\"tidyverse\")\n\n# Instalar múltiplos pacotes\npacotes &lt;- c(\"dplyr\", \"ggplot2\", \"lme4\")\ninstall.packages(pacotes)\n\n\n\nCarregamento (a cada sessão)\n\n# Carregar biblioteca\nlibrary(tidyverse)\n\n\n\n\n\n\n\n💡 Analogia\n\n\n\nPense nos pacotes como livros em uma biblioteca:\n\ninstall.packages() = Comprar/adquirir o livro\nlibrary() = Pegar o livro da prateleira para usar\n\n\n\n\n\nLista de Pacotes Principais\nNo início de cada capítulo, você encontrará uma lista específica dos pacotes necessários. Aqui está uma visão geral dos principais:\n\nManipulaçãoVisualizaçãoModelagemEstatísticas\n\n\n\nlibrary(dplyr)      # Manipulação de dados\nlibrary(tidyr)      # Organização de dados\nlibrary(foreign)    # Importação de dados\n\n\n\n\nlibrary(ggplot2)    # Gráficos elegantes\nlibrary(flexplot)   # Visualização flexível\nlibrary(effects)    # Efeitos de modelos\n\n\n\n\nlibrary(lme4)       # Modelos mistos\nlibrary(nlme)       # Modelos não-lineares\nlibrary(geepack)    # GEE\nlibrary(car)        # Análise de regressão\n\n\n\n\nlibrary(emmeans)    # Médias estimadas\nlibrary(multcomp)   # Comparações múltiplas\nlibrary(rstatix)    # Análises simplificadas\nlibrary(easystats)  # Suite completa",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#material-de-apoio",
+    "href": "index.html#material-de-apoio",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "📹 Material de Apoio",
+    "text": "📹 Material de Apoio\n\n\n\n\n\n\nAulas em Vídeo\n\n\n\nOs vídeos das aulas práticas no SPSS estão disponíveis ao final de cada capítulo para referência.\nNota: Pequenas diferenças nos resultados entre SPSS e R podem ocorrer devido a algoritmos diferentes de estimação. O importante é sempre documentar seu método de análise.",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#boas-práticas-de-reprodutibilidade",
+    "href": "index.html#boas-práticas-de-reprodutibilidade",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "🤝 Boas Práticas de Reprodutibilidade",
+    "text": "🤝 Boas Práticas de Reprodutibilidade\n\n\n\n\n\n\nChecklist para Análises Reproduzíveis\n\n\n\n\nUse projetos do RStudio\nDocumente versões de pacotes (sessionInfo())\nComente seu código adequadamente\nNunca modifique dados originais\nUse caminhos relativos (não absolutos)\nCompartilhe código e dados quando possível\nReporte métodos detalhadamente",
+    "crumbs": [
+      "Bem-vindo"
+    ]
+  },
+  {
+    "objectID": "index.html#recursos-adicionais",
+    "href": "index.html#recursos-adicionais",
+    "title": "Técnicas e Métodos de Pesquisa no R",
+    "section": "📚 Recursos Adicionais",
+    "text": "📚 Recursos Adicionais\nPara aprofundar seus conhecimentos:\n\nR for Data Science - Livro gratuito online\nQuarto Documentation - Documentação oficial\nRStudio Cheatsheets - Guias de referência rápida\n\n\n\n\n\n\n\n\nPronto para Começar?\n\n\n\nAgora que seu ambiente está configurado, você está pronto para explorar os próximos capítulos! Cada um apresenta análises específicas com exemplos práticos e exercícios.\nDica: Trabalhe ativamente com os códigos — não apenas leia, execute e experimente!",
+    "crumbs": [
+      "Bem-vindo"
     ]
   }
 ]
