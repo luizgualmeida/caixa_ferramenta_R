@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Técnicas e Métodos de Pesquisa no R - 3&nbsp; Lista 3 - Matriz de Covariância</title>
+<title>Lista 3: Matrizes de Covariância – Técnicas e Métodos de Pesquisa no R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,11 +96,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -104,12 +141,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">GLM, GEE, GMM, GzLM</a></li><li class="breadcrumb-item"><a href="./lista_3.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">Modelos Lineares</a></li><li class="breadcrumb-item"><a href="./lista_3.html">Lista 3: Matrizes de Covariância</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -119,8 +156,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./stickers/curso2_clean.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Técnicas e Métodos de Pesquisa no R</a> 
         <div class="sidebar-tools-main">
@@ -142,14 +182,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introdução</span></a>
+ <span class="menu-text">Bem-vindo</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./lms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">GLM, GEE, GMM, GzLM</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+ <span class="menu-text">Modelos Lineares</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -157,31 +197,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 1 - GLM, GEE e GMM</span></span></a>
+ <span class="menu-text">Lista 1: GLM, GEE e GMM</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span></a>
+ <span class="menu-text">Lista 2: GEE Avançado</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_3.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span></a>
+ <span class="menu-text">Lista 3: Matrizes de Covariância</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></span></a>
+ <span class="menu-text">Lista 4: Modelos Hierárquicos e ICC</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
   </div>
 </li>
       </ul>
@@ -190,7 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./survival.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SURVIVAL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -198,13 +238,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_6.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
   </div>
 </li>
       </ul>
@@ -213,7 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./ARIMA.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">ARIMA</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -221,7 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_7.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
   </div>
 </li>
       </ul>
@@ -230,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./SEM.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SEM</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -238,13 +278,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
   </div>
 </li>
       </ul>
@@ -252,41 +292,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#pacotes-que-vamos-utilizar" id="toc-pacotes-que-vamos-utilizar" class="nav-link active" data-scroll-target="#pacotes-que-vamos-utilizar"><span class="header-section-number">3.1</span> Pacotes que vamos utilizar</a></li>
-  <li><a href="#instruções-e-carregando-o-banco-de-dados" id="toc-instruções-e-carregando-o-banco-de-dados" class="nav-link" data-scroll-target="#instruções-e-carregando-o-banco-de-dados"><span class="header-section-number">3.2</span> Instruções e carregando o banco de dados</a></li>
-  <li><a href="#a-criando-os-modelos-para-a-variável-resp" id="toc-a-criando-os-modelos-para-a-variável-resp" class="nav-link" data-scroll-target="#a-criando-os-modelos-para-a-variável-resp"><span class="header-section-number">3.3</span> a) Criando os modelos para a variável Resp</a>
+  <li><a href="#pacotes-necessários" id="toc-pacotes-necessários" class="nav-link active" data-scroll-target="#pacotes-necessários">📦 Pacotes Necessários</a></li>
+  <li><a href="#preparação-dos-dados" id="toc-preparação-dos-dados" class="nav-link" data-scroll-target="#preparação-dos-dados">📥 Preparação dos Dados</a>
   <ul class="collapse">
-  <li><a href="#matriz-simétrica" id="toc-matriz-simétrica" class="nav-link" data-scroll-target="#matriz-simétrica">Matriz simétrica</a></li>
-  <li><a href="#matriz-ar1" id="toc-matriz-ar1" class="nav-link" data-scroll-target="#matriz-ar1">Matriz Ar(1)</a></li>
-  <li><a href="#matriz-diagonal-identidade" id="toc-matriz-diagonal-identidade" class="nav-link" data-scroll-target="#matriz-diagonal-identidade">Matriz Diagonal (identidade)</a></li>
-  <li><a href="#matriz-não-estruturada-unstructured" id="toc-matriz-não-estruturada-unstructured" class="nav-link" data-scroll-target="#matriz-não-estruturada-unstructured">Matriz Não estruturada (Unstructured)</a></li>
+  <li><a href="#carregamento-e-verificação" id="toc-carregamento-e-verificação" class="nav-link" data-scroll-target="#carregamento-e-verificação">Carregamento e Verificação</a></li>
+  <li><a href="#verificação-de-tipos-de-variáveis" id="toc-verificação-de-tipos-de-variáveis" class="nav-link" data-scroll-target="#verificação-de-tipos-de-variáveis">Verificação de Tipos de Variáveis</a></li>
   </ul></li>
-  <li><a href="#b-comparando-os-valores-de-aic-e-bic" id="toc-b-comparando-os-valores-de-aic-e-bic" class="nav-link" data-scroll-target="#b-comparando-os-valores-de-aic-e-bic"><span class="header-section-number">3.4</span> b) Comparando os valores de AIC e BIC</a></li>
-  <li><a href="#c-resultado-do-modelo-escolhido---ar1" id="toc-c-resultado-do-modelo-escolhido---ar1" class="nav-link" data-scroll-target="#c-resultado-do-modelo-escolhido---ar1"><span class="header-section-number">3.5</span> c) Resultado do modelo escolhido - AR1</a></li>
-  <li><a href="#extras" id="toc-extras" class="nav-link" data-scroll-target="#extras"><span class="header-section-number">3.6</span> Extras!</a>
+  <li><a href="#parte-a-modelos-com-diferentes-matrizes" id="toc-parte-a-modelos-com-diferentes-matrizes" class="nav-link" data-scroll-target="#parte-a-modelos-com-diferentes-matrizes">🎯 Parte A: Modelos com Diferentes Matrizes</a>
   <ul class="collapse">
-  <li><a href="#gráfico-do-modelo-em-uma-linha" id="toc-gráfico-do-modelo-em-uma-linha" class="nav-link" data-scroll-target="#gráfico-do-modelo-em-uma-linha">Gráfico do modelo em uma linha</a></li>
-  <li><a href="#mudando-a-referência-de-um-fator" id="toc-mudando-a-referência-de-um-fator" class="nav-link" data-scroll-target="#mudando-a-referência-de-um-fator">Mudando a referência de um fator</a></li>
+  <li><a href="#matriz-1-simétrica-composta-compound-symmetry" id="toc-matriz-1-simétrica-composta-compound-symmetry" class="nav-link" data-scroll-target="#matriz-1-simétrica-composta-compound-symmetry">Matriz 1: Simétrica Composta (Compound Symmetry)</a></li>
+  <li><a href="#matriz-2-autorregressiva-de-ordem-1---ar1" id="toc-matriz-2-autorregressiva-de-ordem-1---ar1" class="nav-link" data-scroll-target="#matriz-2-autorregressiva-de-ordem-1---ar1">Matriz 2: Autorregressiva de Ordem 1 - AR(1)</a></li>
+  <li><a href="#matriz-3-identidade-independence" id="toc-matriz-3-identidade-independence" class="nav-link" data-scroll-target="#matriz-3-identidade-independence">Matriz 3: Identidade (Independence)</a></li>
+  <li><a href="#matriz-4-não-estruturada-unstructured" id="toc-matriz-4-não-estruturada-unstructured" class="nav-link" data-scroll-target="#matriz-4-não-estruturada-unstructured">Matriz 4: Não-Estruturada (Unstructured)</a></li>
   </ul></li>
-  <li><a href="#lista-2-resolvida-no-spss" id="toc-lista-2-resolvida-no-spss" class="nav-link" data-scroll-target="#lista-2-resolvida-no-spss"><span class="header-section-number">3.7</span> Lista 2 resolvida no SPSS</a></li>
-  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências"><span class="header-section-number">3.8</span> Referências</a></li>
-  <li><a href="#versões-dos-pacotes" id="toc-versões-dos-pacotes" class="nav-link" data-scroll-target="#versões-dos-pacotes"><span class="header-section-number">3.9</span> Versões dos pacotes</a></li>
+  <li><a href="#parte-b-comparação-de-modelos" id="toc-parte-b-comparação-de-modelos" class="nav-link" data-scroll-target="#parte-b-comparação-de-modelos">🎯 Parte B: Comparação de Modelos</a>
+  <ul class="collapse">
+  <li><a href="#critérios-de-informação" id="toc-critérios-de-informação" class="nav-link" data-scroll-target="#critérios-de-informação">Critérios de Informação</a></li>
+  <li><a href="#comparação-manual" id="toc-comparação-manual" class="nav-link" data-scroll-target="#comparação-manual">Comparação Manual</a></li>
+  <li><a href="#comparação-automatizada" id="toc-comparação-automatizada" class="nav-link" data-scroll-target="#comparação-automatizada">Comparação Automatizada</a></li>
+  <li><a href="#análise-dos-resultados" id="toc-análise-dos-resultados" class="nav-link" data-scroll-target="#análise-dos-resultados">Análise dos Resultados</a></li>
+  </ul></li>
+  <li><a href="#parte-c-modelo-escolhido---ar1" id="toc-parte-c-modelo-escolhido---ar1" class="nav-link" data-scroll-target="#parte-c-modelo-escolhido---ar1">🎯 Parte C: Modelo Escolhido - AR(1)</a>
+  <ul class="collapse">
+  <li><a href="#resultados-completos" id="toc-resultados-completos" class="nav-link" data-scroll-target="#resultados-completos">Resultados Completos</a></li>
+  <li><a href="#relatório-automatizado" id="toc-relatório-automatizado" class="nav-link" data-scroll-target="#relatório-automatizado">Relatório Automatizado</a></li>
+  <li><a href="#interpretação-guiada" id="toc-interpretação-guiada" class="nav-link" data-scroll-target="#interpretação-guiada">Interpretação Guiada</a></li>
+  </ul></li>
+  <li><a href="#visualizações-avançadas" id="toc-visualizações-avançadas" class="nav-link" data-scroll-target="#visualizações-avançadas">📊 Visualizações Avançadas</a>
+  <ul class="collapse">
+  <li><a href="#gráfico-dos-efeitos" id="toc-gráfico-dos-efeitos" class="nav-link" data-scroll-target="#gráfico-dos-efeitos">Gráfico dos Efeitos</a></li>
+  <li><a href="#gráfico-personalizado" id="toc-gráfico-personalizado" class="nav-link" data-scroll-target="#gráfico-personalizado">Gráfico Personalizado</a></li>
+  </ul></li>
+  <li><a href="#extras-dicas-avançadas" id="toc-extras-dicas-avançadas" class="nav-link" data-scroll-target="#extras-dicas-avançadas">🔧 Extras: Dicas Avançadas</a>
+  <ul class="collapse">
+  <li><a href="#mudando-grupo-de-referência" id="toc-mudando-grupo-de-referência" class="nav-link" data-scroll-target="#mudando-grupo-de-referência">Mudando Grupo de Referência</a></li>
+  <li><a href="#comparando-com-nova-referência" id="toc-comparando-com-nova-referência" class="nav-link" data-scroll-target="#comparando-com-nova-referência">Comparando com Nova Referência</a></li>
+  </ul></li>
+  <li><a href="#desafio-análise-da-variável-pulse" id="toc-desafio-análise-da-variável-pulse" class="nav-link" data-scroll-target="#desafio-análise-da-variável-pulse">🎯 Desafio: Análise da Variável “Pulse”</a></li>
+  <li><a href="#material-complementar" id="toc-material-complementar" class="nav-link" data-scroll-target="#material-complementar">📚 Material Complementar</a>
+  <ul class="collapse">
+  <li><a href="#aula-em-vídeo-spss" id="toc-aula-em-vídeo-spss" class="nav-link" data-scroll-target="#aula-em-vídeo-spss">Aula em Vídeo (SPSS)</a></li>
+  <li><a href="#leituras-recomendadas" id="toc-leituras-recomendadas" class="nav-link" data-scroll-target="#leituras-recomendadas">Leituras Recomendadas</a></li>
+  <li><a href="#tabela-de-decisão-rápida" id="toc-tabela-de-decisão-rápida" class="nav-link" data-scroll-target="#tabela-de-decisão-rápida">Tabela de Decisão Rápida</a></li>
+  </ul></li>
+  <li><a href="#informações-de-sessão" id="toc-informações-de-sessão" class="nav-link" data-scroll-target="#informações-de-sessão">🔧 Informações de Sessão</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lms.html">Modelos Lineares</a></li><li class="breadcrumb-item"><a href="./lista_3.html">Lista 3: Matrizes de Covariância</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-lista-3" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 3 - Matriz de Covariância</span></span></h1>
+<h1 class="title"><span id="sec-lista-3" class="quarto-section-identifier">Lista 3: Matrizes de Covariância</span></h1>
 </div>
 
 
@@ -299,44 +364,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
 
-<section id="pacotes-que-vamos-utilizar" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="pacotes-que-vamos-utilizar"><span class="header-section-number">3.1</span> Pacotes que vamos utilizar</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flexplot)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(foreign)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+Objetivo da Lista
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nesta lista, você aprenderá a <strong>escolher a estrutura de covariância mais adequada</strong> para seus dados longitudinais. Compararemos quatro matrizes diferentes (Simétrica Composta, AR(1), Identidade e Não-Estruturada) usando critérios de informação AIC e BIC.</p>
+</div>
+</div>
+<hr>
+<section id="pacotes-necessários" class="level2">
+<h2 class="anchored" data-anchor-id="pacotes-necessários">📦 Pacotes Necessários</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista de pacotes</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacotes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"emmeans"</span>,      <span class="co"># Médias marginais</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"nlme"</span>,         <span class="co"># Modelos mistos com estruturas de correlação</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"flexplot"</span>,     <span class="co"># Visualizações</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"foreign"</span>,      <span class="co"># Importar SPSS</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dplyr"</span>,        <span class="co"># Manipulação de dados</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"multcomp"</span>,     <span class="co"># Comparações múltiplas</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"effects"</span>,      <span class="co"># Efeitos do modelo</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"performance"</span>,  <span class="co"># Comparação de modelos</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"easystats"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ggplot2"</span> </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar e instalar</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>pacotes_faltantes <span class="ot">&lt;-</span> pacotes[<span class="sc">!</span>pacotes <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[, <span class="st">"Package"</span>]]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(pacotes_faltantes) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(pacotes_faltantes, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">lapply</span>(pacotes, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Pacotes carregados com sucesso!</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Pacotes carregados com sucesso!</code></pre>
+</div>
+</div>
+<hr>
 </section>
-<section id="instruções-e-carregando-o-banco-de-dados" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="instruções-e-carregando-o-banco-de-dados"><span class="header-section-number">3.2</span> Instruções e carregando o banco de dados</h2>
-<p>Vamos utilizar um GMM para verificar o efeito de tempo e grupo sobre os resultados de resp (<a href="https://drive.google.com/file/d/17ViQJy-w50z6vm6VdZ1A1lbeTmUuIviB/view?usp=sharing">o banco já está no formato correto</a>). Porém, antes disso vamos avaliar qual a melhor matriz de covariância que o modelo deve aplicar aos dados.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="ot">=</span> <span class="fu">read.spss</span>(<span class="st">"bd_New drug_respiratory&amp;pulseRESHAPE.sav"</span>, <span class="at">to.data.frame=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="preparação-dos-dados" class="level2">
+<h2 class="anchored" data-anchor-id="preparação-dos-dados">📥 Preparação dos Dados</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Muito importante!
+Dados Já no Formato Long!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>SEMPRE verifique o tipo das variáveis no banco de dados. Elas podem ser fatores, números íntegros, números decimais, etc. As análises mudam MUITO dependendo do tipo de variável que utilizamos no modelo de regressão linear!</p>
+<p>Para esta lista, use o banco <strong>“<a href="https://drive.google.com/file/d/17ViQJy-w50z6vm6VdZ1A1lbeTmUuIviB/view?usp=sharing">New Drug (RESHAPE)</a>”</strong> que já está em formato long.</p>
 </div>
 </div>
-<p>Para verificar o tipo das variáveis podemos utilizar a função <code>glimpse()</code>.</p>
+<section id="carregamento-e-verificação" class="level3">
+<h3 class="anchored" data-anchor-id="carregamento-e-verificação">Carregamento e Verificação</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar dados</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dataset <span class="ot">&lt;-</span> <span class="fu">read.spss</span>(<span class="st">"bd_New drug_respiratory&amp;pulseRESHAPE.sav"</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to.data.frame =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar estrutura inicial</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 36
 Columns: 5
@@ -347,14 +448,48 @@ $ resp    &lt;dbl&gt; 3.4, 3.3, 3.3, 3.4, 3.4, 3.3, 3.3, 3.4, 3.4, 3.4, 3.4, 3.4
 $ pulse   &lt;dbl&gt; 2.2, 2.1, 2.1, 2.2, 2.1, 2.2, 2.3, 2.4, 2.3, 2.3, 2.4, 2.3, 2.…</code></pre>
 </div>
 </div>
-<p>Notem que a variável <code>Tempo</code> está como <code>&lt;dbl&gt;</code>, indicando que é uma variável contínua. Vejam a aula prática em que o Altay explica que os tempos de coleta na verdade são fatores e não indicam uma ordem ou um contínuo. Seria como dizer que as amostras foram coletadas nos Tempos “X”, “Y” e “Z”.</p>
-<p>Para transformar a variável <code>Tempo</code> em um fator podemos utilizar o seguinte código:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Tempo <span class="ot">=</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>Tempo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="verificação-de-tipos-de-variáveis" class="level3">
+<h3 class="anchored" data-anchor-id="verificação-de-tipos-de-variáveis">Verificação de Tipos de Variáveis</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p>Rodando novamente a função <code>glimpse()</code> é possível observar que agora sim temos a variável <code>Tempo</code> como <code>&lt;fct&gt;</code>, indicando que ela é do tipo fator .</p>
+<div class="callout-title-container flex-fill">
+⚠️ Tipos de Variáveis São Cruciais!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>SEMPRE</strong> verifique os tipos antes de modelar. As análises mudam <strong>drasticamente</strong> dependendo se a variável é: - <strong>Fator</strong> (<code>&lt;fct&gt;</code>): Categorias nominais ou ordinais - <strong>Numérica</strong> (<code>&lt;dbl&gt;</code>): Valores contínuos - <strong>Inteiro</strong> (<code>&lt;int&gt;</code>): Contagens discretas</p>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Problema Identificado</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Solução Aplicada</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Comparação</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 36
+Columns: 5
+$ Sujeito &lt;dbl&gt; 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7,…
+$ drug    &lt;fct&gt; New Drug, New Drug, New Drug, New Drug, New Drug, New Drug, Ne…
+$ Tempo   &lt;dbl&gt; 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3,…
+$ resp    &lt;dbl&gt; 3.4, 3.3, 3.3, 3.4, 3.4, 3.3, 3.3, 3.4, 3.4, 3.4, 3.4, 3.4, 3.…
+$ pulse   &lt;dbl&gt; 2.2, 2.1, 2.1, 2.2, 2.1, 2.2, 2.3, 2.4, 2.3, 2.3, 2.4, 2.3, 2.…</code></pre>
+</div>
+</div>
+<p><strong>Observação Crítica:</strong> - <code>Tempo</code> aparece como <code>&lt;dbl&gt;</code> (numérica contínua) - Mas representa <strong>categorias</strong> (“Momento 1”, “Momento 2”, “Momento 3”) - Não há ordem contínua entre os momentos</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter Tempo para fator</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Tempo <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>Tempo)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar mudança</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 36
 Columns: 5
@@ -365,115 +500,331 @@ $ resp    &lt;dbl&gt; 3.4, 3.3, 3.3, 3.4, 3.4, 3.3, 3.3, 3.4, 3.4, 3.4, 3.4, 3.4
 $ pulse   &lt;dbl&gt; 2.2, 2.1, 2.1, 2.2, 2.1, 2.2, 2.3, 2.4, 2.3, 2.3, 2.4, 2.3, 2.…</code></pre>
 </div>
 </div>
+<p><strong>Agora sim:</strong> - <code>Tempo</code> é <code>&lt;fct&gt;</code> (fator) - Representa categorias discretas - Análise apropriada para medidas repetidas</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🔍 Por que isso importa?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Se Tempo for numérica:</strong> - R assume relação <strong>linear</strong> entre momentos - Força pontos em uma reta - Perde flexibilidade para padrões não-lineares</p>
+<p><strong>Se Tempo for fator:</strong> - R trata cada momento <strong>independentemente</strong> - Permite médias diferentes para cada tempo - Detecta mudanças não-lineares</p>
+<p><strong>Experimente:</strong> Rode modelos com ambas as especificações e compare!</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="parte-a-modelos-com-diferentes-matrizes" class="level2">
+<h2 class="anchored" data-anchor-id="parte-a-modelos-com-diferentes-matrizes">🎯 Parte A: Modelos com Diferentes Matrizes</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Dica
+O que são Matrizes de Covariância?
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Faça os modelos antes e depois de transformar a variável <code>Tempo</code> em um fator e compare os resultados.</p>
+<p>Em dados longitudinais, observações do mesmo sujeito são <strong>correlacionadas</strong>. A matriz de covariância especifica <strong>como</strong> modelamos essa correlação.</p>
+<p><strong>Por que importa?</strong> - Afeta estimativas dos efeitos fixos - Influencia erros-padrão - Altera conclusões estatísticas</p>
 </div>
 </div>
-<p>Agora sim podemos realizar nossas análises e comparar com os resultados do SPSS.</p>
-</section>
-<section id="a-criando-os-modelos-para-a-variável-resp" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="a-criando-os-modelos-para-a-variável-resp"><span class="header-section-number">3.3</span> a) Criando os modelos para a variável Resp</h2>
-<p>Há diversos pacotes no R que podemos alterar a matriz de covariância do modelo. Optamos por escolher a função <code>lme()</code> do pacote <code>nlme</code> por ela ter de forma bem direta todas as matrizes escolhidas na aula prática utilizando o SPSS. Recomendamos também o pacote <code>geepack</code>para outras matrizes.</p>
-<section id="matriz-simétrica" class="level3">
-<h3 class="anchored" data-anchor-id="matriz-simétrica">Matriz simétrica</h3>
+<hr>
+<section id="matriz-1-simétrica-composta-compound-symmetry" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-1-simétrica-composta-compound-symmetry">Matriz 1: Simétrica Composta (Compound Symmetry)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_resp_sim <span class="ot">=</span> <span class="fu">lme</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug <span class="sc">*</span> Tempo, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>Sujeito, </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito), <span class="co"># Aqui definimos a matriz</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="matriz-ar1" class="level3">
-<h3 class="anchored" data-anchor-id="matriz-ar1">Matriz Ar(1)</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_resp_AR1 <span class="ot">=</span> <span class="fu">lme</span>(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> Tempo <span class="sc">+</span> drug <span class="sc">+</span> Tempo <span class="sc">*</span> drug,</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_resp_sim <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>Sujeito), <span class="co"># Aqui definimos a matriz</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Matriz Simétrica Composta
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Estrutura:</strong> <span class="math display">\[
+\begin{bmatrix}
+1 &amp; \rho &amp; \rho \\
+\rho &amp; 1 &amp; \rho \\
+\rho &amp; \rho &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p><strong>Características:</strong> - Correlação <strong>constante</strong> entre todos os pares - Um único parâmetro <span class="math inline">\(\rho\)</span> para estimar - Mais simples, mais parcimoniosa</p>
+<p><strong>Quando usar:</strong> - Dados com intervalos irregulares - Correlação não muda com distância temporal - Tamanho de amostra pequeno</p>
+<p><strong>Limitações:</strong> - Pouco realista para séries longas - Assume correlação não decai com tempo</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="matriz-diagonal-identidade" class="level3">
-<h3 class="anchored" data-anchor-id="matriz-diagonal-identidade">Matriz Diagonal (identidade)</h3>
+<section id="matriz-2-autorregressiva-de-ordem-1---ar1" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-2-autorregressiva-de-ordem-1---ar1">Matriz 2: Autorregressiva de Ordem 1 - AR(1)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_resp_Iden <span class="ot">=</span> <span class="fu">lme</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug <span class="sc">*</span> Tempo,</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_resp_AR1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corIdent</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>Sujeito), <span class="co"># Aqui definimos a matriz</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Matriz AR(1)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Estrutura:</strong> <span class="math display">\[
+\begin{bmatrix}
+1 &amp; \rho &amp; \rho^2 \\
+\rho &amp; 1 &amp; \rho \\
+\rho^2 &amp; \rho &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p><strong>Características:</strong> - Correlação <strong>decai exponencialmente</strong> com distância - Um único parâmetro <span class="math inline">\(\rho\)</span> (0 &lt; ρ &lt; 1) - Observações adjacentes mais correlacionadas</p>
+<p><strong>Quando usar:</strong> - Medições <strong>igualmente espaçadas</strong> no tempo - Expectativa de correlação decrescente - Séries temporais clássicas</p>
+<p><strong>Vantagens:</strong> - Realista para muitos processos biológicos - Parcimoniosa (1 parâmetro) - Boa relação viés-eficiência</p>
+<p><strong>Exemplo:</strong> Se ρ = 0.7: - Tempos adjacentes: r = 0.70 - Tempos separados por 1: r = 0.49 - Tempos separados por 2: r = 0.34</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="matriz-não-estruturada-unstructured" class="level3">
-<h3 class="anchored" data-anchor-id="matriz-não-estruturada-unstructured">Matriz Não estruturada (Unstructured)</h3>
+<section id="matriz-3-identidade-independence" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-3-identidade-independence">Matriz 3: Identidade (Independence)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_resp_Uns <span class="ot">=</span> <span class="fu">lme</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug <span class="sc">*</span> Tempo,</span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_resp_Iden <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>Sujeito), <span class="co"># Aqui definimos a matriz</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Matriz Identidade
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Estrutura:</strong> <span class="math display">\[
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p><strong>Características:</strong> - <strong>Nenhuma</strong> correlação entre medidas - Assume independência total - Não estima parâmetros de correlação</p>
+<p><strong>Quando usar:</strong> - Baseline para comparações - Testes de necessidade de correlação - <strong>Raramente</strong> apropriada na prática</p>
+<p><strong>Limitações:</strong> - Ignora estrutura de medidas repetidas - Subestima erros-padrão - Infla erro Tipo I</p>
+<p><strong>Nota:</strong> Geralmente <strong>não é recomendada</strong> para dados longitudinais reais!</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-</section>
-<section id="b-comparando-os-valores-de-aic-e-bic" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="b-comparando-os-valores-de-aic-e-bic"><span class="header-section-number">3.4</span> b) Comparando os valores de AIC e BIC</h2>
-<p>Podemos colocar os resultados dos valores de AIC e BIC dos modelos em um dataframe para poder compará-los.</p>
+<section id="matriz-4-não-estruturada-unstructured" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-4-não-estruturada-unstructured">Matriz 4: Não-Estruturada (Unstructured)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Crie um dataframe</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df_aderencia <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">"model_resp_sim"</span>, <span class="st">"model_resp_AR1"</span>, <span class="st">"model_resp_Iden"</span>, <span class="st">"model_resp_Uns"</span>),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">c</span>(<span class="fu">AIC</span>(model_resp_sim), <span class="fu">AIC</span>(model_resp_AR1), <span class="fu">AIC</span>(model_resp_Iden), <span class="fu">AIC</span>(model_resp_Uns)),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">c</span>(<span class="fu">BIC</span>(model_resp_sim), <span class="fu">BIC</span>(model_resp_AR1), <span class="fu">BIC</span>(model_resp_Iden), <span class="fu">BIC</span>(model_resp_Uns))</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Arredonde os valores para 3 casas decimais</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>AIC <span class="ot">&lt;-</span> <span class="fu">round</span>(df_aderencia<span class="sc">$</span>AIC, <span class="dv">3</span>)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>BIC <span class="ot">&lt;-</span> <span class="fu">round</span>(df_aderencia<span class="sc">$</span>BIC, <span class="dv">3</span>)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicione um asterisco às células correspondentes aos menores valores de AIC e BIC</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>AIC <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(df_aderencia<span class="sc">$</span>AIC <span class="sc">==</span> <span class="fu">min</span>(df_aderencia<span class="sc">$</span>AIC), <span class="fu">paste0</span>(df_aderencia<span class="sc">$</span>AIC, <span class="st">"*"</span>), df_aderencia<span class="sc">$</span>AIC)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>BIC <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(df_aderencia<span class="sc">$</span>BIC <span class="sc">==</span> <span class="fu">min</span>(df_aderencia<span class="sc">$</span>BIC), <span class="fu">paste0</span>(df_aderencia<span class="sc">$</span>BIC, <span class="st">"*"</span>), df_aderencia<span class="sc">$</span>BIC)</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Exiba o dataframe</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df_aderencia)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>           Modelo     AIC      BIC
-1  model_resp_sim -51.363  -38.752
-2  model_resp_AR1  -54.3*   -41.69
-3 model_resp_Iden -53.363 -42.153*
-4  model_resp_Uns -53.455  -38.042</code></pre>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model_resp_Uns <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corSymm</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Matriz Não-Estruturada
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Estrutura (3 tempos):</strong> <span class="math display">\[
+\begin{bmatrix}
+1 &amp; \rho_{12} &amp; \rho_{13} \\
+\rho_{12} &amp; 1 &amp; \rho_{23} \\
+\rho_{13} &amp; \rho_{23} &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p><strong>Características:</strong> - Estima <strong>todas</strong> as correlações separadamente - Máxima flexibilidade - Para T tempos: estima T(T-1)/2 correlações</p>
+<p><strong>Quando usar:</strong> - Amostra grande (regra: n &gt; 10 × parâmetros) - Padrão de correlação desconhecido - Análise exploratória</p>
+<p><strong>Vantagens:</strong> - Não assume estrutura específica - Permite padrões complexos - Mais realista quando bem estimada</p>
+<p><strong>Limitações:</strong> - Muitos parâmetros para estimar - Requer amostra grande - Pode não convergir - Pode sobre-ajustar</p>
+<p><strong>Exemplo (3 tempos):</strong> - 3 correlações diferentes: - r(1,2) = 0.65 - r(1,3) = 0.52 - r(2,3) = 0.71</p>
 </div>
 </div>
+</div>
+<hr>
+</section>
+</section>
+<section id="parte-b-comparação-de-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="parte-b-comparação-de-modelos">🎯 Parte B: Comparação de Modelos</h2>
+<section id="critérios-de-informação" class="level3">
+<h3 class="anchored" data-anchor-id="critérios-de-informação">Critérios de Informação</h3>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Dica!
+AIC vs BIC
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Podemos utilizar a função <code>compare_performance</code> para comparar diversos valores de aderência dos modelos!</p>
+<p><strong>AIC (Akaike Information Criterion):</strong> - Penalização moderada para complexidade - Tende a favorecer modelos mais complexos - Foco em predição</p>
+<p><strong>BIC (Bayesian Information Criterion):</strong> - Penalização mais forte para complexidade - Tende a favorecer modelos mais simples - Foco em parcimônia</p>
+<p><strong>Regra geral:</strong> - Menor é melhor - Diferença &gt; 2 = evidência moderada - Diferença &gt; 10 = evidência forte</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="comparação-manual" class="level3">
+<h3 class="anchored" data-anchor-id="comparação-manual">Comparação Manual</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar dataframe comparativo</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df_aderencia <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Modelo =</span> <span class="fu">c</span>(<span class="st">"Simétrica"</span>, <span class="st">"AR(1)"</span>, <span class="st">"Identidade"</span>, <span class="st">"Não-estruturada"</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">AIC =</span> <span class="fu">c</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AIC</span>(model_resp_sim),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AIC</span>(model_resp_AR1),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AIC</span>(model_resp_Iden),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AIC</span>(model_resp_Uns)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">BIC =</span> <span class="fu">c</span>(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">BIC</span>(model_resp_sim),</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">BIC</span>(model_resp_AR1),</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">BIC</span>(model_resp_Iden),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">BIC</span>(model_resp_Uns)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Arredondar</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>AIC <span class="ot">&lt;-</span> <span class="fu">round</span>(df_aderencia<span class="sc">$</span>AIC, <span class="dv">2</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>BIC <span class="ot">&lt;-</span> <span class="fu">round</span>(df_aderencia<span class="sc">$</span>BIC, <span class="dv">2</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Marcar melhores modelos</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>AIC <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  df_aderencia<span class="sc">$</span>AIC <span class="sc">==</span> <span class="fu">min</span>(df_aderencia<span class="sc">$</span>AIC),</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(df_aderencia<span class="sc">$</span>AIC, <span class="st">" ★"</span>),</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  df_aderencia<span class="sc">$</span>AIC</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>df_aderencia<span class="sc">$</span>BIC <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  df_aderencia<span class="sc">$</span>BIC <span class="sc">==</span> <span class="fu">min</span>(df_aderencia<span class="sc">$</span>BIC),</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(df_aderencia<span class="sc">$</span>BIC, <span class="st">" ★"</span>),</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  df_aderencia<span class="sc">$</span>BIC</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Exibir</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  df_aderencia,</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Comparação de Matrizes de Covariância (★ = melhor)"</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Comparação de Matrizes de Covariância (★ = melhor)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Modelo</th>
+<th style="text-align: left;">AIC</th>
+<th style="text-align: left;">BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Simétrica</td>
+<td style="text-align: left;">-51.36</td>
+<td style="text-align: left;">-38.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AR(1)</td>
+<td style="text-align: left;">-54.3 ★</td>
+<td style="text-align: left;">-41.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Identidade</td>
+<td style="text-align: left;">-53.36</td>
+<td style="text-align: left;">-42.15 ★</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Não-estruturada</td>
+<td style="text-align: left;">-53.46</td>
+<td style="text-align: left;">-38.04</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+<section id="comparação-automatizada" class="level3">
+<h3 class="anchored" data-anchor-id="comparação-automatizada">Comparação Automatizada</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🚀 Função <code>compare_performance()</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A função do pacote <code>performance</code> automatiza comparações e calcula pesos de evidência!</p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(model_resp_sim,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                    model_resp_AR1,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                    model_resp_Iden,</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                    model_resp_Uns,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>,<span class="st">"BIC"</span>),</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rank =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  model_resp_sim,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  model_resp_AR1,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  model_resp_Iden,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  model_resp_Uns,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">rank =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some of the nested models seem to be identical and probably only vary in
+  their random effects.</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Comparison of Model Performance Indices
 
@@ -485,35 +836,170 @@ model_resp_Uns  |   lme |       0.354 |       0.077 |            44.62%
 model_resp_sim  |   lme |       0.068 |       0.072 |             0.00%</code></pre>
 </div>
 </div>
-<p>Das duas formas constatamos que o modelo com a matriz de covariância AR1 apresentou os melhores índices de aderência. Note que os valores de AIC e BIC apresentados na saída da função <code>compare_factors</code> aparecem ponderados. Os valores são calculados dividindo o peso AIC/BIC de um modelo pelo peso AIC/BIC dos outros modelos ajustados.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📊 Interpretando Pesos
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>AIC_wt e BIC_wt</strong> são pesos de evidência: - Variam de 0 a 1 - Somam 1 entre todos os modelos - Interpretação: probabilidade relativa de ser o melhor modelo</p>
+<p><strong>Exemplo:</strong> - AIC_wt = 0.85 → 85% de chance de ser o melhor - AIC_wt = 0.10 → 10% de chance de ser o melhor</p>
+<p><strong>Delta_AIC/BIC:</strong> - Diferença em relação ao melhor modelo - 0 = melhor modelo - &gt; 10 = evidência muito forte contra</p>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="c-resultado-do-modelo-escolhido---ar1" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="c-resultado-do-modelo-escolhido---ar1"><span class="header-section-number">3.5</span> c) Resultado do modelo escolhido - AR1</h2>
-<p>A matriz de covariância AR(1) é uma escolha adequada para o exemplo da droga e do placebo devido à sua capacidade de capturar a dependência temporal nas respostas dos pacientes em estudos longitudinais. Essa matriz reflete a ideia de que as observações próximas no tempo têm uma correlação mais forte, enquanto as observações mais distantes têm uma correlação mais fraca. Isso é consistente com a possibilidade de que os efeitos da droga persistam ao longo do tempo, mas diminuam com o passar dos dias após a administração.</p>
+<section id="análise-dos-resultados" class="level3">
+<h3 class="anchored" data-anchor-id="análise-dos-resultados">Análise dos Resultados</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(model_resp_AR1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular diferenças</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>delta_aic <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">AIC</span>(model_resp_AR1) <span class="sc">-</span> <span class="fu">AIC</span>(model_resp_sim))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>delta_bic <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">BIC</span>(model_resp_AR1) <span class="sc">-</span> <span class="fu">BIC</span>(model_resp_sim))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"═══ ANÁLISE DE SELEÇÃO ═══</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>═══ ANÁLISE DE SELEÇÃO ═══</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Diferenças do melhor vs segundo melhor:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Diferenças do melhor vs segundo melhor:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ΔAIC:"</span>, <span class="fu">round</span>(delta_aic, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ΔAIC: 2.94 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  ΔBIC:"</span>, <span class="fu">round</span>(delta_bic, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  ΔBIC: 2.94 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Interpretação:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Interpretação:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (delta_aic <span class="sc">&lt;</span> <span class="dv">2</span>) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  • Modelos equivalentes (ΔAIC &lt; 2)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (delta_aic <span class="sc">&lt;</span> <span class="dv">10</span>) {</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  • Evidência moderada para o melhor (2 &lt; ΔAIC &lt; 10)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"  • Evidência forte para o melhor (ΔAIC &gt; 10)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  • Evidência moderada para o melhor (2 &lt; ΔAIC &lt; 10)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Conclusão: Modelo AR(1) apresenta melhor ajuste aos dados</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Conclusão: Modelo AR(1) apresenta melhor ajuste aos dados</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="parte-c-modelo-escolhido---ar1" class="level2">
+<h2 class="anchored" data-anchor-id="parte-c-modelo-escolhido---ar1">🎯 Parte C: Modelo Escolhido - AR(1)</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Por que AR(1) é Adequado?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Justificativa teórica:</strong> A matriz AR(1) é especialmente apropriada para estudos farmacológicos porque:</p>
+<ol type="1">
+<li><strong>Decaimento temporal:</strong> Efeitos de drogas tendem a diminuir com o tempo</li>
+<li><strong>Memória de curto prazo:</strong> Medições próximas são mais relacionadas</li>
+<li><strong>Parcimônia:</strong> Apenas 1 parâmetro, evita sobre-ajuste</li>
+<li><strong>Intervalos regulares:</strong> Comum em protocolos experimentais</li>
+</ol>
+<p><strong>No contexto atual:</strong> - Pacientes medidos em intervalos regulares - Expectativa de correlação decrescente - Efeito da droga pode persistir mas enfraquecer</p>
+</div>
+</div>
+<hr>
+<section id="resultados-completos" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-completos">Resultados Completos</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_resp_AR1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed-effects model fit by REML
+  Data: dataset 
+        AIC       BIC   logLik
+  -54.30036 -41.68958 36.15018
+
+Random effects:
+ Formula: ~1 | Sujeito
+        (Intercept)   Residual
+StdDev: 1.51949e-06 0.06528019
+
+Correlation Structure: AR(1)
+ Formula: ~1 | Sujeito 
+ Parameter estimate(s):
+      Phi 
+0.4463339 
+Fixed effects:  resp ~ drug + Tempo + drug * Tempo 
+                       Value  Std.Error DF   t-value p-value
+(Intercept)         3.350000 0.02665053 20 125.70107  0.0000
+drugPlacebo        -0.116667 0.03768954 10  -3.09547  0.0113
+Tempo2              0.016667 0.02804431 20   0.59430  0.5590
+Tempo3             -0.016667 0.03372710 20  -0.49416  0.6266
+drugPlacebo:Tempo2  0.000000 0.03966064 20   0.00000  1.0000
+drugPlacebo:Tempo3  0.033333 0.04769733 20   0.69885  0.4927
+ Correlation: 
+                   (Intr) drgPlc Tempo2 Tempo3 drP:T2
+drugPlacebo        -0.707                            
+Tempo2             -0.526  0.372                     
+Tempo3             -0.633  0.447  0.601              
+drugPlacebo:Tempo2  0.372 -0.526 -0.707 -0.425       
+drugPlacebo:Tempo3  0.447 -0.633 -0.425 -0.707  0.601
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-2.2977873 -0.7659291 -0.5106194  0.7659291  2.2977873 
+
+Number of Observations: 36
+Number of Groups: 12 </code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="relatório-automatizado" class="level3">
+<h3 class="anchored" data-anchor-id="relatório-automatizado">Relatório Automatizado</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(model_resp_AR1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random effect variances not available. Returned R2 does not account for random effects.
+Random effect variances not available. Returned R2 does not account for random effects.</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>We fitted a linear mixed model (estimated using REML and nlminb optimizer) to
-predict resp with Tempo, drug and Sujeito (formula: resp ~ Tempo + drug + Tempo
-* drug). The model included Sujeito as random effect (formula: ~1 | Sujeito).
-The model's total explanatory power is substantial (conditional R2 = 0.41) and
-the part related to the fixed effects alone (marginal R2) is of 0.41. The
-model's intercept, corresponding to Tempo = 1 and drug = New Drug, is at 3.35
-(95% CI [3.29, 3.41], t(20) = 125.70, p &lt; .001). Within this model:
+predict resp with drug, Tempo and Sujeito (formula: resp ~ drug + Tempo + drug
+* Tempo). The model included Sujeito as random effect (formula: ~1 | Sujeito).
+The model's explanatory power related to the fixed effects alone (marginal R2)
+is 0.41. The model's intercept, corresponding to drug = New Drug and Tempo = 1,
+is at 3.35 (95% CI [3.29, 3.41], t(20) = 125.70, p &lt; .001). Within this model:
 
+  - The effect of drug [Placebo] is statistically significant and negative (beta
+= -0.12, 95% CI [-0.20, -0.03], t(10) = -3.10, p = 0.011; Std. beta = -1.44,
+95% CI [-2.48, -0.40])
   - The effect of Tempo [2] is statistically non-significant and positive (beta =
 0.02, 95% CI [-0.04, 0.08], t(20) = 0.59, p = 0.559; Std. beta = 0.21, 95% CI
 [-0.52, 0.93])
   - The effect of Tempo [3] is statistically non-significant and negative (beta =
 -0.02, 95% CI [-0.09, 0.05], t(20) = -0.49, p = 0.627; Std. beta = -0.21, 95%
 CI [-1.07, 0.66])
-  - The effect of drug [Placebo] is statistically significant and negative (beta
-= -0.12, 95% CI [-0.20, -0.03], t(10) = -3.10, p = 0.011; Std. beta = -1.44,
-95% CI [-2.48, -0.40])
-  - The effect of Tempo [2] × drug [Placebo] is statistically non-significant and
-positive (beta = 8.08e-17, 95% CI [-0.08, 0.08], t(20) = 2.04e-15, p &gt; .999;
-Std. beta = -1.43e-15, 95% CI [-1.02, 1.02])
-  - The effect of Tempo [3] × drug [Placebo] is statistically non-significant and
+  - The effect of drug [Placebo] × Tempo [2] is statistically non-significant and
+positive (beta = 5.39e-17, 95% CI [-0.08, 0.08], t(20) = 1.36e-15, p &gt; .999;
+Std. beta = -8.35e-16, 95% CI [-1.02, 1.02])
+  - The effect of drug [Placebo] × Tempo [3] is statistically non-significant and
 positive (beta = 0.03, 95% CI [-0.07, 0.13], t(20) = 0.70, p = 0.493; Std. beta
 = 0.41, 95% CI [-0.82, 1.64])
 
@@ -522,71 +1008,489 @@ version of the dataset. 95% Confidence Intervals (CIs) and p-values were
 computed using a Wald t-distribution approximation.</code></pre>
 </div>
 </div>
-<p>Faça as análises para a variável Pulse! Lembre-se de não ficar apenas copiando e colando os scripts e mude os nomes das variáveis!</p>
+<hr>
 </section>
-<section id="extras" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="extras"><span class="header-section-number">3.6</span> Extras!</h2>
-<section id="gráfico-do-modelo-em-uma-linha" class="level3">
-<h3 class="anchored" data-anchor-id="gráfico-do-modelo-em-uma-linha">Gráfico do modelo em uma linha</h3>
-<p>Já vimos algumas formas de apresentar os gráficos dos modelos. A ideia ao longo destes tutoriais é oferecer várias ferramentas para você poder escolher a mais adequada para seus objetivos. Vamos ver uma forma bem prática de criar um gráfico do nosso modelo escolhido com a função <code>plot()</code> em conjunto com a função <code>allEffects()</code>!</p>
+<section id="interpretação-guiada" class="level3">
+<h3 class="anchored" data-anchor-id="interpretação-guiada">Interpretação Guiada</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Efeitos Fixos</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Estrutura de Correlação</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Variâncias</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p><strong>Interpretar coeficientes:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">allEffects</span>(model_resp_AR1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extrair coeficientes</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>coef_table <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_resp_AR1)<span class="sc">$</span>tTable</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(coef_table, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="lista_3_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: right;">Std.Error</th>
+<th style="text-align: right;">DF</th>
+<th style="text-align: right;">t-value</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">3.350</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">125.701</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drugPlacebo</td>
+<td style="text-align: right;">-0.117</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">-3.095</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tempo2</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.594</td>
+<td style="text-align: right;">0.559</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tempo3</td>
+<td style="text-align: right;">-0.017</td>
+<td style="text-align: right;">0.034</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">-0.494</td>
+<td style="text-align: right;">0.627</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">drugPlacebo:Tempo2</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drugPlacebo:Tempo3</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">0.048</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.699</td>
+<td style="text-align: right;">0.493</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-</section>
-<section id="mudando-a-referência-de-um-fator" class="level3">
-<h3 class="anchored" data-anchor-id="mudando-a-referência-de-um-fator">Mudando a referência de um fator</h3>
-<p>Na análise dos modelos observamos que o grupo “New Drug” foi escolhido como referência. Isso é evidenciado pelo fato de que apenas os valores dos estimadores para o grupo “Placebo” são apresentados nos resultados. O R escolhe, por padrão, o valor de referência inicial com base na ordem alfabética dos níveis da variável categórica. Nesse caso, “New Drug” é escolhido como referência por ser o primeiro nível alfabeticamente.</p>
-<p>Caso queira confirmar qual é o valor de referência de uma variável, basta utiliza a função <code>levels()</code>, que já vem instalada com o R.</p>
+<p><strong>Leitura:</strong> - <strong>Intercept:</strong> Média baseline do grupo referência no tempo 1 - <strong>drugPlacebo:</strong> Diferença Placebo vs Droga no tempo 1 - <strong>Tempo2/3:</strong> Mudança ao longo do tempo no grupo droga - <strong>Interações:</strong> Como efeito da droga muda com tempo</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(dataset<span class="sc">$</span>drug)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extrair correlação estimada</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">coef</span>(model_resp_AR1<span class="sc">$</span>modelStruct<span class="sc">$</span>corStruct, <span class="at">unconstrained =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Parâmetro AR(1) estimado: ρ ="</span>, <span class="fu">round</span>(rho, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Parâmetro AR(1) estimado: ρ = 0.446 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Correlações implícitas:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Correlações implícitas:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Tempos adjacentes (1-2, 2-3):"</span>, <span class="fu">round</span>(rho, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tempos adjacentes (1-2, 2-3): 0.446 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  Tempos separados (1-3):"</span>, <span class="fu">round</span>(rho<span class="sc">^</span><span class="dv">2</span>, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tempos separados (1-3): 0.199 </code></pre>
+</div>
+</div>
+<p><strong>Interpretação:</strong> - ρ próximo de 1: Correlação forte e persistente - ρ próximo de 0: Correlação decai rapidamente - ρ = 0.5: Correlação moderada com decaimento típico</p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Componentes de variância</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>var_components <span class="ot">&lt;-</span> <span class="fu">VarCorr</span>(model_resp_AR1)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(var_components)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Variance</th>
+<th style="text-align: left;">StdDev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: left;">2.308851e-12</td>
+<td style="text-align: left;">1.519490e-06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residual</td>
+<td style="text-align: left;">4.261504e-03</td>
+<td style="text-align: left;">6.528019e-02</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Componentes:</strong> - <strong>Between-subject:</strong> Variabilidade entre sujeitos (intercepto aleatório) - <strong>Within-subject:</strong> Variabilidade residual dentro de sujeitos</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="visualizações-avançadas" class="level2">
+<h2 class="anchored" data-anchor-id="visualizações-avançadas">📊 Visualizações Avançadas</h2>
+<section id="gráfico-dos-efeitos" class="level3">
+<h3 class="anchored" data-anchor-id="gráfico-dos-efeitos">Gráfico dos Efeitos</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Plot em Uma Linha!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A função <code>allEffects()</code> + <code>plot()</code> cria visualizações rápidas e informativas:</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">allEffects</span>(model_resp_AR1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lista_3_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="gráfico-personalizado" class="level3">
+<h3 class="anchored" data-anchor-id="gráfico-personalizado">Gráfico Personalizado</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular médias preditas</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>means_pred <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_resp_AR1, </span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">specs =</span> <span class="sc">~</span>drug<span class="sc">*</span>Tempo)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar gráfico elegante</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(means_pred),</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> Tempo, <span class="at">y =</span> emmean, <span class="at">color =</span> drug, <span class="at">group =</span> drug)) <span class="sc">+</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL),</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.15</span>,</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="dv">1</span>,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="fl">1.2</span>,</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.1</span>)</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Efeito da Droga na Respiração ao Longo do Tempo"</span>,</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Modelo com estrutura de correlação AR(1)"</span>,</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Momento de Avaliação"</span>,</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequência Respiratória"</span>,</span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Tratamento"</span>,</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Barras de erro: IC 95%"</span></span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-36"><a href="#cb47-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#E41A1C"</span>, <span class="st">"#377EB8"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lista_3_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="extras-dicas-avançadas" class="level2">
+<h2 class="anchored" data-anchor-id="extras-dicas-avançadas">🔧 Extras: Dicas Avançadas</h2>
+<section id="mudando-grupo-de-referência" class="level3">
+<h3 class="anchored" data-anchor-id="mudando-grupo-de-referência">Mudando Grupo de Referência</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Controle de Referência
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Por padrão, R usa <strong>ordem alfabética</strong> para escolher o nível de referência. Você pode alterar isso:</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar nível atual</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Níveis originais:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Níveis originais:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">levels</span>(dataset<span class="sc">$</span>drug))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "New Drug" "Placebo" </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mudar referência para Placebo</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>drug <span class="ot">&lt;-</span> <span class="fu">relevel</span>(dataset<span class="sc">$</span>drug, <span class="at">ref =</span> <span class="st">"Placebo"</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Novos níveis:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Novos níveis:</code></pre>
 </div>
-<p>Podemos alterar facilmente qual será o grupo de referência de nossas análises utilizando a função <code>relevel()</code>, que também já vem instalada no pacote base do R.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>drug <span class="ot">&lt;-</span> <span class="fu">relevel</span>(dataset<span class="sc">$</span>drug, <span class="at">ref =</span> <span class="st">"Placebo"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(dataset<span class="sc">$</span>drug)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">levels</span>(dataset<span class="sc">$</span>drug))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Placebo"  "New Drug"</code></pre>
 </div>
 </div>
-<p>Note agora que “Placebo” aparece em primeiro lugar, indicando o novo valor de referência. Escreva um novo modelo e compare os resultados com os anteriores.</p>
+<p><strong>Impacto:</strong> Agora os coeficientes comparam <strong>Droga vs Placebo</strong> (não o contrário)</p>
+<hr>
 </section>
-</section>
-<section id="lista-2-resolvida-no-spss" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="lista-2-resolvida-no-spss"><span class="header-section-number">3.7</span> Lista 2 resolvida no SPSS</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/gYWld1qSh9c?si=VJdZsrSYAE-2BJpA" title="GMM - General Mixed Models - Aula Prática #3 (SPSS)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</section>
-<section id="referências" class="level2" data-number="3.8">
-<h2 data-number="3.8" class="anchored" data-anchor-id="referências"><span class="header-section-number">3.8</span> Referências</h2>
-<p>https://bcheggeseth.github.io/CorrelatedData/marginal-models.html</p>
-</section>
-<section id="versões-dos-pacotes" class="level2" data-number="3.9">
-<h2 data-number="3.9" class="anchored" data-anchor-id="versões-dos-pacotes"><span class="header-section-number">3.9</span> Versões dos pacotes</h2>
+<section id="comparando-com-nova-referência" class="level3">
+<h3 class="anchored" data-anchor-id="comparando-com-nova-referência">Comparando com Nova Referência</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Refazer modelo com nova referência</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>model_resp_AR1_v2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> resp <span class="sc">~</span> drug <span class="sc">+</span> Tempo <span class="sc">+</span> drug<span class="sc">*</span>Tempo,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">correlation =</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>Sujeito),</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar coeficientes</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"═══ COMPARAÇÃO DE REFERÊNCIAS ═══</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analyses were conducted using the R Statistical language (version 4.3.1; R Core
-Team, 2023) on Windows 11 x64 (build 22621), using the packages effectsize
-(version 0.8.6; Ben-Shachar MS et al., 2020), flexplot (version 0.20.5; Fife D,
-2024), effects (version 4.2.2; Fox J, Weisberg S, 2019), carData (version
-3.0.5; Fox J et al., 2022), mvtnorm (version 1.2.3; Genz A, Bretz F, 2009),
-TH.data (version 1.1.2; Hothorn T, 2023), multcomp (version 1.4.25; Hothorn T
-et al., 2008), emmeans (version 1.8.8; Lenth R, 2023), parameters (version
-0.21.3; Lüdecke D et al., 2020), performance (version 0.10.8; Lüdecke D et al.,
-2021), easystats (version 0.6.0; Lüdecke D et al., 2022), see (version 0.8.1;
-Lüdecke D et al., 2021), insight (version 0.19.6; Lüdecke D et al., 2019),
-bayestestR (version 0.13.1; Makowski D et al., 2019), modelbased (version
-0.8.6; Makowski D et al., 2020), report (version 0.5.7; Makowski D et al.,
-2023), correlation (version 0.8.4; Makowski D et al., 2022), datawizard
-(version 0.9.0; Patil I et al., 2022), nlme (version 3.1.163; Pinheiro J et
-al., 2023), foreign (version 0.8.85; R Core Team, 2023), survival (version
-3.5.7; Therneau T, 2023), MASS (version 7.3.60; Venables WN, Ripley BD, 2002)
-and dplyr (version 1.1.3; Wickham H et al., 2023).
+<pre><code>═══ COMPARAÇÃO DE REFERÊNCIAS ═══</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Modelo Original (ref: New Drug):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Modelo Original (ref: New Drug):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(model_resp_AR1)<span class="sc">$</span>tTable[<span class="dv">2</span>, <span class="fu">c</span>(<span class="st">"Value"</span>, <span class="st">"p-value"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Value    p-value 
+-0.1166667  0.0113379 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Modelo com Nova Referência (ref: Placebo):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Modelo com Nova Referência (ref: Placebo):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(model_resp_AR1_v2)<span class="sc">$</span>tTable[<span class="dv">2</span>, <span class="fu">c</span>(<span class="st">"Value"</span>, <span class="st">"p-value"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Value   p-value 
+0.1166667 0.0113379 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretação
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note que: - <strong>Magnitude:</strong> Igual em valor absoluto - <strong>Sinal:</strong> Invertido - <strong>p-valor:</strong> Idêntico - <strong>Interpretação:</strong> Mudou de “Placebo vs Droga” para “Droga vs Placebo”</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="desafio-análise-da-variável-pulse" class="level2">
+<h2 class="anchored" data-anchor-id="desafio-análise-da-variável-pulse">🎯 Desafio: Análise da Variável “Pulse”</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sua Vez - Checklist Completo!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Replique <strong>toda a análise</strong> para a variável <strong>“pulse”</strong>:</p>
+<p><strong>Parte A - Modelos:</strong> - [ ] Matriz Simétrica Composta - [ ] Matriz AR(1) - [ ] Matriz Identidade - [ ] Matriz Não-Estruturada</p>
+<p><strong>Parte B - Comparações:</strong> - [ ] Tabela manual de AIC/BIC - [ ] Comparação com <code>compare_performance()</code> - [ ] Interpretação dos deltas - [ ] Identificação do melhor modelo</p>
+<p><strong>Parte C - Modelo Escolhido:</strong> - [ ] Relatório completo - [ ] Interpretação dos coeficientes - [ ] Análise de correlação estimada - [ ] Gráficos dos efeitos</p>
+<p><strong>Extras:</strong> - [ ] Testar mudança de referência - [ ] Comparar resultados com “resp” - [ ] Refletir sobre diferenças</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+💡 Dicas para o Desafio
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>Renomeie adequadamente:</strong> <code>model_resp_*</code> → <code>model_pulse_*</code></li>
+<li><strong>Não copie-cole:</strong> Digite para aprender</li>
+<li><strong>Compare matrizes:</strong> Qual é melhor para pulse?</li>
+<li><strong>Reflita:</strong> Por que pode diferir de resp?</li>
+<li><strong>Documente:</strong> Anote suas conclusões</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="material-complementar" class="level2">
+<h2 class="anchored" data-anchor-id="material-complementar">📚 Material Complementar</h2>
+<section id="aula-em-vídeo-spss" class="level3">
+<h3 class="anchored" data-anchor-id="aula-em-vídeo-spss">Aula em Vídeo (SPSS)</h3>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/gYWld1qSh9c?si=VJdZsrSYAE-2BJpA" title="GMM - General Mixed Models - Aula Prática #3 (SPSS)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<hr>
+</section>
+<section id="leituras-recomendadas" class="level3">
+<h3 class="anchored" data-anchor-id="leituras-recomendadas">Leituras Recomendadas</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+📖 Aprofundamento em Matrizes de Covariância
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Recursos Online:</strong> - <a href="https://bcheggeseth.github.io/CorrelatedData/marginal-models.html">Marginal Models - Correlated Data</a> - Pinheiro &amp; Bates (2000). <em>Mixed-Effects Models in S and S-PLUS</em> - Fitzmaurice et al.&nbsp;(2011). <em>Applied Longitudinal Analysis</em></p>
+<p><strong>Tópicos Avançados:</strong> - Estruturas ARMA(p,q) - Matrizes Toeplitz - Bandas de covariância - Testes de razão de verossimilhança</p>
+<p><strong>Quando explorar além:</strong> - Dados com muitos tempos (T &gt; 5) - Padrões complexos de correlação - Intervalos irregulares - Comparações formais de estruturas</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="tabela-de-decisão-rápida" class="level3">
+<h3 class="anchored" data-anchor-id="tabela-de-decisão-rápida">Tabela de Decisão Rápida</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🗺️ Guia para Escolha de Matriz
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 43%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Matriz Recomendada</th>
+<th>Justificativa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Poucos tempos (T ≤ 3)</td>
+<td>AR(1) ou Simétrica</td>
+<td>Parcimônia</td>
+</tr>
+<tr class="even">
+<td>Muitos tempos (T &gt; 5)</td>
+<td>AR(1)</td>
+<td>Escalabilidade</td>
+</tr>
+<tr class="odd">
+<td>Intervalos irregulares</td>
+<td>Simétrica ou Não-estruturada</td>
+<td>Flexibilidade temporal</td>
+</tr>
+<tr class="even">
+<td>Amostra grande (n &gt; 100)</td>
+<td>Não-estruturada</td>
+<td>Permite exploração</td>
+</tr>
+<tr class="odd">
+<td>Amostra pequena (n &lt; 30)</td>
+<td>AR(1) ou Simétrica</td>
+<td>Evita sobre-ajuste</td>
+</tr>
+<tr class="even">
+<td>Correlação desconhecida</td>
+<td>Testar múltiplas, comparar AIC</td>
+<td>Seleção empírica</td>
+</tr>
+<tr class="odd">
+<td>Série temporal clássica</td>
+<td>AR(1)</td>
+<td>Fundamentação teórica</td>
+</tr>
+<tr class="even">
+<td>Medições muito espaçadas</td>
+<td>Simétrica ou Identidade</td>
+<td>Correlação pode ser fraca</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regra de ouro:</strong> Quando em dúvida, teste múltiplas e compare!</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="informações-de-sessão" class="level2">
+<h2 class="anchored" data-anchor-id="informações-de-sessão">🔧 Informações de Sessão</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analyses were conducted using the R Statistical language (version 4.4.2; R Core
+Team, 2024) on Windows 11 x64 (build 26100), using the packages effectsize
+(version 1.0.1; Ben-Shachar MS et al., 2020), flexplot (version 0.24.3; Fife,
+D, 2022), effects (version 4.2.4; Fox J, Weisberg S, 2019), carData (version
+3.0.5; Fox J et al., 2022), mvtnorm (version 1.3.3; Genz A, Bretz F, 2009),
+TH.data (version 1.1.3; Hothorn T, 2025), multcomp (version 1.4.28; Hothorn T
+et al., 2008), emmeans (version 1.11.0; Lenth R, 2025), parameters (version
+0.28.3; Lüdecke D et al., 2020), performance (version 0.15.2; Lüdecke D et al.,
+2021), easystats (version 0.7.5; Lüdecke D et al., 2022), see (version 0.12.0;
+Lüdecke D et al., 2021), insight (version 1.4.4; Lüdecke D et al., 2019),
+bayestestR (version 0.17.0; Makowski D et al., 2019), modelbased (version
+0.13.1; Makowski D et al., 2025), report (version 0.6.3; Makowski D et al.,
+2023), correlation (version 0.8.8; Makowski D et al., 2022), datawizard
+(version 1.3.0; Patil I et al., 2022), nlme (version 3.1.166; Pinheiro J et
+al., 2024), foreign (version 0.8.87; R Core Team, 2024), survival (version
+3.7.0; Therneau T, 2024), MASS (version 7.3.61; Venables WN, Ripley BD, 2002),
+ggplot2 (version 4.0.1; Wickham H, 2016) and dplyr (version 1.1.4; Wickham H et
+al., 2023).
 
 References
 ----------
@@ -594,14 +1498,14 @@ References
 Effect Size Indices and Standardized Parameters." _Journal of Open Source
 Software_, *5*(56), 2815. doi:10.21105/joss.02815
 &lt;https://doi.org/10.21105/joss.02815&gt;, &lt;https://doi.org/10.21105/joss.02815&gt;.
-  - Fife D (2024). _flexplot: Graphically Based Data Analysis Using 'flexplot'_.
-R package version 0.20.5.
+  - Fife, A. D (2022). "Flexplot: Graphically-based data analysis."
+_Psychological Methods_, *27*(4), -19. &lt;doi.org/10.1037/met0000424&gt;.
   - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, 3rd
 edition. Sage, Thousand Oaks CA.
-&lt;https://socialsciences.mcmaster.ca/jfox/Books/Companion/index.html&gt;. Fox J,
-Weisberg S (2018). "Visualizing Fit and Lack of Fit in Complex Regression
-Models with Predictor Effect Plots and Partial Residuals." _Journal of
-Statistical Software_, *87*(9), 1-27. doi:10.18637/jss.v087.i09
+&lt;https://www.john-fox.ca/Companion/index.html&gt;. Fox J, Weisberg S (2018).
+"Visualizing Fit and Lack of Fit in Complex Regression Models with Predictor
+Effect Plots and Partial Residuals." _Journal of Statistical Software_,
+*87*(9), 1-27. doi:10.18637/jss.v087.i09
 &lt;https://doi.org/10.18637/jss.v087.i09&gt;. Fox J (2003). "Effect Displays in R
 for Generalised Linear Models." _Journal of Statistical Software_, *8*(15),
 1-27. doi:10.18637/jss.v008.i15 &lt;https://doi.org/10.18637/jss.v008.i15&gt;. Fox J,
@@ -615,12 +1519,12 @@ Data Sets_. R package version 3.0-5,
   - Genz A, Bretz F (2009). _Computation of Multivariate Normal and t
 Probabilities_, series Lecture Notes in Statistics. Springer-Verlag,
 Heidelberg. ISBN 978-3-642-01688-2.
-  - Hothorn T (2023). _TH.data: TH's Data Archive_. R package version 1.1-2,
+  - Hothorn T (2025). _TH.data: TH's Data Archive_. R package version 1.1-3,
 &lt;https://CRAN.R-project.org/package=TH.data&gt;.
   - Hothorn T, Bretz F, Westfall P (2008). "Simultaneous Inference in General
 Parametric Models." _Biometrical Journal_, *50*(3), 346-363.
-  - Lenth R (2023). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
-R package version 1.8.8, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
+  - Lenth R (2025). _emmeans: Estimated Marginal Means, aka Least-Squares Means_.
+R package version 1.11.0, &lt;https://CRAN.R-project.org/package=emmeans&gt;.
   - Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). "Extracting, Computing
 and Exploring the Parameters of Statistical Models using R." _Journal of Open
 Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
@@ -629,9 +1533,11 @@ Source Software_, *5*(53), 2445. doi:10.21105/joss.02445
 "performance: An R Package for Assessment, Comparison and Testing of
 Statistical Models." _Journal of Open Source Software_, *6*(60), 3139.
 doi:10.21105/joss.03139 &lt;https://doi.org/10.21105/joss.03139&gt;.
-  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Makowski D (2022). "easystats:
-Framework for Easy Statistical Modeling, Visualization, and Reporting." _CRAN_.
-R package, &lt;https://easystats.github.io/easystats/&gt;.
+  - Lüdecke D, Ben-Shachar M, Patil I, Wiernik B, Bacher E, Thériault R, Makowski
+D (2022). "easystats: Framework for Easy Statistical Modeling, Visualization,
+and Reporting." _CRAN_. doi:10.32614/CRAN.package.easystats
+&lt;https://doi.org/10.32614/CRAN.package.easystats&gt;, R package,
+&lt;https://easystats.github.io/easystats/&gt;.
   - Lüdecke D, Patil I, Ben-Shachar M, Wiernik B, Waggoner P, Makowski D (2021).
 "see: An R Package for Visualizing Statistical Models." _Journal of Open Source
 Software_, *6*(64), 3393. doi:10.21105/joss.03393
@@ -644,12 +1550,17 @@ and their Uncertainty, Existence and Significance within the Bayesian
 Framework." _Journal of Open Source Software_, *4*(40), 1541.
 doi:10.21105/joss.01541 &lt;https://doi.org/10.21105/joss.01541&gt;,
 &lt;https://joss.theoj.org/papers/10.21105/joss.01541&gt;.
-  - Makowski D, Ben-Shachar M, Patil I, Lüdecke D (2020). "Estimation of
-Model-Based Predictions, Contrasts and Means." _CRAN_.
-&lt;https://github.com/easystats/modelbased&gt;.
+  - Makowski D, Ben-Shachar M, Wiernik B, Patil I, Thériault R, Lüdecke D (2025).
+"modelbased: An R package to make the most out of your statistical models
+through marginal means, marginal effects, and model predictions." _Journal of
+Open Source Software_, *10*(109), 7969. doi:10.21105/joss.07969
+&lt;https://doi.org/10.21105/joss.07969&gt;,
+&lt;https://joss.theoj.org/papers/10.21105/joss.07969&gt;.
   - Makowski D, Lüdecke D, Patil I, Thériault R, Ben-Shachar M, Wiernik B (2023).
 "Automated Results Reporting as a Practical Tool to Improve Reproducibility and
 Methodological Best Practices Adoption." _CRAN_.
+doi:10.32614/CRAN.package.report
+&lt;https://doi.org/10.32614/CRAN.package.report&gt;,
 &lt;https://easystats.github.io/report/&gt;.
   - Makowski D, Wiernik B, Patil I, Lüdecke D, Ben-Shachar M (2022).
 "correlation: Methods for Correlation Analysis." Version 0.8.3,
@@ -662,27 +1573,52 @@ R." _Journal of Open Source Software_, *5*(51), 2306. doi:10.21105/joss.02306
 "datawizard: An R Package for Easy Data Preparation and Statistical
 Transformations." _Journal of Open Source Software_, *7*(78), 4684.
 doi:10.21105/joss.04684 &lt;https://doi.org/10.21105/joss.04684&gt;.
-  - Pinheiro J, Bates D, R Core Team (2023). _nlme: Linear and Nonlinear Mixed
-Effects Models_. R package version 3.1-163,
+  - Pinheiro J, Bates D, R Core Team (2024). _nlme: Linear and Nonlinear Mixed
+Effects Models_. R package version 3.1-166,
 &lt;https://CRAN.R-project.org/package=nlme&gt;. Pinheiro JC, Bates DM (2000).
 _Mixed-Effects Models in S and S-PLUS_. Springer, New York. doi:10.1007/b98882
 &lt;https://doi.org/10.1007/b98882&gt;.
-  - R Core Team (2023). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
-'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-85,
+  - R Core Team (2024). _foreign: Read Data Stored by 'Minitab', 'S', 'SAS',
+'SPSS', 'Stata', 'Systat', 'Weka', 'dBase', ..._. R package version 0.8-87,
 &lt;https://CRAN.R-project.org/package=foreign&gt;.
-  - R Core Team (2023). _R: A Language and Environment for Statistical
+  - R Core Team (2024). _R: A Language and Environment for Statistical
 Computing_. R Foundation for Statistical Computing, Vienna, Austria.
 &lt;https://www.R-project.org/&gt;.
-  - Therneau T (2023). _A Package for Survival Analysis in R_. R package version
-3.5-7, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
+  - Therneau T (2024). _A Package for Survival Analysis in R_. R package version
+3.7-0, &lt;https://CRAN.R-project.org/package=survival&gt;. Terry M. Therneau,
 Patricia M. Grambsch (2000). _Modeling Survival Data: Extending the Cox Model_.
 Springer, New York. ISBN 0-387-98784-3.
   - Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth
 edition. Springer, New York. ISBN 0-387-95457-0,
 &lt;https://www.stats.ox.ac.uk/pub/MASS4/&gt;.
+  - Wickham H (2016). _ggplot2: Elegant Graphics for Data Analysis_.
+Springer-Verlag New York. ISBN 978-3-319-24277-4,
+&lt;https://ggplot2.tidyverse.org&gt;.
   - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar
-of Data Manipulation_. R package version 1.1.3,
+of Data Manipulation_. R package version 1.1.4,
 &lt;https://CRAN.R-project.org/package=dplyr&gt;.</code></pre>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+🎓 Resumo da Lista 3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nesta lista você:</p>
+<p>✅ Compreendeu <strong>quatro estruturas</strong> de covariância<br>
+✅ Aprendeu a <strong>comparar modelos</strong> via AIC/BIC<br>
+✅ Identificou a <strong>estrutura mais adequada</strong> aos dados<br>
+✅ Interpretou <strong>parâmetros de correlação</strong><br>
+✅ Criou <strong>visualizações profissionais</strong><br>
+✅ Dominou mudança de <strong>níveis de referência</strong></p>
+<p><strong>Conceitos-chave:</strong> - Matrizes capturam correlação entre medidas repetidas - AR(1) assume decaimento exponencial (comum em farmacologia) - AIC/BIC penalizam complexidade diferentemente - Estrutura apropriada melhora estimativas e inferências</p>
+<p><strong>Próximos passos:</strong> - Complete análise para “pulse” - Compare qual estrutura funciona melhor - Prepare-se para Lista 4: GzLM!</p>
 </div>
 </div>
 
@@ -725,18 +1661,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -768,11 +1693,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -782,8 +1746,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -795,7 +1768,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -839,6 +1935,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -864,6 +1961,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -925,17 +2048,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./lista_2.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 2 - GEE</span></span>
+      <a href="./lista_2.html" class="pagination-link" aria-label="Lista 2: GEE Avançado">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Lista 2: GEE Avançado</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lista_4.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 4 - GMM e ICC</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lista_4.html" class="pagination-link" aria-label="Lista 4: Modelos Hierárquicos e ICC">
+        <span class="nav-page-text">Lista 4: Modelos Hierárquicos e ICC</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

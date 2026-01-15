@@ -1,4 +1,6 @@
-# Lista 1: GLM, GEE e GMM {.unnumbered}
+# Lista 1: GLM, GEE e GMM {.unnumbered} 
+
+<!-- {#sec-lista-3} lista sumario antigo -->
 
 ::: {.callout-note appearance="simple" icon=false}
 ## Objetivo da Lista

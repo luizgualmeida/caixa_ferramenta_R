@@ -1,234 +1,858 @@
-# Lista 3 - Matriz de Covariância {#sec-lista-3}
+# Lista 3: Matrizes de Covariância {#sec-lista-3 .unnumbered}
 
-## Pacotes que vamos utilizar
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-library(emmeans)
-library(nlme)
-library(flexplot)
-library(foreign)
-library(dplyr)
-library(multcomp)
-library(effects)
-library(performance)
-library(easystats)
-```
-
-## Instruções e carregando o banco de dados
-
-Vamos utilizar um GMM para verificar o efeito de tempo e grupo sobre os resultados de resp ([o banco já está no formato correto](https://drive.google.com/file/d/17ViQJy-w50z6vm6VdZ1A1lbeTmUuIviB/view?usp=sharing)). Porém, antes disso vamos avaliar qual a melhor matriz de covariância que o modelo deve aplicar aos dados.
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-dataset = read.spss("bd_New drug_respiratory&pulseRESHAPE.sav", to.data.frame=TRUE)
-```
-
-::: callout-important
-#### Muito importante!
-
-SEMPRE verifique o tipo das variáveis no banco de dados. Elas podem ser fatores, números íntegros, números decimais, etc. As análises mudam MUITO dependendo do tipo de variável que utilizamos no modelo de regressão linear!
+Nesta lista, você aprenderá a **escolher a estrutura de covariância mais adequada** para seus dados longitudinais. Compararemos quatro matrizes diferentes (Simétrica Composta, AR(1), Identidade e Não-Estruturada) usando critérios de informação AIC e BIC.
 :::
 
-Para verificar o tipo das variáveis podemos utilizar a função `glimpse()`.
+---
 
-```{r}
-
-glimpse(dataset)
-
-```
-
-Notem que a variável `Tempo` está como `<dbl>`, indicando que é uma variável contínua. Vejam a aula prática em que o Altay explica que os tempos de coleta na verdade são fatores e não indicam uma ordem ou um contínuo. Seria como dizer que as amostras foram coletadas nos Tempos "X", "Y" e "Z".
-
-Para transformar a variável `Tempo` em um fator podemos utilizar o seguinte código:
-
-```{r}
-dataset$Tempo = as.factor(dataset$Tempo)
-```
-
-Rodando novamente a função `glimpse()` é possível observar que agora sim temos a variável `Tempo` como `<fct>`, indicando que ela é do tipo fator .
-
-```{r}
-glimpse(dataset)
-```
-
-::: callout-tip
-#### Dica
-
-Faça os modelos antes e depois de transformar a variável `Tempo` em um fator e compare os resultados.
-:::
-
-Agora sim podemos realizar nossas análises e comparar com os resultados do SPSS.
-
-## a) Criando os modelos para a variável Resp
-
-Há diversos pacotes no R que podemos alterar a matriz de covariância do modelo. Optamos por escolher a função `lme()` do pacote `nlme` por ela ter de forma bem direta todas as matrizes escolhidas na aula prática utilizando o SPSS. Recomendamos também o pacote `geepack`para outras matrizes.
-
-### Matriz simétrica
+## 📦 Pacotes Necessários
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-model_resp_sim = lme(
-  fixed = resp ~ 1 + drug + Tempo + drug * Tempo, 
-  random =~ 1|Sujeito, 
-  correlation = corCompSymm(form = ~1|Sujeito), # Aqui definimos a matriz
-  data = dataset)
-```
-
-### Matriz Ar(1)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-model_resp_AR1 = lme(
-  fixed = resp ~ Tempo + drug + Tempo * drug,
-  random = ~1|Sujeito,
-  correlation = corAR1(form = ~ 1|Sujeito), # Aqui definimos a matriz
-  data = dataset)
-```
-
-### Matriz Diagonal (identidade)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-model_resp_Iden = lme(
-  fixed = resp ~ drug + Tempo + drug * Tempo,
-  random = ~1|Sujeito,
-  correlation = corIdent(form = ~ 1|Sujeito), # Aqui definimos a matriz
-  data = dataset)
-
-```
-
-### Matriz Não estruturada (Unstructured)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-model_resp_Uns = lme(
-  fixed = resp ~ drug + Tempo + drug * Tempo,
-  random = ~1|Sujeito,
-  correlation = corSymm(form = ~ 1|Sujeito), # Aqui definimos a matriz
-  data = dataset)
-```
-
-## b) Comparando os valores de AIC e BIC
-
-Podemos colocar os resultados dos valores de AIC e BIC dos modelos em um dataframe para poder compará-los.
-
-```{r}
-# Crie um dataframe
-df_aderencia <- data.frame(
-  Modelo = c("model_resp_sim", "model_resp_AR1", "model_resp_Iden", "model_resp_Uns"),
-  AIC = c(AIC(model_resp_sim), AIC(model_resp_AR1), AIC(model_resp_Iden), AIC(model_resp_Uns)),
-  BIC = c(BIC(model_resp_sim), BIC(model_resp_AR1), BIC(model_resp_Iden), BIC(model_resp_Uns))
+# Lista de pacotes
+pacotes <- c(
+  "emmeans",      # Médias marginais
+  "nlme",         # Modelos mistos com estruturas de correlação
+  "flexplot",     # Visualizações
+  "foreign",      # Importar SPSS
+  "dplyr",        # Manipulação de dados
+  "multcomp",     # Comparações múltiplas
+  "effects",      # Efeitos do modelo
+  "performance",  # Comparação de modelos
+  "easystats",
+  "ggplot2" 
 )
 
-# Arredonde os valores para 3 casas decimais
-df_aderencia$AIC <- round(df_aderencia$AIC, 3)
-df_aderencia$BIC <- round(df_aderencia$BIC, 3)
+# Verificar e instalar
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
 
-# Adicione um asterisco às células correspondentes aos menores valores de AIC e BIC
-df_aderencia$AIC <- ifelse(df_aderencia$AIC == min(df_aderencia$AIC), paste0(df_aderencia$AIC, "*"), df_aderencia$AIC)
-df_aderencia$BIC <- ifelse(df_aderencia$BIC == min(df_aderencia$BIC), paste0(df_aderencia$BIC, "*"), df_aderencia$BIC)
-
-
-# Exiba o dataframe
-print(df_aderencia)
-
-
+# Carregar
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes carregados com sucesso!\n")
 ```
 
-::: callout-tip
-#### Dica!
+---
 
-Podemos utilizar a função `compare_performance` para comparar diversos valores de aderência dos modelos!
+## 📥 Preparação dos Dados
+
+::: {.callout-important}
+## Dados Já no Formato Long!
+
+Para esta lista, use o banco **"[New Drug (RESHAPE)](https://drive.google.com/file/d/17ViQJy-w50z6vm6VdZ1A1lbeTmUuIviB/view?usp=sharing)"** que já está em formato long.
 :::
 
-```{r}
-compare_performance(model_resp_sim,
-                    model_resp_AR1,
-                    model_resp_Iden,
-                    model_resp_Uns,
-                    metrics = c("AIC","BIC"),
-                    rank = TRUE)
-
-```
-
-Das duas formas constatamos que o modelo com a matriz de covariância AR1 apresentou os melhores índices de aderência. Note que os valores de AIC e BIC apresentados na saída da função `compare_factors` aparecem ponderados. Os valores são calculados dividindo o peso AIC/BIC de um modelo pelo peso AIC/BIC dos outros modelos ajustados.
-
-## c) Resultado do modelo escolhido - AR1
-
-A matriz de covariância AR(1) é uma escolha adequada para o exemplo da droga e do placebo devido à sua capacidade de capturar a dependência temporal nas respostas dos pacientes em estudos longitudinais. Essa matriz reflete a ideia de que as observações próximas no tempo têm uma correlação mais forte, enquanto as observações mais distantes têm uma correlação mais fraca. Isso é consistente com a possibilidade de que os efeitos da droga persistam ao longo do tempo, mas diminuam com o passar dos dias após a administração.
+### Carregamento e Verificação
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
+
+# Carregar dados
+dataset <- read.spss("bd_New drug_respiratory&pulseRESHAPE.sav", 
+                     to.data.frame = TRUE)
+
+# Visualizar estrutura inicial
+glimpse(dataset)
+```
+
+---
+
+### Verificação de Tipos de Variáveis
+
+::: {.callout-important}
+## ⚠️ Tipos de Variáveis São Cruciais!
+
+**SEMPRE** verifique os tipos antes de modelar. As análises mudam **drasticamente** dependendo se a variável é:
+- **Fator** (`<fct>`): Categorias nominais ou ordinais
+- **Numérica** (`<dbl>`): Valores contínuos
+- **Inteiro** (`<int>`): Contagens discretas
+:::
+
+::: {.panel-tabset}
+
+#### Problema Identificado
+
+```{r}
+#| echo: true
+
+glimpse(dataset)
+```
+
+**Observação Crítica:**
+- `Tempo` aparece como `<dbl>` (numérica contínua)
+- Mas representa **categorias** ("Momento 1", "Momento 2", "Momento 3")
+- Não há ordem contínua entre os momentos
+
+#### Solução Aplicada
+
+```{r}
+#| echo: true
+
+# Converter Tempo para fator
+dataset$Tempo <- as.factor(dataset$Tempo)
+
+# Verificar mudança
+glimpse(dataset)
+```
+
+**Agora sim:**
+- `Tempo` é `<fct>` (fator)
+- Representa categorias discretas
+- Análise apropriada para medidas repetidas
+
+#### Comparação
+
+::: {.callout-tip collapse="true"}
+## 🔍 Por que isso importa?
+
+**Se Tempo for numérica:**
+- R assume relação **linear** entre momentos
+- Força pontos em uma reta
+- Perde flexibilidade para padrões não-lineares
+
+**Se Tempo for fator:**
+- R trata cada momento **independentemente**
+- Permite médias diferentes para cada tempo
+- Detecta mudanças não-lineares
+
+**Experimente:**
+Rode modelos com ambas as especificações e compare!
+:::
+
+:::
+
+---
+
+## 🎯 Parte A: Modelos com Diferentes Matrizes
+
+::: {.callout-tip}
+## O que são Matrizes de Covariância?
+
+Em dados longitudinais, observações do mesmo sujeito são **correlacionadas**. A matriz de covariância especifica **como** modelamos essa correlação.
+
+**Por que importa?**
+- Afeta estimativas dos efeitos fixos
+- Influencia erros-padrão
+- Altera conclusões estatísticas
+:::
+
+---
+
+### Matriz 1: Simétrica Composta (Compound Symmetry)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_sim <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|Sujeito,
+  correlation = corCompSymm(form = ~1|Sujeito),
+  data = dataset
+)
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Matriz Simétrica Composta
+
+**Estrutura:**
+$$
+\begin{bmatrix}
+1 & \rho & \rho \\
+\rho & 1 & \rho \\
+\rho & \rho & 1
+\end{bmatrix}
+$$
+
+**Características:**
+- Correlação **constante** entre todos os pares
+- Um único parâmetro $\rho$ para estimar
+- Mais simples, mais parcimoniosa
+
+**Quando usar:**
+- Dados com intervalos irregulares
+- Correlação não muda com distância temporal
+- Tamanho de amostra pequeno
+
+**Limitações:**
+- Pouco realista para séries longas
+- Assume correlação não decai com tempo
+:::
+
+---
+
+### Matriz 2: Autorregressiva de Ordem 1 - AR(1)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_AR1 <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|Sujeito,
+  correlation = corAR1(form = ~1|Sujeito),
+  data = dataset
+)
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Matriz AR(1)
+
+**Estrutura:**
+$$
+\begin{bmatrix}
+1 & \rho & \rho^2 \\
+\rho & 1 & \rho \\
+\rho^2 & \rho & 1
+\end{bmatrix}
+$$
+
+**Características:**
+- Correlação **decai exponencialmente** com distância
+- Um único parâmetro $\rho$ (0 < ρ < 1)
+- Observações adjacentes mais correlacionadas
+
+**Quando usar:**
+- Medições **igualmente espaçadas** no tempo
+- Expectativa de correlação decrescente
+- Séries temporais clássicas
+
+**Vantagens:**
+- Realista para muitos processos biológicos
+- Parcimoniosa (1 parâmetro)
+- Boa relação viés-eficiência
+
+**Exemplo:**
+Se ρ = 0.7:
+- Tempos adjacentes: r = 0.70
+- Tempos separados por 1: r = 0.49
+- Tempos separados por 2: r = 0.34
+:::
+
+---
+
+### Matriz 3: Identidade (Independence)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_Iden <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|Sujeito,
+  correlation = corIdent(form = ~1|Sujeito),
+  data = dataset
+)
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Matriz Identidade
+
+**Estrutura:**
+$$
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+**Características:**
+- **Nenhuma** correlação entre medidas
+- Assume independência total
+- Não estima parâmetros de correlação
+
+**Quando usar:**
+- Baseline para comparações
+- Testes de necessidade de correlação
+- **Raramente** apropriada na prática
+
+**Limitações:**
+- Ignora estrutura de medidas repetidas
+- Subestima erros-padrão
+- Infla erro Tipo I
+
+**Nota:** Geralmente **não é recomendada** para dados longitudinais reais!
+:::
+
+---
+
+### Matriz 4: Não-Estruturada (Unstructured)
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+model_resp_Uns <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|Sujeito,
+  correlation = corSymm(form = ~1|Sujeito),
+  data = dataset
+)
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Matriz Não-Estruturada
+
+**Estrutura (3 tempos):**
+$$
+\begin{bmatrix}
+1 & \rho_{12} & \rho_{13} \\
+\rho_{12} & 1 & \rho_{23} \\
+\rho_{13} & \rho_{23} & 1
+\end{bmatrix}
+$$
+
+**Características:**
+- Estima **todas** as correlações separadamente
+- Máxima flexibilidade
+- Para T tempos: estima T(T-1)/2 correlações
+
+**Quando usar:**
+- Amostra grande (regra: n > 10 × parâmetros)
+- Padrão de correlação desconhecido
+- Análise exploratória
+
+**Vantagens:**
+- Não assume estrutura específica
+- Permite padrões complexos
+- Mais realista quando bem estimada
+
+**Limitações:**
+- Muitos parâmetros para estimar
+- Requer amostra grande
+- Pode não convergir
+- Pode sobre-ajustar
+
+**Exemplo (3 tempos):**
+- 3 correlações diferentes:
+  - r(1,2) = 0.65
+  - r(1,3) = 0.52
+  - r(2,3) = 0.71
+:::
+
+---
+
+## 🎯 Parte B: Comparação de Modelos
+
+### Critérios de Informação
+
+::: {.callout-tip}
+## AIC vs BIC
+
+**AIC (Akaike Information Criterion):**
+- Penalização moderada para complexidade
+- Tende a favorecer modelos mais complexos
+- Foco em predição
+
+**BIC (Bayesian Information Criterion):**
+- Penalização mais forte para complexidade
+- Tende a favorecer modelos mais simples
+- Foco em parcimônia
+
+**Regra geral:**
+- Menor é melhor
+- Diferença > 2 = evidência moderada
+- Diferença > 10 = evidência forte
+:::
+
+---
+
+### Comparação Manual
+
+```{r}
+#| echo: true
+
+# Criar dataframe comparativo
+df_aderencia <- data.frame(
+  Modelo = c("Simétrica", "AR(1)", "Identidade", "Não-estruturada"),
+  AIC = c(
+    AIC(model_resp_sim),
+    AIC(model_resp_AR1),
+    AIC(model_resp_Iden),
+    AIC(model_resp_Uns)
+  ),
+  BIC = c(
+    BIC(model_resp_sim),
+    BIC(model_resp_AR1),
+    BIC(model_resp_Iden),
+    BIC(model_resp_Uns)
+  )
+)
+
+# Arredondar
+df_aderencia$AIC <- round(df_aderencia$AIC, 2)
+df_aderencia$BIC <- round(df_aderencia$BIC, 2)
+
+# Marcar melhores modelos
+df_aderencia$AIC <- ifelse(
+  df_aderencia$AIC == min(df_aderencia$AIC),
+  paste0(df_aderencia$AIC, " ★"),
+  df_aderencia$AIC
+)
+
+df_aderencia$BIC <- ifelse(
+  df_aderencia$BIC == min(df_aderencia$BIC),
+  paste0(df_aderencia$BIC, " ★"),
+  df_aderencia$BIC
+)
+
+# Exibir
+knitr::kable(
+  df_aderencia,
+  caption = "Comparação de Matrizes de Covariância (★ = melhor)"
+)
+```
+
+---
+
+### Comparação Automatizada
+
+::: {.callout-tip}
+## 🚀 Função `compare_performance()`
+
+A função do pacote `performance` automatiza comparações e calcula pesos de evidência!
+:::
+
+```{r}
+#| echo: true
+
+compare_performance(
+  model_resp_sim,
+  model_resp_AR1,
+  model_resp_Iden,
+  model_resp_Uns,
+  metrics = c("AIC", "BIC"),
+  rank = TRUE
+)
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Interpretando Pesos
+
+**AIC_wt e BIC_wt** são pesos de evidência:
+- Variam de 0 a 1
+- Somam 1 entre todos os modelos
+- Interpretação: probabilidade relativa de ser o melhor modelo
+
+**Exemplo:**
+- AIC_wt = 0.85 → 85% de chance de ser o melhor
+- AIC_wt = 0.10 → 10% de chance de ser o melhor
+
+**Delta_AIC/BIC:**
+- Diferença em relação ao melhor modelo
+- 0 = melhor modelo
+- > 10 = evidência muito forte contra
+:::
+
+---
+
+### Análise dos Resultados
+
+```{r}
+#| echo: true
+
+# Calcular diferenças
+delta_aic <- abs(AIC(model_resp_AR1) - AIC(model_resp_sim))
+delta_bic <- abs(BIC(model_resp_AR1) - BIC(model_resp_sim))
+
+cat("═══ ANÁLISE DE SELEÇÃO ═══\n\n")
+
+cat("Diferenças do melhor vs segundo melhor:\n")
+cat("  ΔAIC:", round(delta_aic, 2), "\n")
+cat("  ΔBIC:", round(delta_bic, 2), "\n\n")
+
+cat("Interpretação:\n")
+
+if (delta_aic < 2) {
+  cat("  • Modelos equivalentes (ΔAIC < 2)\n")
+} else if (delta_aic < 10) {
+  cat("  • Evidência moderada para o melhor (2 < ΔAIC < 10)\n")
+} else {
+  cat("  • Evidência forte para o melhor (ΔAIC > 10)\n")
+}
+
+cat("\nConclusão: Modelo AR(1) apresenta melhor ajuste aos dados\n")
+```
+
+---
+
+## 🎯 Parte C: Modelo Escolhido - AR(1)
+
+::: {.callout-tip}
+## Por que AR(1) é Adequado?
+
+**Justificativa teórica:**
+A matriz AR(1) é especialmente apropriada para estudos farmacológicos porque:
+
+1. **Decaimento temporal:** Efeitos de drogas tendem a diminuir com o tempo
+2. **Memória de curto prazo:** Medições próximas são mais relacionadas
+3. **Parcimônia:** Apenas 1 parâmetro, evita sobre-ajuste
+4. **Intervalos regulares:** Comum em protocolos experimentais
+
+**No contexto atual:**
+- Pacientes medidos em intervalos regulares
+- Expectativa de correlação decrescente
+- Efeito da droga pode persistir mas enfraquecer
+:::
+
+---
+
+### Resultados Completos
+
+```{r}
+#| echo: true
+
+summary(model_resp_AR1)
+```
+
+---
+
+### Relatório Automatizado
+
+```{r}
+#| echo: true
 
 report(model_resp_AR1)
 ```
 
-Faça as análises para a variável Pulse! Lembre-se de não ficar apenas copiando e colando os scripts e mude os nomes das variáveis!
+---
 
-## Extras!
+### Interpretação Guiada
 
-### Gráfico do modelo em uma linha
+::: {.panel-tabset}
 
-Já vimos algumas formas de apresentar os gráficos dos modelos. A ideia ao longo destes tutoriais é oferecer várias ferramentas para você poder escolher a mais adequada para seus objetivos. Vamos ver uma forma bem prática de criar um gráfico do nosso modelo escolhido com a função `plot()` em conjunto com a função `allEffects()`!
+#### Efeitos Fixos
+
+**Interpretar coeficientes:**
+
+```{r}
+#| echo: true
+
+# Extrair coeficientes
+coef_table <- summary(model_resp_AR1)$tTable
+knitr::kable(coef_table, digits = 3)
+```
+
+**Leitura:**
+- **Intercept:** Média baseline do grupo referência no tempo 1
+- **drugPlacebo:** Diferença Placebo vs Droga no tempo 1
+- **Tempo2/3:** Mudança ao longo do tempo no grupo droga
+- **Interações:** Como efeito da droga muda com tempo
+
+#### Estrutura de Correlação
+
+```{r}
+#| echo: true
+
+# Extrair correlação estimada
+rho <- as.numeric(coef(model_resp_AR1$modelStruct$corStruct, unconstrained = FALSE))
+
+cat("Parâmetro AR(1) estimado: ρ =", round(rho, 3), "\n\n")
+
+cat("Correlações implícitas:\n")
+cat("  Tempos adjacentes (1-2, 2-3):", round(rho, 3), "\n")
+cat("  Tempos separados (1-3):", round(rho^2, 3), "\n")
+```
+
+**Interpretação:**
+- ρ próximo de 1: Correlação forte e persistente
+- ρ próximo de 0: Correlação decai rapidamente
+- ρ = 0.5: Correlação moderada com decaimento típico
+
+#### Variâncias
+
+```{r}
+#| echo: true
+
+# Componentes de variância
+var_components <- VarCorr(model_resp_AR1)
+knitr::kable(var_components)
+```
+
+**Componentes:**
+- **Between-subject:** Variabilidade entre sujeitos (intercepto aleatório)
+- **Within-subject:** Variabilidade residual dentro de sujeitos
+
+:::
+
+---
+
+## 📊 Visualizações Avançadas
+
+### Gráfico dos Efeitos
+
+::: {.callout-tip}
+## Plot em Uma Linha!
+
+A função `allEffects()` + `plot()` cria visualizações rápidas e informativas:
+:::
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 6
+
+plot(allEffects(model_resp_AR1))
+```
+
+---
+
+### Gráfico Personalizado
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-plot(allEffects(model_resp_AR1))
+# Calcular médias preditas
+means_pred <- emmeans(model_resp_AR1, 
+                      specs = ~drug*Tempo)
+
+# Criar gráfico elegante
+ggplot(as.data.frame(means_pred),
+       aes(x = Tempo, y = emmean, color = drug, group = drug)) +
+  geom_errorbar(
+    aes(ymin = lower.CL, ymax = upper.CL),
+    width = 0.15,
+    linewidth = 1,
+    position = position_dodge(0.1)
+  ) +
+  geom_point(
+    size = 4,
+    position = position_dodge(0.1)
+  ) +
+  geom_line(
+    linewidth = 1.2,
+    position = position_dodge(0.1)
+  ) +
+  labs(
+    title = "Efeito da Droga na Respiração ao Longo do Tempo",
+    subtitle = "Modelo com estrutura de correlação AR(1)",
+    x = "Momento de Avaliação",
+    y = "Frequência Respiratória",
+    color = "Tratamento",
+    caption = "Barras de erro: IC 95%"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_color_manual(values = c("#E41A1C", "#377EB8"))
 ```
 
-### Mudando a referência de um fator
+---
 
-Na análise dos modelos observamos que o grupo "New Drug" foi escolhido como referência. Isso é evidenciado pelo fato de que apenas os valores dos estimadores para o grupo "Placebo" são apresentados nos resultados. O R escolhe, por padrão, o valor de referência inicial com base na ordem alfabética dos níveis da variável categórica. Nesse caso, "New Drug" é escolhido como referência por ser o primeiro nível alfabeticamente.
+## 🔧 Extras: Dicas Avançadas
 
-Caso queira confirmar qual é o valor de referência de uma variável, basta utiliza a função `levels()`, que já vem instalada com o R.
+### Mudando Grupo de Referência
+
+::: {.callout-tip}
+## Controle de Referência
+
+Por padrão, R usa **ordem alfabética** para escolher o nível de referência. Você pode alterar isso:
+:::
 
 ```{r}
-levels(dataset$drug)
-```
+#| echo: true
 
-Podemos alterar facilmente qual será o grupo de referência de nossas análises utilizando a função `relevel()`, que também já vem instalada no pacote base do R.
+# Verificar nível atual
+cat("Níveis originais:\n")
+print(levels(dataset$drug))
 
-```{r}
+# Mudar referência para Placebo
 dataset$drug <- relevel(dataset$drug, ref = "Placebo")
-levels(dataset$drug)
+
+cat("\nNovos níveis:\n")
+print(levels(dataset$drug))
 ```
 
-Note agora que "Placebo" aparece em primeiro lugar, indicando o novo valor de referência. Escreva um novo modelo e compare os resultados com os anteriores.
+**Impacto:**
+Agora os coeficientes comparam **Droga vs Placebo** (não o contrário)
 
-## Lista 2 resolvida no SPSS
+---
+
+### Comparando com Nova Referência
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+# Refazer modelo com nova referência
+model_resp_AR1_v2 <- lme(
+  fixed = resp ~ drug + Tempo + drug*Tempo,
+  random = ~1|Sujeito,
+  correlation = corAR1(form = ~1|Sujeito),
+  data = dataset
+)
+
+# Comparar coeficientes
+cat("═══ COMPARAÇÃO DE REFERÊNCIAS ═══\n\n")
+cat("Modelo Original (ref: New Drug):\n")
+print(summary(model_resp_AR1)$tTable[2, c("Value", "p-value")])
+
+cat("\nModelo com Nova Referência (ref: Placebo):\n")
+print(summary(model_resp_AR1_v2)$tTable[2, c("Value", "p-value")])
+```
+
+::: {.callout-note}
+## Interpretação
+
+Note que:
+- **Magnitude:** Igual em valor absoluto
+- **Sinal:** Invertido
+- **p-valor:** Idêntico
+- **Interpretação:** Mudou de "Placebo vs Droga" para "Droga vs Placebo"
+:::
+
+---
+
+## 🎯 Desafio: Análise da Variável "Pulse"
+
+::: {.callout-important}
+## Sua Vez - Checklist Completo!
+
+Replique **toda a análise** para a variável **"pulse"**:
+
+**Parte A - Modelos:**
+- [ ] Matriz Simétrica Composta
+- [ ] Matriz AR(1)
+- [ ] Matriz Identidade
+- [ ] Matriz Não-Estruturada
+
+**Parte B - Comparações:**
+- [ ] Tabela manual de AIC/BIC
+- [ ] Comparação com `compare_performance()`
+- [ ] Interpretação dos deltas
+- [ ] Identificação do melhor modelo
+
+**Parte C - Modelo Escolhido:**
+- [ ] Relatório completo
+- [ ] Interpretação dos coeficientes
+- [ ] Análise de correlação estimada
+- [ ] Gráficos dos efeitos
+
+**Extras:**
+- [ ] Testar mudança de referência
+- [ ] Comparar resultados com "resp"
+- [ ] Refletir sobre diferenças
+:::
+
+::: {.callout-tip}
+## 💡 Dicas para o Desafio
+
+1. **Renomeie adequadamente:** `model_resp_*` → `model_pulse_*`
+2. **Não copie-cole:** Digite para aprender
+3. **Compare matrizes:** Qual é melhor para pulse?
+4. **Reflita:** Por que pode diferir de resp?
+5. **Documente:** Anote suas conclusões
+:::
+
+---
+
+## 📚 Material Complementar
+
+### Aula em Vídeo (SPSS)
 
 {{< video https://youtu.be/gYWld1qSh9c?si=VJdZsrSYAE-2BJpA title='GMM - General Mixed Models - Aula Prática #3 (SPSS)' >}}
 
-## Referências
+---
 
-https://bcheggeseth.github.io/CorrelatedData/marginal-models.html
+### Leituras Recomendadas
 
-## Versões dos pacotes
+::: {.callout-note collapse="true"}
+## 📖 Aprofundamento em Matrizes de Covariância
+
+**Recursos Online:**
+- [Marginal Models - Correlated Data](https://bcheggeseth.github.io/CorrelatedData/marginal-models.html)
+- Pinheiro & Bates (2000). *Mixed-Effects Models in S and S-PLUS*
+- Fitzmaurice et al. (2011). *Applied Longitudinal Analysis*
+
+**Tópicos Avançados:**
+- Estruturas ARMA(p,q)
+- Matrizes Toeplitz
+- Bandas de covariância
+- Testes de razão de verossimilhança
+
+**Quando explorar além:**
+- Dados com muitos tempos (T > 5)
+- Padrões complexos de correlação
+- Intervalos irregulares
+- Comparações formais de estruturas
+:::
+
+---
+
+### Tabela de Decisão Rápida
+
+::: {.callout-tip collapse="true"}
+## 🗺️ Guia para Escolha de Matriz
+
+| Situação | Matriz Recomendada | Justificativa |
+|----------|-------------------|---------------|
+| Poucos tempos (T ≤ 3) | AR(1) ou Simétrica | Parcimônia |
+| Muitos tempos (T > 5) | AR(1) | Escalabilidade |
+| Intervalos irregulares | Simétrica ou Não-estruturada | Flexibilidade temporal |
+| Amostra grande (n > 100) | Não-estruturada | Permite exploração |
+| Amostra pequena (n < 30) | AR(1) ou Simétrica | Evita sobre-ajuste |
+| Correlação desconhecida | Testar múltiplas, comparar AIC | Seleção empírica |
+| Série temporal clássica | AR(1) | Fundamentação teórica |
+| Medições muito espaçadas | Simétrica ou Identidade | Correlação pode ser fraca |
+
+**Regra de ouro:** Quando em dúvida, teste múltiplas e compare!
+:::
+
+---
+
+## 🔧 Informações de Sessão
 
 ```{r}
+#| echo: true
+
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 3
+
+Nesta lista você:
+
+✅ Compreendeu **quatro estruturas** de covariância  
+✅ Aprendeu a **comparar modelos** via AIC/BIC  
+✅ Identificou a **estrutura mais adequada** aos dados  
+✅ Interpretou **parâmetros de correlação**  
+✅ Criou **visualizações profissionais**  
+✅ Dominou mudança de **níveis de referência**  
+
+**Conceitos-chave:**
+- Matrizes capturam correlação entre medidas repetidas
+- AR(1) assume decaimento exponencial (comum em farmacologia)
+- AIC/BIC penalizam complexidade diferentemente
+- Estrutura apropriada melhora estimativas e inferências
+
+**Próximos passos:**
+- Complete análise para "pulse"
+- Compare qual estrutura funciona melhor
+- Prepare-se para Lista 4: GzLM!
+:::

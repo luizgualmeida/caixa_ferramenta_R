@@ -851,9 +851,7 @@ https://www.rdocumentation.org/packages/psychometric/versions/2.4/topics/ICC.lme
 
 https://www.alexanderdemos.org/Mixed5.html
 
-
 ### OLD
-
 
 ```{r}
 modelo_5 = lmer(PosTHKS ~ 1
