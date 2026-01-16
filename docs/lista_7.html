@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Lista 7: Séries Temporais (ARIMA) – Técnicas e Métodos de Pesquisa no R</title>
+<title>Lista 7: Séries Temporais (ARIMA) – Técnicas e Métodos de Pesquisa no R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ARIMA.html">ARIMA</a></li><li class="breadcrumb-item"><a href="./lista_7.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 7: Séries Temporais (ARIMA)</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ARIMA.html">ARIMA</a></li><li class="breadcrumb-item"><a href="./lista_7.html">Lista 7: Séries Temporais (ARIMA)</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -215,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+ <span class="menu-text">Lista 6.1: Cox com Covariáveis Tempo-Dependentes</span></a>
   </div>
 </li>
       </ul>
@@ -232,7 +232,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_7.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 7: Séries Temporais (ARIMA)</span></span></a>
+ <span class="menu-text">Lista 7: Séries Temporais (ARIMA)</span></a>
   </div>
 </li>
       </ul>
@@ -249,13 +249,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+ <span class="menu-text">Lista 8: CFA e Path Analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
   </div>
 </li>
       </ul>
@@ -270,10 +270,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#pacotes" id="toc-pacotes" class="nav-link active" data-scroll-target="#pacotes"><span class="header-section-number">2.1</span> 📦 Pacotes</a></li>
-  <li><a href="#o-que-é-arima" id="toc-o-que-é-arima" class="nav-link" data-scroll-target="#o-que-é-arima"><span class="header-section-number">2.2</span> 🔍 O que é ARIMA?</a></li>
-  <li><a href="#preparação-do-ambiente" id="toc-preparação-do-ambiente" class="nav-link" data-scroll-target="#preparação-do-ambiente"><span class="header-section-number">2.3</span> 🧹 Preparação do Ambiente</a></li>
-  <li><a href="#parte-1-estacionaridade-dados-de-cigarros" id="toc-parte-1-estacionaridade-dados-de-cigarros" class="nav-link" data-scroll-target="#parte-1-estacionaridade-dados-de-cigarros"><span class="header-section-number">2.4</span> 📥 Parte 1: Estacionaridade (Dados de Cigarros)</a>
+  <li><a href="#pacotes" id="toc-pacotes" class="nav-link active" data-scroll-target="#pacotes">📦 Pacotes</a></li>
+  <li><a href="#o-que-é-arima" id="toc-o-que-é-arima" class="nav-link" data-scroll-target="#o-que-é-arima">🔍 O que é ARIMA?</a></li>
+  <li><a href="#preparação-do-ambiente" id="toc-preparação-do-ambiente" class="nav-link" data-scroll-target="#preparação-do-ambiente">🧹 Preparação do Ambiente</a></li>
+  <li><a href="#parte-1-estacionaridade-dados-de-cigarros" id="toc-parte-1-estacionaridade-dados-de-cigarros" class="nav-link" data-scroll-target="#parte-1-estacionaridade-dados-de-cigarros">📥 Parte 1: Estacionaridade (Dados de Cigarros)</a>
   <ul class="collapse">
   <li><a href="#carregar-dados" id="toc-carregar-dados" class="nav-link" data-scroll-target="#carregar-dados">Carregar Dados</a></li>
   <li><a href="#inspeção-visual" id="toc-inspeção-visual" class="nav-link" data-scroll-target="#inspeção-visual">Inspeção Visual</a></li>
@@ -283,14 +283,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#transformação-diferenciação" id="toc-transformação-diferenciação" class="nav-link" data-scroll-target="#transformação-diferenciação">Transformação: Diferenciação</a></li>
   <li><a href="#visualização-pós-transformação" id="toc-visualização-pós-transformação" class="nav-link" data-scroll-target="#visualização-pós-transformação">Visualização Pós-Transformação</a></li>
   </ul></li>
-  <li><a href="#parte-2-modelagem-arima-dados-de-salários" id="toc-parte-2-modelagem-arima-dados-de-salários" class="nav-link" data-scroll-target="#parte-2-modelagem-arima-dados-de-salários"><span class="header-section-number">2.5</span> 📊 Parte 2: Modelagem ARIMA (Dados de Salários)</a>
+  <li><a href="#parte-2-modelagem-arima-dados-de-salários" id="toc-parte-2-modelagem-arima-dados-de-salários" class="nav-link" data-scroll-target="#parte-2-modelagem-arima-dados-de-salários">📊 Parte 2: Modelagem ARIMA (Dados de Salários)</a>
   <ul class="collapse">
   <li><a href="#carregar-dados-1" id="toc-carregar-dados-1" class="nav-link" data-scroll-target="#carregar-dados-1">Carregar Dados</a></li>
   <li><a href="#criar-objeto-de-série-temporal" id="toc-criar-objeto-de-série-temporal" class="nav-link" data-scroll-target="#criar-objeto-de-série-temporal">Criar Objeto de Série Temporal</a></li>
   <li><a href="#plot-sazonal" id="toc-plot-sazonal" class="nav-link" data-scroll-target="#plot-sazonal">Plot Sazonal</a></li>
   <li><a href="#diagnóstico-da-série" id="toc-diagnóstico-da-série" class="nav-link" data-scroll-target="#diagnóstico-da-série">Diagnóstico da Série</a></li>
   </ul></li>
-  <li><a href="#ajustando-modelos-arima" id="toc-ajustando-modelos-arima" class="nav-link" data-scroll-target="#ajustando-modelos-arima"><span class="header-section-number">2.6</span> 🎯 Ajustando Modelos ARIMA</a>
+  <li><a href="#ajustando-modelos-arima" id="toc-ajustando-modelos-arima" class="nav-link" data-scroll-target="#ajustando-modelos-arima">🎯 Ajustando Modelos ARIMA</a>
   <ul class="collapse">
   <li><a href="#modelo-1-arima100" id="toc-modelo-1-arima100" class="nav-link" data-scroll-target="#modelo-1-arima100">Modelo 1: ARIMA(1,0,0)</a></li>
   <li><a href="#modelo-2-arima010" id="toc-modelo-2-arima010" class="nav-link" data-scroll-target="#modelo-2-arima010">Modelo 2: ARIMA(0,1,0)</a></li>
@@ -298,31 +298,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#comparação-de-modelos" id="toc-comparação-de-modelos" class="nav-link" data-scroll-target="#comparação-de-modelos">Comparação de Modelos</a></li>
   <li><a href="#visualização-ajustado-vs-real" id="toc-visualização-ajustado-vs-real" class="nav-link" data-scroll-target="#visualização-ajustado-vs-real">Visualização: Ajustado vs Real</a></li>
   </ul></li>
-  <li><a href="#modelo-com-covariáveis" id="toc-modelo-com-covariáveis" class="nav-link" data-scroll-target="#modelo-com-covariáveis"><span class="header-section-number">2.7</span> 🔧 Modelo com Covariáveis</a>
+  <li><a href="#modelo-com-covariáveis" id="toc-modelo-com-covariáveis" class="nav-link" data-scroll-target="#modelo-com-covariáveis">🔧 Modelo com Covariáveis</a>
   <ul class="collapse">
   <li><a href="#coeficientes-e-significância" id="toc-coeficientes-e-significância" class="nav-link" data-scroll-target="#coeficientes-e-significância">Coeficientes e Significância</a></li>
   </ul></li>
-  <li><a href="#previsões-forecasting" id="toc-previsões-forecasting" class="nav-link" data-scroll-target="#previsões-forecasting"><span class="header-section-number">2.8</span> 🔮 Previsões (Forecasting)</a>
+  <li><a href="#previsões-forecasting" id="toc-previsões-forecasting" class="nav-link" data-scroll-target="#previsões-forecasting">🔮 Previsões (Forecasting)</a>
   <ul class="collapse">
   <li><a href="#salários-masculinos-50-meses-à-frente" id="toc-salários-masculinos-50-meses-à-frente" class="nav-link" data-scroll-target="#salários-masculinos-50-meses-à-frente">Salários Masculinos: 50 Meses à Frente</a></li>
   <li><a href="#salários-femininos-comparação" id="toc-salários-femininos-comparação" class="nav-link" data-scroll-target="#salários-femininos-comparação">Salários Femininos: Comparação</a></li>
   </ul></li>
-  <li><a href="#diagnóstico-de-resíduos" id="toc-diagnóstico-de-resíduos" class="nav-link" data-scroll-target="#diagnóstico-de-resíduos"><span class="header-section-number">2.9</span> ✅ Diagnóstico de Resíduos</a></li>
-  <li><a href="#material-complementar" id="toc-material-complementar" class="nav-link" data-scroll-target="#material-complementar"><span class="header-section-number">2.10</span> 📚 Material Complementar</a>
+  <li><a href="#diagnóstico-de-resíduos" id="toc-diagnóstico-de-resíduos" class="nav-link" data-scroll-target="#diagnóstico-de-resíduos">✅ Diagnóstico de Resíduos</a></li>
+  <li><a href="#material-complementar" id="toc-material-complementar" class="nav-link" data-scroll-target="#material-complementar">📚 Material Complementar</a>
   <ul class="collapse">
   <li><a href="#recursos-adicionais" id="toc-recursos-adicionais" class="nav-link" data-scroll-target="#recursos-adicionais">Recursos Adicionais</a></li>
   </ul></li>
-  <li><a href="#fluxo-de-trabalho-arima" id="toc-fluxo-de-trabalho-arima" class="nav-link" data-scroll-target="#fluxo-de-trabalho-arima"><span class="header-section-number">2.11</span> 🎯 Fluxo de Trabalho ARIMA</a></li>
-  <li><a href="#informações-de-sessão" id="toc-informações-de-sessão" class="nav-link" data-scroll-target="#informações-de-sessão"><span class="header-section-number">2.12</span> 🔧 Informações de Sessão</a></li>
+  <li><a href="#fluxo-de-trabalho-arima" id="toc-fluxo-de-trabalho-arima" class="nav-link" data-scroll-target="#fluxo-de-trabalho-arima">🎯 Fluxo de Trabalho ARIMA</a></li>
+  <li><a href="#informações-de-sessão" id="toc-informações-de-sessão" class="nav-link" data-scroll-target="#informações-de-sessão">🔧 Informações de Sessão</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ARIMA.html">ARIMA</a></li><li class="breadcrumb-item"><a href="./lista_7.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 7: Séries Temporais (ARIMA)</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ARIMA.html">ARIMA</a></li><li class="breadcrumb-item"><a href="./lista_7.html">Lista 7: Séries Temporais (ARIMA)</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 7: Séries Temporais (ARIMA)</span></h1>
+<h1 class="title">Lista 7: Séries Temporais (ARIMA)</h1>
 </div>
 
 
@@ -353,8 +353,8 @@ Objetivo da Lista
 </div>
 </div>
 <hr>
-<section id="pacotes" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="pacotes"><span class="header-section-number">2.1</span> 📦 Pacotes</h2>
+<section id="pacotes" class="level2">
+<h2 class="anchored" data-anchor-id="pacotes">📦 Pacotes</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>✓ Pacotes de séries temporais carregados!</code></pre>
@@ -362,8 +362,8 @@ Objetivo da Lista
 </div>
 <hr>
 </section>
-<section id="o-que-é-arima" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="o-que-é-arima"><span class="header-section-number">2.2</span> 🔍 O que é ARIMA?</h2>
+<section id="o-que-é-arima" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-arima">🔍 O que é ARIMA?</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -383,16 +383,16 @@ ARIMA = AutoRegressive Integrated Moving Average
 </div>
 <hr>
 </section>
-<section id="preparação-do-ambiente" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="preparação-do-ambiente"><span class="header-section-number">2.3</span> 🧹 Preparação do Ambiente</h2>
+<section id="preparação-do-ambiente" class="level2">
+<h2 class="anchored" data-anchor-id="preparação-do-ambiente">🧹 Preparação do Ambiente</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpar ambiente</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>(<span class="at">all.names =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          used (Mb) gc trigger  (Mb) max used  (Mb)
-Ncells 1682376 89.9    3138010 167.6  2479844 132.5
-Vcells 2892400 22.1    8388608  64.0  4628957  35.4</code></pre>
+Ncells 1682340 89.9    3138441 167.7  2478994 132.4
+Vcells 2892755 22.1    8388608  64.0  4629138  35.4</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configurações</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
@@ -400,8 +400,8 @@ Vcells 2892400 22.1    8388608  64.0  4628957  35.4</code></pre>
 </div>
 <hr>
 </section>
-<section id="parte-1-estacionaridade-dados-de-cigarros" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="parte-1-estacionaridade-dados-de-cigarros"><span class="header-section-number">2.4</span> 📥 Parte 1: Estacionaridade (Dados de Cigarros)</h2>
+<section id="parte-1-estacionaridade-dados-de-cigarros" class="level2">
+<h2 class="anchored" data-anchor-id="parte-1-estacionaridade-dados-de-cigarros">📥 Parte 1: Estacionaridade (Dados de Cigarros)</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -695,8 +695,8 @@ alternative hypothesis: stationary</code></pre>
 <hr>
 </section>
 </section>
-<section id="parte-2-modelagem-arima-dados-de-salários" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="parte-2-modelagem-arima-dados-de-salários"><span class="header-section-number">2.5</span> 📊 Parte 2: Modelagem ARIMA (Dados de Salários)</h2>
+<section id="parte-2-modelagem-arima-dados-de-salários" class="level2">
+<h2 class="anchored" data-anchor-id="parte-2-modelagem-arima-dados-de-salários">📊 Parte 2: Modelagem ARIMA (Dados de Salários)</h2>
 <section id="carregar-dados-1" class="level3">
 <h3 class="anchored" data-anchor-id="carregar-dados-1">Carregar Dados</h3>
 <div class="cell">
@@ -775,8 +775,8 @@ $ DATE_        &lt;chr&gt; "JAN 1989", "FEB 1989", "MAR 1989", "APR 1989", "MAY 
 <hr>
 </section>
 </section>
-<section id="ajustando-modelos-arima" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="ajustando-modelos-arima"><span class="header-section-number">2.6</span> 🎯 Ajustando Modelos ARIMA</h2>
+<section id="ajustando-modelos-arima" class="level2">
+<h2 class="anchored" data-anchor-id="ajustando-modelos-arima">🎯 Ajustando Modelos ARIMA</h2>
 <section id="modelo-1-arima100" class="level3">
 <h3 class="anchored" data-anchor-id="modelo-1-arima100">Modelo 1: ARIMA(1,0,0)</h3>
 <div class="cell">
@@ -999,8 +999,8 @@ Training set -0.04692903</code></pre>
 <hr>
 </section>
 </section>
-<section id="modelo-com-covariáveis" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="modelo-com-covariáveis"><span class="header-section-number">2.7</span> 🔧 Modelo com Covariáveis</h2>
+<section id="modelo-com-covariáveis" class="level2">
+<h2 class="anchored" data-anchor-id="modelo-com-covariáveis">🔧 Modelo com Covariáveis</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matriz de covariáveis</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>covars <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(db_salarios[, <span class="fu">c</span>(<span class="st">"horas"</span>, <span class="st">"divida"</span>, <span class="st">"idade"</span>, </span>
@@ -1136,8 +1136,8 @@ Training set -0.006183707</code></pre>
 <hr>
 </section>
 </section>
-<section id="previsões-forecasting" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="previsões-forecasting"><span class="header-section-number">2.8</span> 🔮 Previsões (Forecasting)</h2>
+<section id="previsões-forecasting" class="level2">
+<h2 class="anchored" data-anchor-id="previsões-forecasting">🔮 Previsões (Forecasting)</h2>
 <section id="salários-masculinos-50-meses-à-frente" class="level3">
 <h3 class="anchored" data-anchor-id="salários-masculinos-50-meses-à-frente">Salários Masculinos: 50 Meses à Frente</h3>
 <div class="cell">
@@ -1196,8 +1196,8 @@ Training set -0.006183707</code></pre>
 <hr>
 </section>
 </section>
-<section id="diagnóstico-de-resíduos" class="level2" data-number="2.9">
-<h2 data-number="2.9" class="anchored" data-anchor-id="diagnóstico-de-resíduos"><span class="header-section-number">2.9</span> ✅ Diagnóstico de Resíduos</h2>
+<section id="diagnóstico-de-resíduos" class="level2">
+<h2 class="anchored" data-anchor-id="diagnóstico-de-resíduos">✅ Diagnóstico de Resíduos</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1252,8 +1252,8 @@ Model df: 2.   Total lags used: 10</code></pre>
 </div>
 <hr>
 </section>
-<section id="material-complementar" class="level2" data-number="2.10">
-<h2 data-number="2.10" class="anchored" data-anchor-id="material-complementar"><span class="header-section-number">2.10</span> 📚 Material Complementar</h2>
+<section id="material-complementar" class="level2">
+<h2 class="anchored" data-anchor-id="material-complementar">📚 Material Complementar</h2>
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/qTQ1YDgyByE" title="Séries Temporais (ARIMA) - Aula Prática #7" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <hr>
 <section id="recursos-adicionais" class="level3">
@@ -1279,8 +1279,8 @@ Model df: 2.   Total lags used: 10</code></pre>
 <hr>
 </section>
 </section>
-<section id="fluxo-de-trabalho-arima" class="level2" data-number="2.11">
-<h2 data-number="2.11" class="anchored" data-anchor-id="fluxo-de-trabalho-arima"><span class="header-section-number">2.11</span> 🎯 Fluxo de Trabalho ARIMA</h2>
+<section id="fluxo-de-trabalho-arima" class="level2">
+<h2 class="anchored" data-anchor-id="fluxo-de-trabalho-arima">🎯 Fluxo de Trabalho ARIMA</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1306,8 +1306,8 @@ Checklist Passo-a-Passo
 </div>
 <hr>
 </section>
-<section id="informações-de-sessão" class="level2" data-number="2.12">
-<h2 data-number="2.12" class="anchored" data-anchor-id="informações-de-sessão"><span class="header-section-number">2.12</span> 🔧 Informações de Sessão</h2>
+<section id="informações-de-sessão" class="level2">
+<h2 class="anchored" data-anchor-id="informações-de-sessão">🔧 Informações de Sessão</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">

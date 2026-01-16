@@ -1,675 +1,650 @@
-# Lista 8 - CFA e Path Analysis
+# Lista 8: CFA e Path Analysis {.unnumbered}
+
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
+
+Explore **Modelagem de Equações Estruturais (SEM)**: construa modelos de **Path Analysis** (relações entre variáveis observadas) e **CFA** (Análise Fatorial Confirmatória - variáveis latentes). Aprenda a avaliar ajuste de modelos e interpretar resultados.
+:::
+
+---
+
+## 📚 O que é SEM?
+
+::: {.callout-tip}
+## Structural Equation Modeling (SEM)
+
+Técnica estatística que combina:
+- **Análise de regressão:** Relações direcionais entre variáveis
+- **Análise fatorial:** Variáveis latentes não-observadas
+
+**Dois componentes principais:**
+
+**1. Path Analysis** (Análise de Caminhos)
+- Relações entre **variáveis observadas**
+- Testa modelos teóricos de causalidade
+- Análise de mediação e moderação
+
+**2. CFA** (Confirmatory Factor Analysis)
+- Testa estrutura de **variáveis latentes**
+- Confirmação de fatores teóricos
+- Validação de questionários/escalas
+:::
+
+---
+
+## 📦 Pacotes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+pacotes <- c(
+  "foreign", "tidyverse", "lavaan", "semPlot",
+  "performance", "easystats", "kableExtra"
+)
+
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
+
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes de SEM carregados!\n")
+```
+
+---
+
+## 🎯 Parte A: Path Analysis
+
+### Contexto dos Dados
+
+::: {.callout-tip}
+**Dados:** 94 pessoas
+
+**Variáveis:**
+- `Idade`: Anos
+- `IMC1`: Índice de Massa Corporal
+- `Sociabilidade`: Escore de questionário
+- `Treinos`: Número de treinos (VD)
+
+**Pergunta:** Como Idade, IMC e Sociabilidade afetam frequência de treinos?
+:::
+
+---
+
+### Carregar Dados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-library(foreign)
-library(tidyverse)
-library(lavaan)
-library(semPlot)
-library(performance)
-library(easystats)
-library(kableExtra)
-
+dados_path <- read.spss("DADOS PATH.sav", to.data.frame = TRUE)
+glimpse(dados_path)
 ```
 
-## a) Regressão linear
+---
 
-::: callout-note
-#### Exercício
+### Baseline: Regressão Linear
 
-Veja o banco de dados DADOSPATH.sav. Nele temos os dados de Idade, IMC, numero de treinos e sociabilidade (questionario) de um grupo de 94 pessoas. Faca um modelo de regressao linear tendo como variavel dependente o numero de Treinos e as demais variaveis como independentes.
+```{r}
+#| echo: true
+
+modelo_lm <- lm(Treinos ~ Idade + IMC1 + Sociabilidade, 
+                data = dados_path)
+
+summary(modelo_lm)$coefficients %>%
+  kable(digits = 3, caption = "Coeficientes de Regressão Linear")
+```
+
+---
+
+### Modelo de Path Analysis
+
+::: {.callout-note}
+## Sintaxe lavaan
+
+Em SEM, especificamos modelos com texto:
+
+**`~`** = "é regredido por" (Y ~ X)  
+**`=~`** = "é medido por" (Fator =~ itens)  
+**`~~`** = "covaria com"
 :::
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-original = read.spss("DADOS PATH.sav", to.data.frame=TRUE)
-modelo_1 = lm(Treinos ~ Idade + IMC1 + Sociabilidade, data = original)
 
+# Especificar modelo (idêntico à regressão)
+path_modelo <- "Treinos ~ Idade + IMC1 + Sociabilidade"
+
+# Ajustar
+fit_path <- sem(path_modelo, data = dados_path)
 ```
 
-Modelo:
+---
 
-$$
-Y \sim \beta_0 + \beta_1*idade + \beta_2*IMC1 + \beta_3*Sociabilidade + \epsilon
-$$
-
-### Resultados
+### Resultados da Path Analysis
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-kable(summary(modelo_1)$coef)
 
+summary(fit_path, standardized = TRUE, fit.measures = TRUE)
 ```
 
-Um modelo linear (estimado usando Mínimos Quadrados Ordinários - OLS) foi utilizado para prever a variável Treinos com base nas variáveis Idade, IMC1 e Sociabilidade. O modelo explica uma proporção estatisticamente significativa e moderada da variância (R² = 0,14, F(3, 90) = 5,06, p = 0,003, R² ajustado = 0,12). Dentro desse modelo: • O efeito da Idade é estatisticamente significativo e positivo (beta = 1,91, IC 95% \[0,82, 3,00\], t(90) = 3,48, p \< 0,001; Beta padronizado = 0,35, IC 95% \[0,15, 0,56\]) • O efeito do IMC1 é estatisticamente significativo e negativo (beta = -2,80, IC 95% \[-5,15, -0,46\], t(90) = -2,37, p = 0,020; Beta padronizado = -0,24, IC 95% \[-0,44, -0,04\]) • O efeito da Sociabilidade é estatisticamente não significativo e positivo (beta = 0,52, IC 95% \[-0,66, 1,69\], t(90) = 0,88, p = 0,383; Beta padronizado = 0,09, IC 95% \[-0,11, 0,28\]) Parâmetros padronizados foram obtidos ajustando o modelo a uma versão padronizada do conjunto de dados. Intervalos de Confiança (ICs) de 95% e valores-p foram calculados usando uma aproximação da distribuição t de Wald.
+---
 
-## b) Path Analysis
+### Tabela de Estimativas
 
-::: callout-note
-#### Exercício
+```{r}
+#| echo: true
 
-Com base no mesmo banco acima faça uma Path Analysis e monte um diagrama no ~~AMOS~~ R. Compare os resultados com os dados encontrados na regressão linear.
+parameterEstimates(fit_path) %>%
+  filter(op == "~") %>%
+  select(lhs, op, rhs, est, se, z, pvalue, ci.lower, ci.upper) %>%
+  kable(
+    digits = 3,
+    col.names = c("VD", "←", "VI", "β", "EP", "z", "p", "IC_low", "IC_up"),
+    caption = "Estimativas de Parâmetros (Path Analysis)"
+  )
+```
+
+::: {.callout-note}
+## 📊 Comparação: Path vs Regressão
+
+**Resultados são idênticos!** Path Analysis com apenas variáveis observadas = Regressão Linear.
+
+**Vantagem do SEM:** Permite modelos mais complexos (múltiplas VDs, mediação, variáveis latentes)
 :::
 
+---
+
+### Índices de Ajuste
+
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-#| 
-path_1 = "Treinos ~ Idade + IMC1 + Sociabilidade"
 
+model_performance(
+  fit_path,
+  metrics = c("Chi2", "Chi2_df", "NFI", "NNFI", "CFI", 
+              "RMSEA", "AIC", "BIC")
+) %>%
+  kable(digits = 3, caption = "Índices de Ajuste do Modelo")
+```
 
-path_model_1 = sem(
-  model = path_1,
-  data = original,
+::: {.callout-tip collapse="true"}
+## 🔍 Interpretando Índices de Ajuste
+
+**χ² (Chi-quadrado):**
+- Testa H₀: modelo perfeito
+- p > 0.05 = bom ajuste (mas sensível a N)
+
+**CFI (Comparative Fit Index):**
+- Compara com modelo nulo
+- > 0.90 aceitável, > 0.95 bom
+
+**RMSEA (Root Mean Square Error):**
+- < 0.05 excelente
+- 0.05-0.08 aceitável
+- > 0.10 pobre
+
+**AIC/BIC:** Comparação entre modelos (menor = melhor)
+:::
+
+---
+
+### Diagrama do Modelo
+
+```{r}
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+
+semPaths(
+  fit_path,
+  what = "std",
+  whatLabels = "par",
+  style = "ram",
+  layout = "tree",
+  rotation = 2,
+  sizeMan = 8,
+  edge.label.cex = 1.2,
+  label.cex = 1.3,
+  color = list(man = "lightblue", lat = "lightgreen")
 )
 ```
 
-### Tabela com os resultados
+---
 
-Como sempre, podemos utilizar a função `summary()` para retornar um resumo com os resultados do modelo
+## 🎯 Parte B: Análise Fatorial Confirmatória (CFA)
 
-```{r}
-summary(path_model_1) # posso colocar o parametro fit.measures = TRUE para obter os valores de aderência do modelo
-```
+### Contexto Teórico
 
-No caso da path analisys recomendamos utilizar a função `parameterEstimates()` do pacote `lavaan` para ter uma tabela mais direta com os resultados dos estimadores.
+::: {.callout-tip}
+## Escala de Apego a Amigos (IAA)
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-kable(parameterEstimates(path_model_1))
-```
+**Teoria:** Apego a amigos tem 2 dimensões latentes:
 
-Os resultados foram os mesmos obtidos tanto pela path analysis quanto pela regressão linear simples.
+**1. Alienação** (sentir-se isolado)
+- IAa1, IAa2, IAa3
 
-### Indices de qualidade do modelo
+**2. Confiança** (segurança nas amizades)
+- IAa13, IAa14, IAa15
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-model_performance(path_model_1, metrics = c("Chi2", "Chi2_df", "NFI", "NNFI", "CFI", "RMSEA", "AIC", "BIC"))
-
-AIC(path_model_1)
-
-```
-
-### Diagrama da path analysis
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-P <- semPaths(
-          object = path_model_1,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
-)
-```
-
-<!-- ### Modelo path 2 -->
-
-<!-- ```{r} -->
-
-<!-- #| echo: true -->
-
-<!-- #| message: false -->
-
-<!-- #| warning: false -->
-
-<!-- # Modelo com covariância entre os erros -->
-
-<!-- path_2 <- "Treinos ~ Idade + IMC1 + Sociabilidade -->
-
-<!--     Treinos ~~ Treinos -->
-
-<!--     Idade ~~ Idade -->
-
-<!--     IMC1 ~~ IMC1 -->
-
-<!--     Sociabilidade ~~ Sociabilidade -->
-
-<!--     Treinos ~~ Idade -->
-
-<!--     Treinos ~~ IMC1 -->
-
-<!--     Treinos ~~ Sociabilidade -->
-
-<!-- " -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- #| echo: true -->
-
-<!-- #| message: false -->
-
-<!-- #| warning: false -->
-
-<!-- # Modelo com covariância entre os erros -->
-
-<!-- path_model_2 = sem( -->
-
-<!--   model = path_2, -->
-
-<!--   data = original -->
-
-<!-- ) -->
-
-<!-- summary(path_model_2, fit.measures = TRUE) -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- #| echo: true -->
-
-<!-- #| message: false -->
-
-<!-- #| warning: false -->
-
-<!-- P2 <- semPaths( -->
-
-<!--           object = path_model_2, -->
-
-<!--           what = "path", -->
-
-<!--           whatLabels = "par", -->
-
-<!--           style = "ram", -->
-
-<!--           layout = "tree", -->
-
-<!--           rotation = 2, -->
-
-<!--           sizeMan = 7, -->
-
-<!--           sizeLat = 7, -->
-
-<!--           color = "lightgray", -->
-
-<!--           edge.label.cex = 1.2, -->
-
-<!--           label.cex = 1.3 -->
-
-<!-- ) -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- #| echo: true -->
-
-<!-- #| message: false -->
-
-<!-- #| warning: false -->
-
-<!-- model_performance(path_model_2, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "AIC", "BIC")) -->
-
-<!-- ``` -->
-
-## c) CFA
-
-::: callout-note
-#### Exercício
-
-Veja o banco de dados Fatorial escala.sav. Faça uma Análise fatorial confirmatória (CFA) gerando os seguintes fatores com base no questionário de apego a amigos (IAA).
+**Objetivo:** Confirmar essa estrutura com CFA
 :::
 
-Segundo a teoria esperada, os fatores teriam o seguinte agrupamento: a. Confianca -- Q13 Q14 Q15 b. Alienacao -- Q1 Q2 Q3 Monte o diagrama e discuta a qualidade do modelo e suas limitações caso existam.
+---
 
-**Equação do Modelo 1:**
-
-`cfa_eq = " Alienação =~ IAa1 + IAa2 + IAa3 Confiança =~ IAa13 + IAa14 + IAa15  "`
-
-**Análise Fatorial Confirmatória do modelo 1**
-
-`cfa_modelo = cfa(   model = cfa_eq,   data = dados_CFA,   std.lv = TRUE  )`
+### Carregar Dados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-dados_CFA = read.spss("fatorial CFA.sav", to.data.frame=TRUE)
 
+dados_cfa <- read.spss("fatorial CFA.sav", to.data.frame = TRUE)
+glimpse(dados_cfa)
 ```
 
+---
+
+### Modelo 1: CFA com 2 Fatores
+
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
 
-cfa_eq = "
-Alienação =~ IAa1 + IAa2 + IAa3
-Confiança =~ IAa13 + IAa14 + IAa15
-
+# Especificar modelo
+# Variáveis latentes (=~ significa 'medido por')
+cfa_eq1 <- "
+  alienacao =~ IAa1 + IAa2 + IAa3
+  confianca =~ IAa13 + IAa14 + IAa15
 "
 
+# Ajustar
+cfa_modelo1 <- cfa(
+  cfa_eq1,
+  data = dados_cfa,
+  std.lv = TRUE  # Padronizar variáveis latentes
+)
 ```
+
+::: {.callout-note}
+## `std.lv = TRUE`
+
+Fixa variância das variáveis latentes em 1 (padronização).
+
+**Alternativa:** `std.lv = FALSE` fixa primeira carga fatorial = 1
+:::
+
+---
+
+### Resultados do Modelo 1
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
 
-cfa_modelo = cfa(
-  model = cfa_eq,
-  data = dados_CFA,
-  std.lv = TRUE #If TRUE, the metric of each latent variable is determined by fixing their (residual) variances to 1.0. If FALSE, the metric of each latent variable is determined by fixing the factor loading of the first indicator to 1.0.
+summary(cfa_modelo1, fit.measures = TRUE, standardized = TRUE)
+```
+
+---
+
+### Tabela de Cargas Fatoriais
+
+```{r}
+#| echo: true
+
+parameterEstimates(cfa_modelo1) %>%
+  filter(op == "=~") %>%
+  dplyr::select(lhs, rhs, est, se, z, pvalue, ci.lower, ci.upper) %>%
+  kable(
+    digits = 3,
+    col.names = c("Fator", "Item", "λ", "EP", "z", "p", "ci lower", "ci upper"),
+    caption = "Cargas Fatoriais (Modelo 1)"
+  )
+```
+
+::: {.callout-tip}
+## 📊 Interpretando Cargas (λ)
+
+**λ_pad (padronizado):**
+- > 0.70 = Excelente
+- 0.50-0.70 = Aceitável
+- < 0.50 = Problemático
+
+Indica quanto cada item "carrega" no fator latente.
+:::
+
+---
+
+### Índices de Ajuste - Modelo 1
+
+```{r}
+#| echo: true
+
+model_performance(
+  cfa_modelo1,
+  metrics = c("Chi2", "Chi2_df", "NFI", "NNFI", "CFI",
+              "RMSEA", "p_RMSEA", "AIC", "BIC")
+) %>%
+  kable(digits = 3, caption = "Ajuste do Modelo 1")
+```
+
+::: {.callout-warning}
+## ⚠️ Ajuste Moderado
+
+- **CFI/NNFI:** Bons (> 0.90)
+- **RMSEA:** Alto (0.10) → Modelo pode melhorar
+
+**Próximo passo:** Verificar índices de modificação
+:::
+
+---
+
+### Índices de Modificação
+
+```{r}
+#| echo: true
+
+modificationindices(cfa_modelo1, sort = TRUE, minimum.value = 5) %>%
+  head(10) %>%
+  kable(digits = 3, caption = "Top 10 Modificações Sugeridas")
+```
+
+::: {.callout-tip collapse="true"}
+## 🔍 Interpretando MI
+
+**MI (Modification Index):**
+- Prediz redução em χ² se parâmetro for liberado
+- MI > 10 = modificação substancial
+
+**EPC (Expected Parameter Change):**
+- Valor esperado do parâmetro
+
+**Decisão:** Só adicionar se **teoricamente justificável**!
+:::
+
+---
+
+### Modelo 2: Com Covariâncias de Resíduos
+
+```{r}
+#| echo: true
+
+cfa_eq2 <- "
+  # Fatores
+  alienacao =~ IAa1 + IAa2 + IAa3
+  confianca =~ IAa13 + IAa14 + IAa15
   
-)
-
-```
-
-### Resultados do modelo sem covariâncias entre os resíduos (modelo 1)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-summary(cfa_modelo) # posso colocar no summary o parametro fit.measures = TRUE
-
-```
-
-```{r}
-kable(parameterEstimates(cfa_modelo))
-```
-
-Os resultados da análise de equações estruturais indicam que o modelo ajustado apresenta um bom ajuste aos dados observados (χ² = 39,166, df = 8, p \< 0,001). O modelo envolve duas variáveis latentes, "Alienação" e "Confiança", e suas variáveis observadas.
-
-Os coeficientes de carga (estimates) indicam que as perguntas associadas a "Alienação" (IAa1, IAa2, IAa3) e "Confiança" (IAa13, IAa14, IAa15) têm influências positivas significativas em suas respectivas variáveis latentes.
-
-Além disso, a covariância entre "Alienação" e "Confiança" é estatisticamente significativa (estimate = 0,865, p \< 0,001), sugerindo uma relação entre essas duas dimensões.
-
-Esses resultados fornecem evidências de que o modelo proposto é estatisticamente significativo.
-
-### Índices de qualidade do modelo 1
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-model_performance(cfa_modelo, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI") )
-```
-
-Os resultados dos índices de qualidade indicam que o modelo apresenta uma adequada qualidade de aderência aos dados observados, conforme evidenciado pelos índices de ajuste (NFI, CFI) acima de 0.9. Apenas o NNFI (ou TFI) está abaixo de 0.9, indicando um bom ajuste relativo.
-
-No entanto, o valor do RMSEA é alto (10%), indicando que o modelo pode ser aprimorado.
-
-Os valores de AIC e BIC serão utilizados para efeito de comparação com os modelos a seguir.
-
-### Diagrama da CFA com o modelo 1
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-plot_CFA <- semPaths(
-          object = cfa_modelo,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
-)
-```
-
-### Verificar os índices de modificações do modelo 1
-
-Os índices de modificação podem ser obtidos utilizando a função `modindices()`. Por padrão, os índices de modificação são impressos para cada parâmetro não livre (ou fixado como zero). Os índices de modificação são complementados pelos valores de mudança esperada nos parâmetros (EPC) (coluna epc). As últimas três colunas contêm os valores padronizados de EPC (sepc.lv: padronização apenas das variáveis latentes; sepc.all: padronização de todas as variáveis; sepc.nox: padronização de todas, exceto variáveis observadas exógenas).
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-kable(modificationindices(cfa_modelo, sort = TRUE, minimum.value = 5))
-```
-
-### Novo modelo com a covariância dos resíduos (modelo 2)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-cfa_eq_2 = "
-Alienação =~ IAa1 + IAa2 + IAa3
-Confiança =~ IAa13 + IAa14 + IAa15
-
-# Covariancia dos resíduos
-IAa1 ~~ IAa3
-IAa13 ~~ IAa14
-IAa13 ~~ IAa15
-
+  # Covariâncias de resíduos (baseadas em MI)
+  IAa1 ~~ IAa3
+  IAa13 ~~ IAa14
+  IAa13 ~~ IAa15
 "
 
+cfa_modelo2 <- cfa(cfa_eq2, data = dados_cfa, std.lv = TRUE)
 ```
+
+---
+
+### Resultados do Modelo 2
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
 
-cfa_modelo_2 = cfa(
-  model = cfa_eq_2,
-  data = dados_CFA,
-  std.lv = TRUE
-)
-
+parameterEstimates(cfa_modelo2) %>%
+  kable(digits = 3, caption = "Estimativas - Modelo 2")
 ```
 
-**Equação do Modelo 2:**
+---
 
-`cfa_eq_2 = " Alienação =~ IAa1 + IAa2 + IAa3 Confiança =~ IAa13 + IAa14 + IAa15  # Covariancia dos resíduos IAa1 ~~ IAa3  IAa13 ~~ IAa14 IAa13 ~~ IAa15  "`
-
-**Análise Fatorial Confirmatória do modelo 2**
-
-`cfa_modelo_2 = cfa(   model = cfa_eq_2,   data = dados_CFA,   std.lv = TRUE    )`
-
-### Resultados modelo 2
+### Comparação: Modelo 1 vs 2
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-summary(cfa_modelo_2) # posso colocar no summary o parametro fit.measures = TRUE
 
+compare_performance(
+  cfa_modelo1, cfa_modelo2,
+  metrics = c("NFI", "NNFI", "CFI", "RMSEA", "AIC", "BIC"),
+  rank = TRUE, verbose = FALSE
+) %>%
+  kable(digits = 3, caption = "Comparação de Modelos")
 ```
 
-```{r}
-kable(parameterEstimates(cfa_modelo_2))
+::: {.callout-note}
+## ✓ Modelo 2 Superior
 
-```
+- **RMSEA** reduzido (0.10 → 0.07)
+- **AIC/BIC** menores
+- **CFI/NNFI** ligeiramente melhores
 
-Os resultados da análise indicam que o modelo apresenta um razoável ajuste aos dados observados, conforme evidenciado pelos índices de ajuste, embora o teste qui-quadrado seja estatisticamente significativo (χ² = 14.194, df = 5, p = 0.014), indicando diferenças entre o modelo e os dados.
+Covariâncias de resíduos melhoraram ajuste!
+:::
 
-As cargas fatoriais para os indicadores associados às variáveis latentes "Alienação" e "Confiança" são todas estatisticamente significativas (p \< 0.001), indicando que esses indicadores têm uma relação com suas respectivas variáveis latentes.
+---
 
-### Índices de qualidade do modelo 2
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-model_performance(cfa_modelo_2, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"))
-```
-
-Os resultados dos índices de qualidade indicam que o modelo apresenta uma adequada qualidade de aderência aos dados observados, conforme evidenciado pelos índices de ajuste (NFI, CFI e NNFI) acima de 0.9.
-
-No entanto, o valor do RMSEA é moderado (7%), indicando que o modelo pode ser aprimorado.
-
-Os valores de AIC e BIC serão utilizados para efeito de comparação com os modelos a seguir.
-
-### Diagrama do modelo 2
+### Diagrama - Modelo 2
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-plot_CFA <- semPaths(
-          object = cfa_modelo_2,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
+#| fig-width: 8
+#| fig-height: 7
+
+semPaths(
+  cfa_modelo2,
+  what = "std",
+  whatLabels = "std",
+  style = "ram",
+  layout = "tree2",
+  rotation = 2,
+  sizeMan = 7,
+  sizeLat = 10,
+  edge.label.cex = 1,
+  label.cex = 1.2,
+  color = list(man = "lightblue", lat = "lightcoral")
 )
 ```
 
-### **Comparação entre os modelos**
+---
+
+## 🔍 Modelos Alternativos
+
+### Modelo 3: Fator Único
+
+::: {.callout-tip}
+## Hipótese Alternativa
+
+**E se** Alienação e Confiança são na verdade **um único fator**?
+
+Vamos testar!
+:::
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-compare_performance(cfa_modelo, cfa_modelo_2, 
-                    metrics = c("NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"),
-                    rank = TRUE, verbose = F)
-```
 
-O modelo_2 demonstra superioridade em relação ao modelo_1 com base nos critérios de ajuste avaliados.
-
-## Complementar: Modelo com apenas um fator latente (modelo 3)
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-cfa_eq_3 = "
-F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
+cfa_eq3 <- "
+  # Um único fator
+  Apego =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
 "
 
+cfa_modelo3 <- cfa(cfa_eq3, data = dados_cfa, std.lv = TRUE)
 ```
+
+---
+
+### Modelo 4: Fator Único + Covariâncias
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-#| 
-cfa_modelo_3 = cfa(
-  model = cfa_eq_3,
-  data = dados_CFA,
-  std.lv = TRUE
-)
 
-```
+# Verificar MI do modelo 3
+mi3 <- modificationindices(cfa_modelo3, minimum.value = 5)
 
-**Equação do modelo 3:**
-
-`cfa_eq_3 = " F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15 "`
-
-**Análise Fatorial Confirmatória do modelo 2**
-
-`cfa_modelo_3 = cfa(   model = cfa_eq_3,   data = dados_CFA,   std.lv = TRUE    )`
-
-### Resultados do modelo 3
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-kable(parameterEstimates(cfa_modelo_3))
-```
-
-O modelo de uma única variável latente "F1" apresenta um ajuste geral adequado aos dados, conforme indicado pelo teste qui-quadrado significativo (χ² = 45.034, df = 9, p = 0.000).
-
-As cargas fatoriais dos indicadores para "F1" são todas estatisticamente significativas (p \< 0.001), indicando que essas variáveis observadas têm uma relação com a variável latente "F1".
-
-### Índices de qualidade do modelo 3
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-model_performance(cfa_modelo_3, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI") )
-```
-
-### Diagrama do modelo 3
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-plot_CFA <- semPaths(
-          object = cfa_modelo_3,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
-)
-```
-
-### **Índices de modificação para o modelo**
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-kable(modificationindices(cfa_modelo_3, standardized = FALSE, minimum.value = 5))
-```
-
-## Modelo 4 com covariância entre os resíduos
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-cfa_eq_4 = "
-F1 =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
-
-#Covariância dos resíduos
-IAa2	~~	IAa14
-IAa13	~~	IAa14
+# Adicionar principais covariâncias
+cfa_eq4 <- "
+  Apego =~ IAa1 + IAa2 + IAa3 + IAa13 + IAa14 + IAa15
+  
+  # Covariâncias
+  IAa2 ~~ IAa14
+  IAa13 ~~ IAa14
 "
 
+cfa_modelo4 <- cfa(cfa_eq4, data = dados_cfa, std.lv = TRUE)
 ```
 
-**Análise Fatorial Confirmatória do modelo 4**
+---
+
+### Comparação Final: Todos os Modelos
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-cfa_modelo_4 = cfa(
-  model = cfa_eq_4,
-  data = dados_CFA,
-  std.lv = TRUE
-)
 
+compare_performance(
+  cfa_modelo1, cfa_modelo2, cfa_modelo3, cfa_modelo4,
+  metrics = c("Chi2", "NFI", "NNFI", "CFI", "RMSEA", "AIC", "BIC"),
+  rank = TRUE, verbose = FALSE
+) %>%
+  kable(digits = 3, caption = "Comparação Completa de Modelos CFA")
 ```
 
-### Resultados do modelo 4
+::: {.callout-note}
+## 🏆 Modelo Vencedor
+
+**Modelo 4** (fator único + covariâncias):
+- Melhor RMSEA (0.046)
+- Melhores CFI/NNFI (> 0.97)
+- Menores AIC/BIC
+
+**Mas...** Teoria sugere 2 fatores! Decisão final deve considerar teoria + ajuste.
+:::
+
+---
+
+### Diagrama - Modelo 4
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
-kable(parameterEstimates(cfa_modelo_4))
+#| fig-width: 8
+#| fig-height: 7
 
-```
-
-Os resultados do modelo sugerem que o ajuste do modelo aos dados é razoável, conforme indicado pelo teste qui-quadrado (χ² = 12.216, df = 7, p = 0.094). O modelo envolve uma única variável latente "F1," e por seis variáveis observadas (IAa1, IAa2, IAa3, IAa13, IAa14, IAa15). As cargas fatoriais associadas a cada indicador são todas estatisticamente significativas (p \< 0.001), indicando uma relação entre esses indicadores e a variável latente "F1". As variâncias dos indicadores também são significativas, sugerindo que cada indicador contribui para a variabilidade total da variável latente "F1".
-
-Além disso, há duas covariâncias estimadas entre os indicadores: uma entre IAa2 e IAa14, e outra entre IAa13 e IAa14. Essas covariâncias indicam associações adicionais entre os indicadores além daquelas explicadas pelas relações com a variável latente "F1".
-
-### Índices de qualidade do modelo 4
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-model_performance(cfa_modelo_4, metrics = c("Chi2", "Chi2_df", "NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"))
-```
-
-O modelo apresenta índices NFI (0.974), CFI (0.989) e NNFI (0.976) próximos de 1, indicando um bom ajuste. O RMSEA (0.046) é baixo, sugerindo uma adequada aproximação do modelo aos dados.
-
-### Diagrama do modelo 4
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-plot_CFA <- semPaths(
-          object = cfa_modelo_4,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
+semPaths(
+  cfa_modelo4,
+  what = "std",
+  whatLabels = "std",
+  style = "ram",
+  layout = "circle",
+  sizeMan = 7,
+  sizeLat = 12,
+  edge.label.cex = 1,
+  label.cex = 1.2,
+  color = list(man = "lightyellow", lat = "lightcoral")
 )
 ```
 
-### Comparação entre os modelos
+---
+
+## 📊 Guia de Interpretação
+
+::: {.callout-tip collapse="true"}
+## 🗺️ Checklist de Análise SEM
+
+**1. Especificação do Modelo**
+- [ ] Baseado em teoria sólida
+- [ ] Identificado (df ≥ 0)
+- [ ] Parâmetros interpretáveis
+
+**2. Avaliação de Ajuste**
+- [ ] χ²: p > 0.05 (ideal, mas sensível a N)
+- [ ] CFI/NNFI: > 0.95 (> 0.90 aceitável)
+- [ ] RMSEA: < 0.05 (< 0.08 aceitável)
+- [ ] SRMR: < 0.08
+
+**3. Interpretação de Parâmetros**
+- [ ] Cargas fatoriais: > 0.50 (> 0.70 ideal)
+- [ ] Todos significativos (p < 0.05)
+- [ ] Direção teoricamente esperada
+- [ ] Ausência de casos Heywood (variâncias negativas)
+
+**4. Modificações**
+- [ ] Baseadas em MI > 10
+- [ ] Teoricamente justificáveis
+- [ ] Não data-driven exclusivamente
+- [ ] Validação cruzada se possível
+
+**5. Comparação de Modelos**
+- [ ] ΔCFI > 0.01 = diferença substancial
+- [ ] ΔRMSEA > 0.015 = diferença substancial
+- [ ] Considerar parcimônia (menos parâmetros)
+:::
+
+---
+
+## 📚 Material Complementar
+
+{{< video https://www.youtube.com/watch?v=f_fXWuCGssQ title='SEM - CFA e Path Analysis - Aula Prática #8' >}}
+
+---
+
+### Recursos Adicionais
+
+::: {.callout-note collapse="true"}
+## 📖 Aprofundamento em SEM
+
+**Pacote lavaan:**
+- [Tutorial Oficial](https://lavaan.ugent.be/tutorial/)
+- [Rosseel (2012). JSS Paper](https://www.jstatsoft.org/article/view/v048i02)
+
+**Livros:**
+- Kline (2015). *Principles and Practice of SEM*
+- Brown (2015). *Confirmatory Factor Analysis*
+
+**Tópicos Avançados:**
+- Modelos multigrupo (invariância)
+- Variáveis categóricas (WLSMV)
+- Modelos de crescimento (LGM)
+- SEM bayesiano
+:::
+
+---
+
+## 🔧 Informações de Sessão
 
 ```{r}
-#| echo: true
-#| message: false
-#| warning: false
-compare_performance(cfa_modelo, cfa_modelo_2, cfa_modelo_3, cfa_modelo_4,
-                    metrics = c("NFI", "CFI", "RMSEA", "p_RMSEA", "AIC", "BIC", "NNFI"),
-                    rank = TRUE, verbose = F)
-```
-
-O modelo_4 demonstra superioridade em relação aos demais modelos com base nos critérios de ajuste avaliados.
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-# Links de referência
-
-# https://rdrr.io/cran/performance/man/model_performance.lavaan.html
-# https://methodenlehre.github.io/SGSCLM-R-course/cfa-and-sem-with-lavaan.html#structural-equation-modelling-sem
-```
-
-## Lista 8 resolvida no SPSS
-
-{{< video https://www.youtube.com/watch?v=f_fXWuCGssQ title='Structural Equation Modeling (SEM) - CFA e Path Analysis - Aula Prática #8' >}}
-
-## Extras!
-
-### Mais gráficos
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-semPaths(cfa_modelo, "std", weighted = FALSE, nCharNodes = 7, shapeMan = "rectangle",
-         sizeMan = 8, sizeMan2 = 5)
-```
-
-## Referências
-
-<https://www.jstatsoft.org/article/view/v048i02>
-
-<https://lavaan.ugent.be/tutorial/inspect.html>
-
-## Versões dos pacotes
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 8
+
+Nesta lista você:
+
+✅ Compreendeu diferença entre **Path Analysis** e **CFA**  
+✅ Especificou modelos em **sintaxe lavaan**  
+✅ Ajustou e interpretou **cargas fatoriais**  
+✅ Avaliou **índices de ajuste** (CFI, RMSEA, etc.)  
+✅ Usou **índices de modificação** para melhorar modelos  
+✅ Comparou **modelos aninhados** e não-aninhados  
+✅ Criou **diagramas** de modelos SEM  
+
+**Conceitos-chave:**
+- SEM = Regressão + Análise Fatorial
+- Path Analysis: apenas variáveis observadas
+- CFA: testa estrutura de variáveis latentes
+- =~ "é medido por", ~ "é regredido por"
+- Índices de ajuste: CFI, RMSEA, χ²
+- Modificações devem ser teoricamente justificadas
+
+**Aplicações:**
+- Validação de escalas/questionários
+- Testes de modelos teóricos
+- Análise de mediação/moderação
+- Modelos de equações simultâneas
+
+**Próximos passos:**
+- SEM completo (Path + CFA combinados)
+- Mediação e moderação
+- Modelos multigrupo
+- Análise de invariância
+:::

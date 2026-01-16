@@ -1,465 +1,696 @@
-# Lista 8.1 - Moderação e Mediação
+# Lista 8.1: Moderação e Mediação {.unnumbered}
 
-Veja o banco de dados DADOSPATH.sav. Nele temos as variáveis Idade, IMC, Sociabilidade (medida por um questionário) e número de treinos realizados em uma academia. Temos uma hipótese teórica de que SOCIABILIDADE é uma variável preditora (X) do número de TREINOS (Y) que a pessoa realiza na academia. No entanto, o IMC (M) é uma variável mediadora desse efeito, não apenas moderadora. Ou seja, a relação entre sociabilidade e treinos só aparece na presença do IMC ou quando ele é conhecido.
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-library(foreign)
-library(tidyverse)
-library(lavaan)
-library(semPlot)
-library(performance)
-library(easystats)
-library(semPlot)
-library(semTools)
-library(flexplot)
-library(mediation)
-library(kableExtra)
-
-```
-
-## a) Modelo causal teórico
-
-::: callout-note
-#### Exercício
-
-Verifique esse modelo causal teórico e veja se ele faz sentido, utilizando um modelo SEM com mediação. Avalie os efeitos diretos e indiretos e decida se esse modelo teórico faz sentido, utilizando o AMOS e o Process.
+Explore **análise de mediação** usando SEM: compreenda efeitos diretos vs indiretos, teste hipóteses de mediação e interprete modelos causais complexos. Aprenda quando uma variável **medeia** (explica como) vs **modera** (modifica quando/para quem).
 :::
 
-Resolução do exercício foi baseada no vídeo "Simple Mediation using lavaan package of R" <https://www.youtube.com/watch?v=nfQOCy9xMnk>
+---
 
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-original = read.spss("DADOS PATH.sav", to.data.frame=TRUE)
-glimpse(original)
-```
+## 📚 Mediação vs Moderação
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-modelo_1 = "Treinos ~ c_*Sociabilidade + b*IMC1 
-            IMC1 ~ a*Sociabilidade
-            Indireto := a*b
-            Total_direto_C := a*b + c_"
+::: {.callout-tip}
+## Conceitos Fundamentais
 
-```
+**Mediação** (Como? Por que?)
+- **M explica o mecanismo** entre X → Y
+- X influencia M, que influencia Y
+- "X afeta Y **através de** M"
 
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-fit_1 = sem(modelo_1, original, se = "bootstrap", bootstrap = 500)
-```
+**Moderação** (Quando? Para quem?)
+- **M modifica a força/direção** de X → Y
+- X × M interage para afetar Y
+- "O efeito de X em Y **depende de** M"
 
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-#summary(fit_1) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) 
+**Exemplo Mediação:**
+- Exercício → Bem-estar → Produtividade
+- "Exercício aumenta produtividade *porque* melhora bem-estar"
 
-kable(parameterEstimates(fit_1))
-
-```
-
-### Resultados
-
-1.  **Regressões:**
-
--   O coeficiente estimado para a relação entre Sociabilidae e Treinos é 0.605, mas não é estatisticamente significativo (p = 0.360).
-
--   O coeficiente estimado para a relação entre IMC e Treinos é -1.650, indicando uma relação negativa. No entanto, esse coeficiente também não é estatisticamente significativo (p = 0.100).
-
--   O coeficiente estimado para a relação entre Sociabilidae e IMC é 0.019 e não é estatisticamente significativo (p = 0.693).
-
-2.  **Parâmetros Definidos:**
-
--   O efeito indireto é estimado como -0.031, mas não é estatisticamente significativo (p = 0.717). Isso sugere que a variável IMC não medeia significativamente a relação entre Sociabilidae e Treinos.
-
--   O efeito direto da Sociabilidade no Treino é estimado como 0.574 e também não é estatisticamente significativo (p = 0.386).
-
-Com base nos resultados, podemos concluir que o modelo teórico não se sustenta, pois não há evidência estatística significativa para sugerir relações entre as variáveis Sociabilidae , IMC e Treinos.
-
-## b) Mediação vs Regressões lineares
-
-::: callout-note
-#### Exercício
-
-Compare os dados encontrados com aqueles realizados por um conjunto de regressões lineares (OLS). Fazer esta análise de mediação por regressão linear e utilizando o AMOS+Process é a mesma coisa? Coloque também o diagrama gerado aqui.
+**Exemplo Moderação:**
+- Estresse × Suporte Social → Saúde Mental
+- "Estresse afeta saúde *diferentemente* dependendo do suporte"
 :::
 
-### Valor de "c"
+---
+
+## 📦 Pacotes
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+pacotes <- c(
+  "foreign", "tidyverse", "lavaan", "semPlot",
+  "performance", "easystats", "kableExtra",
+  "mediation", "flexplot"
+)
+
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
+
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes de mediação carregados!\n")
+```
+
+---
+
+## 📖 Contexto do Estudo
+
+::: {.callout-tip}
+## Hipótese Teórica
+
+**Variáveis:**
+- `Sociabilidade`: Escore de questionário (X)
+- `IMC1`: Índice de Massa Corporal (M - mediador?)
+- `Treinos`: Número de treinos/mês (Y)
+- `Idade`: Anos (covariável)
+
+**Hipótese:**
+"**Sociabilidade** aumenta **Treinos**, mas esse efeito é **mediado por IMC**"
+
+Ou seja: Pessoas mais sociáveis frequentam mais a academia **porque** isso afeta seu IMC?
+:::
+
+---
+
+## 📥 Carregar Dados
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-soc_treinos = lm(Treinos ~ Sociabilidade, data = original) #valor de c
-kable(summary(soc_treinos)$coef)
+dados <- read.spss("DADOS PATH.sav", to.data.frame = TRUE)
+glimpse(dados)
 ```
 
-### Valor de a
+---
+
+## 🎯 Modelo 1: IMC como Mediador
+
+### Diagrama Conceitual
+
+```
+Sociabilidade → IMC1 → Treinos
+       \________________/
+         (efeito direto c')
+```
+
+::: {.callout-note}
+## Terminologia de Mediação
+
+**Caminho a:** X → M (Sociabilidade → IMC)  
+**Caminho b:** M → Y (IMC → Treinos)  
+**Caminho c':** X → Y direto (efeito após controlar M)  
+**Caminho c:** X → Y total (sem M no modelo)
+
+**Efeito Indireto:** a × b  
+**Efeito Total:** c = c' + (a × b)
+
+**Mediação completa:** c' = 0 (todo efeito via M)  
+**Mediação parcial:** c' ≠ 0 (parte do efeito é direto)
+:::
+
+---
+
+### Especificar Modelo
+
+```{r}
+#| echo: true
+
+modelo_med1 <- "
+  # Regressões
+  Treinos ~ c_*Sociabilidade + b*IMC1
+  IMC1 ~ a*Sociabilidade
+  
+  # Efeitos calculados
+  Indireto := a*b
+  Total := a*b + c_
+"
+```
+
+---
+
+### Ajustar com Bootstrap
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-soc_imc = lm(IMC1 ~ Sociabilidade, data = original) 
-kable(summary(soc_imc)$coef)
-
-```
-
-### valor de b e de c'
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-soc_E_imc_treinos = lm(Treinos ~ IMC1 + Sociabilidade, data = original) 
-kable(summary(soc_E_imc_treinos)$coef)
-
-```
-
-Os resultados são diferentes. As mediações apenas por regressão linear não apresentam o resultado do efeito indireto, mostrado no resultado do exercício anterior
-
-### Diagrama do modelo
-
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-
-diagrama_1 <- semPaths(
-          object = fit_1,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
+fit_med1 <- sem(
+  modelo_med1,
+  data = dados,
+  se = "bootstrap",
+  bootstrap = 500
 )
 ```
 
-## Modelo 2 (Opcional 1)
+::: {.callout-tip}
+## Por que Bootstrap?
 
-Refaça o modelo tendo a variável Idade como mediador.
+**Efeitos indiretos** (a × b) não têm distribuição normal!
 
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
+Bootstrap:
+- Reamostra dados 500× com reposição
+- Calcula a × b em cada amostra
+- IC baseado em distribuição empírica
 
-modelo_2 = "Treinos ~ c_*Sociabilidade + b*Idade 
-            Idade ~ a*Sociabilidade
-            Indireto := a*b
-            Total_direto_C := a*b + c_"
+**Mais robusto** que método de Sobel para mediação.
+:::
 
-```
-
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
-
-fit_2 = sem(modelo_2, original, se = "bootstrap", bootstrap = 500)
-
-kable(parameterEstimates(fit_2)) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE) 
-
-```
+---
 
 ### Resultados
 
-1.  **Regressões:**
-
-    -   A relação estimada entre `Sociabilidade` e `Treinos` é 0.485, mas não é estatisticamente significativa (p = 0.384).
-
-    -   A relação estimada entre `Idade` e `Treinos` é 1.543, indicando uma relação positiva e significativa (p = 0.001).
-
-    -   A relação estimada entre `Sociabldd` e `Idade` é 0.057 e não é estatisticamente significativa (p = 0.592).
-
-2.  **Parâmetros Definidos:**
-
-    -   O efeito `Indireto` é estimado como 0.088, mas não é estatisticamente significativo (p = 0.605). Isso sugere que a variável `Idade` não medeia significativamente a relação entre `Sociabilidade` e `Treinos`.
-
-    -   O efeito total direto da Sociabilidae nos Treinos é estimado como 0.574 e não é estatisticamente significativo (p = 0.345).
-
-Os resultados sugerem que a variável `Idade` está significativamente relacionada à variável `Treinos`, enquanto a variável `Sociabilidade` não tem uma relação significativa com `Treinos`. O efeito indireto através de `Idade` não é estatisticamente significativo, e o efeito total direto também não é significativo.
-
-### Diagrama do modelo 2
-
-```{r }
+```{r}
 #| echo: true
-#| message: false
-#| warning: false
 
-diagrama_2 <- semPaths(
-          object = fit_2,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
-)
+parameterEstimates(fit_med1) %>%
+  dplyr::select(lhs, op, rhs, label, est, se, z,  pvalue, ci.lower, ci.upper) %>%
+  kable(
+    digits = 3,
+    col.names = c("VD", "←", "VI", "Param", "β", "EP", "z", "p", "IC_low", "IC_up"),
+    caption = "Estimativas do Modelo de Mediação 1"
+  )
 ```
 
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
+---
 
-mediation_model_2 = lm(Idade ~ Sociabilidade, data = original)
-kable(summary(mediation_model_2)$coef)
+### Interpretação - Modelo 1
 
-# library(flexplot)
-# visualize(mediation_model_2) análise gráfica do modelo
-```
+::: {.callout-warning}
+## 📊 Resultado: Mediação NÃO Confirmada
 
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
+**Caminhos:**
+- **a (Soc → IMC):** β = 0.019, p = 0.693 → **NS**
+- **b (IMC → Treino):** β = -1.650, p = 0.100 → **NS**
+- **c' (Soc → Treino direto):** β = 0.605, p = 0.360 → **NS**
 
-full_model_2 = lm(Treinos ~ Idade + Sociabilidade, data = original)
-kable(summary(full_model_2)$coef)
-#visualize(full_model_2) análise gráfica do modelo
-```
+**Efeito Indireto:** β = -0.031, p = 0.717 → **NS**
 
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
+**Conclusão:**
+IMC **NÃO medeia** a relação entre Sociabilidade e Treinos.
 
-results_2 = mediate(mediation_model_2, full_model_2,
-                  treat = "Sociabilidade",
-                  mediator = "Idade",
-                  boot = TRUE,
-                  sims = 500)
+**Modelo teórico não se sustenta!**
+:::
 
-summary(results_2)
-```
+---
 
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-mediate_plot(Treinos ~ Idade  + Sociabilidade  , data = original)
-```
-
-## Modelo 3 (Opcional 2)
-
-Testando outros modelos, foi possível observar que o efeito do IMC sobre o treinamento é mediado pela Idade
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-modelo_3 = "Treinos ~ c_*IMC1 + b*Idade 
-            Idade ~ a*IMC1
-            Indireto := a*b
-            Total_direto_C := a*b + c_"
-
-```
-
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-
-fit_3 = sem(modelo_3, original, se = "bootstrap", bootstrap = 500) #demora um tempo para executar
-```
-
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-
-kable(parameterEstimates(fit_3)) # parâmetros adicionais summary(fit_1, fit.measures = TRUE, standardized = TRUE, rsquare = TRUE)
-```
-
-### Resultados
-
-1.  **Regressões:**
-
-    -   A relação estimada entre `IMC1` (Índice de Massa Corporal) e `Treinos` é -2.778, indicando uma relação negativa e significativa (p = 0.006).
-
-    -   A relação estimada entre `Idade` e `Treinos` é 1.928, indicando uma relação positiva e significativa (p = 0.000).
-
-    -   A relação estimada entre `IMC` e `Idade` é 0.608 e é estatisticamente significativa (p = 0.005).
-
-2.  **Parâmetros Definidos:**
-
-    -   O efeito `Indireto` é estimado como 1.171 e é estatisticamente significativo (p = 0.030). Isso sugere que a variável `Idade` medeia significativamente a relação entre `IMC` e `Treinos`.
-
-    -   O efeito total direto de IMC nos Treinos é estimado como -1.607, mas não é estatisticamente significativo (p = 0.114).
-
-Os resultados indicam que a variável `IMC` está significativamente relacionada negativamente à variável `Treinos`. A variável `Idade` atua como mediadora nessa relação. O efeito indireto é estimado como 1.171 (p = 0.030), indicando que a inclusão de `Idade` no modelo altera a relação entre `IMC1` e `Treinos`, tornando-a mais negativa do que a relação direta.
-
-## Diagrama do modelo 3
-
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-
-diagrama_3 <- semPaths(
-          object = fit_3,
-          what = "path",
-          whatLabels = "par",
-          style = "ram",
-          layout = "tree",
-          rotation = 2,
-          sizeMan = 7,
-          sizeLat = 7,
-          color = "lightgray",
-          edge.label.cex = 1.2,
-          label.cex = 1.3
-)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-mediation_model_3 = lm(Idade ~ IMC1, data = original)
-summary(mediation_model_3)$coef
-visualize(mediation_model_3) 
-
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-full_model_3 = lm(Treinos ~ Idade + IMC1, data = original)
-summary(full_model_3)$coef
-visualize(full_model_3)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-results_3 = mediate(mediation_model_3, full_model_3,
-                  treat = "IMC1",
-                  mediator = "Idade",
-                  boot = TRUE,
-                  sims = 500)
-
-summary(results_3)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-mediate_plot(Treinos ~ Idade  + IMC1  , data = original)
-
-```
-
-## Lista 8.1 resolvida no SPSS
-
-{{< video https://www.youtube.com/watch?v=NstttDePtcM title='Structural Equation Modeling (SEM) - Moderação e Mediação - Aula Prática #8.1' >}}
-
-## Extras!
-
-Outro tipo de resolução baseada no vídeo do Dustin Fife (How to do a mediation analysis in R...with visuals!)
-
-```{r }
-#| echo: true
-#| message: false
-#| warning: false
-# Mediação com visualização
-library(mediation)
-library(flexplot)
-
-
-mediation_model = lm(IMC1 ~ Sociabilidade, data = original)
-summary(mediation_model)
-
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-visualize(mediation_model, plot = "model")
-
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-full_model = lm(Treinos ~ IMC1 + Sociabilidade, data = original)
-summary(full_model)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-visualize(full_model)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-results = mediate(mediation_model, full_model,
-                  treat = "Sociabilidade",
-                  mediator = "IMC1",
-                  boot = TRUE,
-                  sims = 500)
-```
-
-```{r  }
-summary(results)
-```
-
-```{r  }
-#| echo: true
-#| message: false
-#| warning: false
-
-mediate_plot(Treinos ~ IMC1 +  Sociabilidade, data = original) # Ordem em que aparece as variáveis é muito importante. A última variável será sempre a variável DEPENDENTE (X). Todas as outras que vierem antes dela, serão tratadas como MEDIADORAS (no caso IMC1) 
-```
-
-## Referências
-
-<https://www.youtube.com/watch?v=_4Fu8SZID2k>
-
-## Versões dos pacotes
+### Diagrama do Modelo 1
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
+#| fig-width: 8
+#| fig-height: 6
 
+semPaths(
+  fit_med1,
+  what = "std",
+  whatLabels = "std",
+  style = "ram",
+  layout = "tree",
+  rotation = 2,
+  sizeMan = 7,
+  edge.label.cex = 1,
+  label.cex = 1.2,
+  color = list(man = "lightblue")
+)
+```
+
+---
+
+## 🔍 Comparação: SEM vs Regressões Separadas
+
+### Regressão 1: Efeito Total (c)
+
+```{r}
+#| echo: true
+
+# Sociabilidade → Treinos (sem mediador)
+reg_total <- lm(Treinos ~ Sociabilidade, data = dados)
+
+summary(reg_total)$coefficients %>%
+  kable(digits = 3, caption = "Efeito Total (c)")
+```
+
+---
+
+### Regressão 2: Caminho a
+
+```{r}
+#| echo: true
+
+# Sociabilidade → IMC
+reg_a <- lm(IMC1 ~ Sociabilidade, data = dados)
+
+summary(reg_a)$coefficients %>%
+  kable(digits = 3, caption = "Caminho a (X → M)")
+```
+
+---
+
+### Regressão 3: Caminhos b e c'
+
+```{r}
+#| echo: true
+
+# IMC + Sociabilidade → Treinos
+reg_bc <- lm(Treinos ~ IMC1 + Sociabilidade, data = dados)
+
+summary(reg_bc)$coefficients %>%
+  kable(digits = 3, caption = "Caminhos b (M → Y) e c' (X → Y direto)")
+```
+
+---
+
+### Diferença: SEM vs Regressões
+
+::: {.callout-important}
+## Por que SEM é Superior?
+
+**Regressões separadas:**
+- ✓ Estimam a, b, c'
+- ✗ **NÃO** calculam efeito indireto (a × b)
+- ✗ **NÃO** fornecem IC para mediação
+- ✗ Não testam significância da mediação
+
+**SEM (lavaan):**
+- ✓ Estima todos os caminhos
+- ✓ **Calcula efeito indireto** automaticamente
+- ✓ **Bootstrap IC** para a × b
+- ✓ **Teste formal** de mediação
+
+**Conclusão:** Use SEM para mediação!
+:::
+
+---
+
+## 🎯 Modelo 2: Idade como Mediador
+
+::: {.callout-tip}
+## Nova Hipótese
+
+**E se:** Sociabilidade → Idade → Treinos?
+
+(Hipótese pouco plausível, mas vamos testar!)
+:::
+
+```{r}
+#| echo: true
+
+modelo_med2 <- "
+  Treinos ~ c_*Sociabilidade + b*Idade
+  Idade ~ a*Sociabilidade
+  
+  Indireto := a*b
+  Total := a*b + c_
+"
+
+fit_med2 <- sem(modelo_med2, data = dados, 
+                se = "bootstrap", bootstrap = 500)
+```
+
+---
+
+### Resultados - Modelo 2
+
+```{r}
+#| echo: true
+
+parameterEstimates(fit_med2) %>%
+  filter(op %in% c("~", ":=")) %>%
+  dplyr::select(lhs, op, rhs, label, est, se, z, pvalue, ci.lower, ci.upper) %>%
+  kable(digits = 3, caption = "Mediação via Idade")
+```
+
+::: {.callout-note}
+## 📊 Resultado
+
+**Caminhos:**
+- **a (Soc → Idade):** p = 0.592 → **NS**
+- **b (Idade → Treino):** p = 0.001 → **Sig!**
+- **c':** p = 0.384 → **NS**
+
+**Efeito Indireto:** p = 0.605 → **NS**
+
+**Conclusão:**
+Idade prediz Treinos, mas **não medeia** efeito de Sociabilidade.
+:::
+
+---
+
+### Diagrama - Modelo 2
+
+```{r}
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+
+semPaths(
+  fit_med2,
+  what = "std",
+  whatLabels = "std",
+  style = "ram",
+  layout = "tree",
+  rotation = 2,
+  sizeMan = 7,
+  edge.label.cex = 1,
+  color = list(man = "lightyellow")
+)
+```
+
+---
+
+## 🎯 Modelo 3: IMC → Idade → Treinos
+
+::: {.callout-tip}
+## Terceira Hipótese
+
+**Explorando:** IMC → Idade → Treinos
+
+"IMC influencia Treinos **através de** Idade"
+:::
+
+```{r}
+#| echo: true
+
+modelo_med3 <- "
+  Treinos ~ c_*IMC1 + b*Idade
+  Idade ~ a*IMC1
+  
+  Indireto := a*b
+  Total := a*b + c_
+"
+
+fit_med3 <- sem(modelo_med3, data = dados,
+                se = "bootstrap", bootstrap = 500)
+```
+
+---
+
+### Resultados - Modelo 3
+
+```{r}
+#| echo: true
+
+parameterEstimates(fit_med3) %>%
+  filter(op %in% c("~", ":=")) %>%
+  dplyr::select(lhs, op, rhs, label, est, se, z, pvalue, ci.lower, ci.upper) %>%
+  kable(digits = 3, caption = "Mediação: IMC → Idade → Treinos")
+```
+
+::: {.callout-tip}
+## ✓ Mediação Confirmada!
+
+**Caminhos:**
+- **a (IMC → Idade):** β = 0.608, p = 0.005 → **Sig!**
+- **b (Idade → Treino):** β = 1.928, p < 0.001 → **Sig!**
+- **c' (IMC → Treino direto):** β = -2.778, p = 0.006 → **Sig!**
+
+**Efeito Indireto:** β = 1.171, p = 0.030 → **Sig!**
+
+**Interpretação:**
+- IMC **negativamente** relacionado a Treinos (direto)
+- Mas IMC **positivamente** relacionado a Idade
+- E Idade **positivamente** relacionada a Treinos
+- **Mediação parcial:** Parte do efeito é indireto (via Idade)
+
+**Efeito supressor:** Indireto e direto têm **sinais opostos**!
+:::
+
+---
+
+### Diagrama - Modelo 3
+
+```{r}
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+
+semPaths(
+  fit_med3,
+  what = "std",
+  whatLabels = "std",
+  style = "ram",
+  layout = "tree",
+  rotation = 2,
+  sizeMan = 7,
+  edge.label.cex = 1,
+  color = list(man = "lightcoral")
+)
+```
+
+---
+
+## 📊 Análise Complementar: Pacote `mediation`
+
+```{r}
+#| echo: true
+
+# Caminho a
+modelo_a <- lm(Idade ~ IMC1, data = dados)
+
+# Caminhos b e c'
+modelo_completo <- lm(Treinos ~ Idade + IMC1, data = dados)
+
+# Análise de mediação
+resultado_med <- mediate(
+  modelo_a,
+  modelo_completo,
+  treat = "IMC1",
+  mediator = "Idade",
+  boot = TRUE,
+  sims = 500
+)
+
+summary(resultado_med)
+```
+
+---
+
+### Visualização da Mediação
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+mediate_plot(Treinos ~ Idade + IMC1, data = dados)
+```
+
+::: {.callout-tip}
+## 🔍 Interpretando o Gráfico
+
+**Painel 1 (esquerda):** IMC → Idade (caminho a)  
+**Painel 2 (direita):** Idade → Treinos (caminho b)  
+**Painel 3 (centro):** IMC → Treinos direto (c')
+
+Linhas mostram relação entre variáveis, controlando outras.
+:::
+
+---
+
+## 📊 Comparação dos Três Modelos
+
+```{r}
+#| echo: true
+
+# Extrair efeitos indiretos
+efeitos <- data.frame(
+  Modelo = c(
+    "1: Soc → IMC → Treino",
+    "2: Soc → Idade → Treino",
+    "3: IMC → Idade → Treino"
+  ),
+  Indireto_β = c(
+    parameterEstimates(fit_med1)[8, "est"],
+    parameterEstimates(fit_med2)[8, "est"],
+    parameterEstimates(fit_med3)[8, "est"]
+  ),
+  Indireto_p = c(
+    parameterEstimates(fit_med1)[8, "pvalue"],
+    parameterEstimates(fit_med2)[8, "pvalue"],
+    parameterEstimates(fit_med3)[8, "pvalue"]
+  )
+) %>%
+  mutate(
+    Significativo = ifelse(Indireto_p < 0.05, "✓ Sim", "✗ Não"),
+    across(where(is.numeric), ~round(., 3))
+  )
+
+kable(efeitos, caption = "Comparação de Efeitos Indiretos")
+```
+
+::: {.callout-note}
+## 🏆 Modelo Vencedor
+
+**Modelo 3** é o único com mediação significativa!
+
+**Mensagem:** IMC afeta Treinos tanto:
+- **Diretamente** (negativamente)
+- **Indiretamente** via Idade (positivamente)
+
+Supressão: Efeito total pode ser enganoso!
+:::
+
+---
+
+## 🎓 Conceitos Avançados
+
+::: {.callout-tip collapse="true"}
+## 📚 Tipos de Mediação
+
+**1. Mediação Completa**
+- c' = 0 (NS)
+- Todo efeito via M
+- Raro na prática
+
+**2. Mediação Parcial**
+- c' ≠ 0 (Sig)
+- Efeito direto + indireto
+- Mais comum
+
+**3. Mediação Inconsistente**
+- c' e (a×b) têm **sinais opostos**
+- "Supressão"
+- Modelo 3 é exemplo!
+
+**4. Não-Mediação**
+- a×b = 0 (NS)
+- M não explica X → Y
+- Modelos 1 e 2
+:::
+
+---
+
+::: {.callout-tip collapse="true"}
+## 🗺️ Checklist de Mediação
+
+**1. Requisitos Teóricos**
+- [ ] X → M → Y faz sentido temporal
+- [ ] M é consequência de X (não pré-existente)
+- [ ] Mecanismo plausível
+
+**2. Requisitos Estatísticos**
+- [ ] Caminho a significativo (X → M)
+- [ ] Caminho b significativo (M → Y, controlando X)
+- [ ] Efeito indireto (a×b) significativo
+
+**3. Não é Necessário**
+- ✗ Efeito total (c) ser significativo
+- ✗ Baron & Kenny desatualizado!
+
+**4. Bootstrap**
+- [ ] Usar bootstrap (≥ 500 simulações)
+- [ ] IC não contém zero → mediação
+
+**5. Alternativas**
+- [ ] Considerar variáveis confundidoras
+- [ ] Testar mediação reversa
+- [ ] Análise de sensibilidade
+:::
+
+---
+
+## 📚 Material Complementar
+
+{{< video https://www.youtube.com/watch?v=NstttDePtcM title='SEM - Moderação e Mediação - Aula Prática #8.1' >}}
+
+---
+
+### Recursos Adicionais
+
+::: {.callout-note collapse="true"}
+## 📖 Aprofundamento
+
+**Tutoriais:**
+- [Simple Mediation in R](https://www.youtube.com/watch?v=nfQOCy9xMnk)
+- [Dustin Fife - Mediation with Visuals](https://www.youtube.com/watch?v=_4Fu8SZID2k)
+
+**Leituras:**
+- Hayes (2017). *Introduction to Mediation, Moderation*
+- MacKinnon (2008). *Introduction to Statistical Mediation Analysis*
+
+**Tópicos Avançados:**
+- Mediação múltipla (M1, M2...)
+- Mediação moderada
+- Mediação multinível
+- Análise de sensibilidade (Sensitivity analysis)
+:::
+
+---
+
+## 🔧 Informações de Sessão
+
+```{r}
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 8.1
+
+Nesta lista você:
+
+✅ Compreendeu **mediação vs moderação**  
+✅ Especificou modelos de **mediação em lavaan**  
+✅ Calculou **efeitos indiretos** com bootstrap  
+✅ Interpretou **caminhos a, b, c, c'**  
+✅ Identificou **mediação parcial** e **supressão**  
+✅ Comparou **SEM vs regressões** separadas  
+✅ Usou **`mediation` package** para análise complementar  
+
+**Conceitos-chave:**
+- Mediação explica **como/por que** X afeta Y
+- Efeito indireto = a × b
+- Bootstrap para IC robusto
+- c = c' + (a × b)
+- Mediação parcial mais comum que completa
+- SEM superior a regressões separadas
+
+**Aplicações:**
+- Testar mecanismos psicológicos
+- Validar teorias causais
+- Identificar variáveis-alvo para intervenção
+- Análise de processos mediacionais
+
+**Armadilhas comuns:**
+- ✗ Assumir causalidade sem desenho apropriado
+- ✗ Ignorar confundidores
+- ✗ Mediação sem fundamentação teórica
+- ✗ Usar método Baron & Kenny desatualizado
+:::
+
+---
+
+::: {.callout-tip appearance="simple"}
+## 🎉 Parabéns!
+
+Você completou **todas as 10 listas** do tutorial de Modelos Estatísticos em R!
+
+**Jornada percorrida:**
+1. ✓ Introdução e GLM básico
+2. ✓ GEE com diferentes distribuições
+3. ✓ Matrizes de covariância (GMM)
+4. ✓ Modelos hierárquicos e ICC
+5. ✓ Modelos lineares generalizados
+6. ✓ Análise de sobrevida (Kaplan-Meier e Cox)
+7. ✓ Cox tempo-dependente
+8. ✓ Séries temporais (ARIMA)
+9. ✓ CFA e Path Analysis
+10. ✓ Mediação e Moderação
+
+**Próximos passos:**
+- Aplicar em seus dados reais
+- Consultar material complementar
+- Contribuir com feedback
+- Compartilhar conhecimento!
+
+**Bons estudos e sucesso em suas análises! 📊🚀**
+:::

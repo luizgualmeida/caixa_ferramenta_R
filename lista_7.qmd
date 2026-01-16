@@ -1,12 +1,12 @@
 # Lista 7: Séries Temporais (ARIMA) {.unnumbered}
 
-::: {.callout-note appearance="simple" icon=false}
+::: {.callout-note appearance="simple" icon="false"}
 ## Objetivo da Lista
 
 Domine **modelos ARIMA** para análise de séries temporais: avaliar estacionaridade, identificar padrões sazonais e fazer previsões futuras. Trabalharemos com dados de consumo de cigarros e salários ao longo do tempo.
 :::
 
----
+------------------------------------------------------------------------
 
 ## 📦 Pacotes
 
@@ -29,33 +29,25 @@ invisible(lapply(pacotes, library, character.only = TRUE))
 cat("✓ Pacotes de séries temporais carregados!\n")
 ```
 
----
+------------------------------------------------------------------------
 
 ## 🔍 O que é ARIMA?
 
-::: {.callout-tip}
+::: callout-tip
 ## ARIMA = AutoRegressive Integrated Moving Average
 
 Modelo para séries temporais que combina três componentes:
 
-**AR (p)** - AutoRegressivo
-- Usa valores **passados** da série
-- "O hoje depende do ontem"
-- p = número de defasagens (lags)
+**AR (p)** - AutoRegressivo - Usa valores **passados** da série - "O hoje depende do ontem" - p = número de defasagens (lags)
 
-**I (d)** - Integrado
-- Número de **diferenças** para tornar série estacionária
-- d = 0 (estacionária), d = 1 (1ª diferença), etc.
+**I (d)** - Integrado - Número de **diferenças** para tornar série estacionária - d = 0 (estacionária), d = 1 (1ª diferença), etc.
 
-**MA (q)** - Média Móvel
-- Usa **erros passados** da série
-- "Correções baseadas em erros anteriores"
-- q = número de termos de erro
+**MA (q)** - Média Móvel - Usa **erros passados** da série - "Correções baseadas em erros anteriores" - q = número de termos de erro
 
 **Notação:** ARIMA(p, d, q)
 :::
 
----
+------------------------------------------------------------------------
 
 ## 🧹 Preparação do Ambiente
 
@@ -71,22 +63,19 @@ options(scipen = 999, stringsAsFactors = FALSE)
 set.seed(42)
 ```
 
----
+------------------------------------------------------------------------
 
 ## 📥 Parte 1: Estacionaridade (Dados de Cigarros)
 
-::: {.callout-important}
+::: callout-important
 ## Conceito Fundamental: Estacionaridade
 
-Uma série é **estacionária** quando:
-- **Média constante** ao longo do tempo
-- **Variância constante**
-- **Autocorrelação** depende apenas da defasagem, não do tempo
+Uma série é **estacionária** quando: - **Média constante** ao longo do tempo - **Variância constante** - **Autocorrelação** depende apenas da defasagem, não do tempo
 
 **Por que importa?** Modelos ARIMA requerem estacionaridade!
 :::
 
----
+------------------------------------------------------------------------
 
 ### Carregar Dados
 
@@ -99,7 +88,7 @@ db_cigarro <- read.spss("CigarrosROD_1.sav", to.data.frame = TRUE)
 glimpse(db_cigarro)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Inspeção Visual
 
@@ -119,7 +108,7 @@ abline(h = media_cigarros, col = "blue", lty = 2, lwd = 2)
 legend("topright", legend = "Média", col = "blue", lty = 2, lwd = 2)
 ```
 
-::: {.callout-warning}
+::: callout-warning
 ## 📊 Diagnóstico Visual
 
 Valores **desviam bastante da média** → Série **NÃO é estacionária**
@@ -127,19 +116,17 @@ Valores **desviam bastante da média** → Série **NÃO é estacionária**
 Observe tendência de queda ao longo do tempo.
 :::
 
----
+------------------------------------------------------------------------
 
 ### Teste Augmented Dickey-Fuller (ADF)
 
-::: {.callout-tip}
+::: callout-tip
 ## Teste ADF
 
-**H₀:** Série é **não-estacionária** (possui raiz unitária)  
+**H₀:** Série é **não-estacionária** (possui raiz unitária)\
 **H₁:** Série é **estacionária**
 
-**Decisão:**
-- p < 0.05 → Rejeita H₀ → Estacionária ✓
-- p > 0.05 → Não rejeita H₀ → Não-estacionária ✗
+**Decisão:** - p \< 0.05 → Rejeita H₀ → Estacionária ✓ - p \> 0.05 → Não rejeita H₀ → Não-estacionária ✗
 :::
 
 ```{r}
@@ -148,15 +135,15 @@ Observe tendência de queda ao longo do tempo.
 adf.test(db_cigarro$cigarrosROD)
 ```
 
-::: {.callout-note}
+::: callout-note
 ## Resultado
 
-**p > 0.05** → Série **não é estacionária**
+**p \> 0.05** → Série **não é estacionária**
 
 Precisamos transformá-la!
 :::
 
----
+------------------------------------------------------------------------
 
 ### Função de Autocorrelação (ACF)
 
@@ -180,7 +167,7 @@ ggtsdisplay(db_cigarro$cigarrosROD,
 **Lags candidatos:** Onde ACF cruza o limiar pela primeira vez
 :::
 
----
+------------------------------------------------------------------------
 
 ### Teste de Ljung-Box
 
@@ -206,7 +193,7 @@ kable(head(resultados, 10), digits = 4,
       caption = "Teste de Ljung-Box por Lag")
 ```
 
----
+------------------------------------------------------------------------
 
 ### Transformação: Diferenciação
 
@@ -224,7 +211,7 @@ serie_diff <- diff(db_cigarro$cigarrosROD, differences = n_diffs)
 adf.test(serie_diff)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Visualização Pós-Transformação
 
@@ -242,15 +229,15 @@ abline(h = media_diff, col = "red", lty = 2, lwd = 2)
 abline(h = 0, col = "gray", lty = 3)
 ```
 
-::: {.callout-tip}
+::: callout-tip
 ## ✓ Série Agora Estacionária!
 
-- Oscila em torno da média (linha vermelha)
-- Variância constante
-- ADF test significativo (p < 0.05)
+-   Oscila em torno da média (linha vermelha)
+-   Variância constante
+-   ADF test significativo (p \< 0.05)
 :::
 
----
+------------------------------------------------------------------------
 
 ## 📊 Parte 2: Modelagem ARIMA (Dados de Salários)
 
@@ -266,7 +253,7 @@ db_salarios <- read.spss("dados series temporais.sav",
 glimpse(db_salarios)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Criar Objeto de Série Temporal
 
@@ -283,7 +270,7 @@ plot(ts_men, main = "Salários Masculinos (1989-)",
      ylab = "Salário", xlab = "Tempo")
 ```
 
----
+------------------------------------------------------------------------
 
 ### Plot Sazonal
 
@@ -299,7 +286,7 @@ seasonplot(ts_men,
            main = "Padrão Sazonal de Salários")
 ```
 
----
+------------------------------------------------------------------------
 
 ### Diagnóstico da Série
 
@@ -311,7 +298,7 @@ seasonplot(ts_men,
 ggtsdisplay(ts_men, main = "Diagnóstico: Salários Masculinos")
 ```
 
----
+------------------------------------------------------------------------
 
 ## 🎯 Ajustando Modelos ARIMA
 
@@ -324,7 +311,7 @@ modelo_100 <- Arima(db_salarios$men, order = c(1, 0, 0))
 summary(modelo_100)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Modelo 2: ARIMA(0,1,0)
 
@@ -335,12 +322,12 @@ modelo_010 <- Arima(db_salarios$men, order = c(0, 1, 0))
 summary(modelo_010)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Modelo 3: Auto ARIMA
 
-::: {.callout-tip}
-## `auto.arima()` 
+::: callout-tip
+## `auto.arima()`
 
 Função que **automaticamente** seleciona os melhores parâmetros (p, d, q) minimizando AIC/BIC.
 :::
@@ -360,7 +347,7 @@ modelo_auto <- auto.arima(db_salarios$men)
 summary(modelo_auto)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Comparação de Modelos
 
@@ -384,7 +371,7 @@ modelos_comp <- modelos_comp %>%
 kable(modelos_comp, caption = "Comparação de Modelos (★ = melhor)")
 ```
 
----
+------------------------------------------------------------------------
 
 ### Visualização: Ajustado vs Real
 
@@ -415,7 +402,7 @@ ggplot(df_plot, aes(x = Tempo)) +
   theme(legend.position = "bottom")
 ```
 
----
+------------------------------------------------------------------------
 
 ## 🔧 Modelo com Covariáveis
 
@@ -431,7 +418,7 @@ modelo_com_covars <- auto.arima(db_salarios$men, xreg = covars)
 summary(modelo_com_covars)
 ```
 
----
+------------------------------------------------------------------------
 
 ### Coeficientes e Significância
 
@@ -459,7 +446,7 @@ resultados <- data.frame(
 kable(resultados, caption = "Coeficientes do Modelo com Covariáveis")
 ```
 
----
+------------------------------------------------------------------------
 
 ## 🔮 Previsões (Forecasting)
 
@@ -486,7 +473,7 @@ autoplot(fcast_men) +
   theme_minimal()
 ```
 
----
+------------------------------------------------------------------------
 
 ### Salários Femininos: Comparação
 
@@ -514,18 +501,14 @@ autoplot(fcast_women) +
   theme_minimal()
 ```
 
----
+------------------------------------------------------------------------
 
 ## ✅ Diagnóstico de Resíduos
 
-::: {.callout-important}
+::: callout-important
 ## Por que Verificar Resíduos?
 
-Resíduos devem ser **ruído branco**:
-- Média zero
-- Variância constante
-- Sem autocorrelação
-- Normalmente distribuídos
+Resíduos devem ser **ruído branco**: - Média zero - Variância constante - Sem autocorrelação - Normalmente distribuídos
 
 Se resíduos têm padrão → Modelo não capturou toda a informação!
 :::
@@ -541,66 +524,54 @@ checkresiduals(modelo_auto)
 ::: {.callout-note collapse="true"}
 ## 🔍 Interpretando Diagnósticos
 
-**Gráfico 1 (Resíduos ao longo do tempo):**
-- Deve oscilar aleatoriamente em torno de zero
-- Sem padrões ou tendências
+**Gráfico 1 (Resíduos ao longo do tempo):** - Deve oscilar aleatoriamente em torno de zero - Sem padrões ou tendências
 
-**Gráfico 2 (ACF dos resíduos):**
-- Nenhuma barra significativa (exceto lag 0)
-- Indica ausência de autocorrelação restante
+**Gráfico 2 (ACF dos resíduos):** - Nenhuma barra significativa (exceto lag 0) - Indica ausência de autocorrelação restante
 
-**Gráfico 3 (Histograma):**
-- Aproximadamente normal
-- Centrado em zero
+**Gráfico 3 (Histograma):** - Aproximadamente normal - Centrado em zero
 
-**Teste de Ljung-Box:**
-- p > 0.05 → Resíduos são ruído branco ✓
+**Teste de Ljung-Box:** - p \> 0.05 → Resíduos são ruído branco ✓
 :::
 
----
+------------------------------------------------------------------------
 
 ## 📚 Material Complementar
 
 {{< video https://www.youtube.com/watch?v=qTQ1YDgyByE title='Séries Temporais (ARIMA) - Aula Prática #7' >}}
 
----
+------------------------------------------------------------------------
 
 ### Recursos Adicionais
 
 ::: {.callout-note collapse="true"}
 ## 📖 Leituras e Vídeos Recomendados
 
-**Livros:**
-- Hyndman & Athanasopoulos. *Forecasting: Principles and Practice*
+**Livros:** - Hyndman & Athanasopoulos. *Forecasting: Principles and Practice*
 
-**Tutoriais Online:**
-- [Prophet (Facebook)](https://facebook.github.io/prophet/docs/installation.html#r)
-- [RPubs - Time Series with Prophet](https://rpubs.com/mpleo/timeseries_prophet)
+**Tutoriais Online:** - [Prophet (Facebook)](https://facebook.github.io/prophet/docs/installation.html#r) - [RPubs - Time Series with Prophet](https://rpubs.com/mpleo/timeseries_prophet)
 
-**Vídeos em Português:**
-- [ARIMA em R - Tutorial Completo](https://www.youtube.com/watch?v=Txuo9JQjnKE)
-- [Playlist Séries Temporais](https://www.youtube.com/watch?v=RJzmHkGWCxs&list=PLEuzmtv9IuT_vg5oE0lQyZR-wgbVeGztt)
+**Vídeos em Português:** - [ARIMA em R - Tutorial Completo](https://www.youtube.com/watch?v=Txuo9JQjnKE) - [Playlist Séries Temporais](https://www.youtube.com/watch?v=RJzmHkGWCxs&list=PLEuzmtv9IuT_vg5oE0lQyZR-wgbVeGztt)
 :::
 
----
+------------------------------------------------------------------------
 
 ## 🎯 Fluxo de Trabalho ARIMA
 
-::: {.callout-tip}
+::: callout-tip
 ## Checklist Passo-a-Passo
 
-1. **Visualizar** a série
-2. **Testar estacionaridade** (ADF, KPSS)
-3. **Transformar** se necessário (diferenciação, Box-Cox)
-4. **Identificar** p, d, q (ACF, PACF, ou auto.arima)
-5. **Ajustar** modelo
-6. **Diagnosticar** resíduos
-7. **Comparar** modelos (AIC, BIC)
-8. **Prever** valores futuros
-9. **Validar** com dados holdout
+1.  **Visualizar** a série
+2.  **Testar estacionaridade** (ADF, KPSS)
+3.  **Transformar** se necessário (diferenciação, Box-Cox)
+4.  **Identificar** p, d, q (ACF, PACF, ou auto.arima)
+5.  **Ajustar** modelo
+6.  **Diagnosticar** resíduos
+7.  **Comparar** modelos (AIC, BIC)
+8.  **Prever** valores futuros
+9.  **Validar** com dados holdout
 :::
 
----
+------------------------------------------------------------------------
 
 ## 🔧 Informações de Sessão
 
@@ -608,32 +579,22 @@ checkresiduals(modelo_auto)
 report(sessionInfo())
 ```
 
----
+------------------------------------------------------------------------
 
 ::: {.callout-note appearance="simple"}
 ## 🎓 Resumo da Lista 7
 
 Nesta lista você:
 
-✅ Compreendeu **conceitos fundamentais** de séries temporais  
-✅ Avaliou **estacionaridade** visualmente e com testes  
-✅ Aplicou **diferenciação** para tornar séries estacionárias  
-✅ Ajustou modelos **ARIMA** manualmente e com auto.arima  
-✅ Incluiu **covariáveis** em modelos ARIMA  
-✅ Fez **previsões** futuras com intervalos de confiança  
-✅ Diagnosticou **resíduos** para validar modelos  
+✅ Compreendeu **conceitos fundamentais** de séries temporais\
+✅ Avaliou **estacionaridade** visualmente e com testes\
+✅ Aplicou **diferenciação** para tornar séries estacionárias\
+✅ Ajustou modelos **ARIMA** manualmente e com auto.arima\
+✅ Incluiu **covariáveis** em modelos ARIMA\
+✅ Fez **previsões** futuras com intervalos de confiança\
+✅ Diagnosticou **resíduos** para validar modelos
 
-**Conceitos-chave:**
-- ARIMA(p,d,q): AR + Diferenciação + MA
-- Estacionaridade: pré-requisito para ARIMA
-- ADF test: teste formal de estacionaridade
-- ACF/PACF: identificar ordem do modelo
-- auto.arima(): seleção automática de modelo
-- Resíduos: devem ser ruído branco
+**Conceitos-chave:** - ARIMA(p,d,q): AR + Diferenciação + MA - Estacionaridade: pré-requisito para ARIMA - ADF test: teste formal de estacionaridade - ACF/PACF: identificar ordem do modelo - auto.arima(): seleção automática de modelo - Resíduos: devem ser ruído branco
 
-**Próximos passos:**
-- Explorar SARIMA (sazonal)
-- Modelos Prophet para padrões complexos
-- VAR para múltiplas séries interdependentes
-- Machine Learning para séries temporais
+**Próximos passos:** - Explorar SARIMA (sazonal) - Modelos Prophet para padrões complexos - VAR para múltiplas séries interdependentes - Machine Learning para séries temporais
 :::
