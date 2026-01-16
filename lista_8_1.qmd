@@ -19,6 +19,7 @@ library(mediation)
 library(kableExtra)
 
 ```
+
 ## a) Modelo causal teórico
 
 ::: callout-note
@@ -92,6 +93,7 @@ Compare os dados encontrados com aqueles realizados por um conjunto de regressõ
 :::
 
 ### Valor de "c"
+
 ```{r}
 #| echo: true
 #| message: false
@@ -102,6 +104,7 @@ kable(summary(soc_treinos)$coef)
 ```
 
 ### Valor de a
+
 ```{r}
 #| echo: true
 #| message: false
@@ -113,6 +116,7 @@ kable(summary(soc_imc)$coef)
 ```
 
 ### valor de b e de c'
+
 ```{r}
 #| echo: true
 #| message: false
@@ -378,8 +382,8 @@ mediate_plot(Treinos ~ Idade  + IMC1  , data = original)
 
 {{< video https://www.youtube.com/watch?v=NstttDePtcM title='Structural Equation Modeling (SEM) - Moderação e Mediação - Aula Prática #8.1' >}}
 
-
 ## Extras!
+
 Outro tipo de resolução baseada no vídeo do Dustin Fife (How to do a mediation analysis in R...with visuals!)
 
 ```{r }
@@ -447,7 +451,6 @@ mediate_plot(Treinos ~ IMC1 +  Sociabilidade, data = original) # Ordem em que ap
 ```
 
 ## Referências
-
 
 <https://www.youtube.com/watch?v=_4Fu8SZID2k>
 

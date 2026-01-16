@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span></a>
+ <span class="menu-text">Lista 5: Modelos Lineares Generalizados (GzLM)</span></a>
   </div>
 </li>
       </ul>
@@ -209,13 +209,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_6.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 6 - Kaplan-Meier e Cox Regression</span></span></a>
+ <span class="menu-text">Lista 6: Análise de Sobrevida</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_6_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 6.1 - Cox tempo dependente</span></span></a>
   </div>
 </li>
       </ul>
@@ -232,7 +232,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_7.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lista 7 - Séries Temporais (ARIMA)</span></span></a>
   </div>
 </li>
       </ul>
@@ -249,13 +249,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lista 8 - CFA e Path Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lista_8_1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lista 8.1 - Moderação e Mediação</span></span></a>
   </div>
 </li>
       </ul>
@@ -361,19 +361,28 @@ Television, School and Family Smoking Prevention Project
 </section>
 <section id="pacotes" class="level2">
 <h2 class="anchored" data-anchor-id="pacotes">📦 Pacotes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacotes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"emmeans"</span>, <span class="st">"lme4"</span>, <span class="st">"nlme"</span>, <span class="st">"flexplot"</span>, <span class="st">"foreign"</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"dplyr"</span>, <span class="st">"ggplot2"</span>, <span class="st">"forcats"</span>, <span class="st">"performance"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"easystats"</span>, <span class="st">"misty"</span>, <span class="st">"tidyr"</span>, <span class="st">"kableExtra"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>pacotes_faltantes <span class="ot">&lt;-</span> pacotes[<span class="sc">!</span>pacotes <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[, <span class="st">"Package"</span>]]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(pacotes_faltantes) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">install.packages</span>(pacotes_faltantes, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">lapply</span>(pacotes, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <hr>
 </section>
 <section id="dados" class="level2">
 <h2 class="anchored" data-anchor-id="dados">📥 Dados</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="ot">&lt;-</span> <span class="fu">read.spss</span>(<span class="st">"THKS2.sav"</span>, <span class="at">to.data.frame =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Corrigir tipos</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>SchoolID <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>SchoolID)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>ClassID <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>ClassID)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PreTHKS <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PreTHKS)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PosTHKS <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PosTHKS)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Tamanho_Classe <span class="ot">&lt;-</span> <span class="fu">ave</span>(dataset<span class="sc">$</span>PreTHKS, dataset<span class="sc">$</span>SchoolID, dataset<span class="sc">$</span>ClassID, <span class="at">FUN =</span> length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="ot">&lt;-</span> <span class="fu">read.spss</span>(<span class="st">"THKS2.sav"</span>, <span class="at">to.data.frame =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Corrigir tipos</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>SchoolID <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>SchoolID)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>ClassID <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>ClassID)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PreTHKS <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PreTHKS)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>PosTHKS <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(dataset<span class="sc">$</span>PosTHKS)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Tamanho_Classe <span class="ot">&lt;-</span> <span class="fu">ave</span>(dataset<span class="sc">$</span>PreTHKS, dataset<span class="sc">$</span>SchoolID, dataset<span class="sc">$</span>ClassID, <span class="at">FUN =</span> length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>
@@ -382,13 +391,13 @@ Television, School and Family Smoking Prevention Project
 <section id="por-escola" class="level3">
 <h3 class="anchored" data-anchor-id="por-escola">Por Escola</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>media_escola <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PreTHKS, PosTHKS) <span class="sc">~</span> SchoolID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>media_escola_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(media_escola, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(media_escola_long, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> SchoolID, <span class="at">group =</span> SchoolID)) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Trajetória por Escola"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Média THKS"</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>media_escola <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PreTHKS, PosTHKS) <span class="sc">~</span> SchoolID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>media_escola_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(media_escola, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(media_escola_long, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> SchoolID, <span class="at">group =</span> SchoolID)) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Trajetória por Escola"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Média THKS"</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -403,13 +412,13 @@ Television, School and Family Smoking Prevention Project
 <section id="por-classe" class="level3">
 <h3 class="anchored" data-anchor-id="por-classe">Por Classe</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>media_classe <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PreTHKS, PosTHKS) <span class="sc">~</span> ClassID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>media_classe_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(media_classe, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(media_classe_long, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> ClassID, <span class="at">group =</span> ClassID)) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Trajetória por Classe (135 classes)"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Média THKS"</span>) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>media_classe <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(<span class="fu">cbind</span>(PreTHKS, PosTHKS) <span class="sc">~</span> ClassID, <span class="at">data =</span> dataset, <span class="at">FUN =</span> mean)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>media_classe_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(media_classe, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"PreTHKS"</span>, <span class="st">"PosTHKS"</span>), <span class="at">names_to =</span> <span class="st">"tempo"</span>, <span class="at">values_to =</span> <span class="st">"media"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(media_classe_long, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_rev</span>(tempo), <span class="at">y =</span> media, <span class="at">color =</span> ClassID, <span class="at">group =</span> ClassID)) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Trajetória por Classe (135 classes)"</span>, <span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Média THKS"</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -427,21 +436,21 @@ Television, School and Family Smoking Prevention Project
 <section id="modelo-1-com-preditores" class="level3">
 <h3 class="anchored" data-anchor-id="modelo-1-com-preditores">Modelo 1: Com Preditores</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>modelo_1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Group <span class="sc">*</span> PreTHKS <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID), <span class="at">data =</span> dataset, <span class="at">REML =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>var_modelo_1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_1))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>var_classe_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">1</span>]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>var_escola_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">2</span>]</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>var_erro_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">3</span>]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>icc_escola_1 <span class="ot">&lt;-</span> var_escola_1 <span class="sc">/</span> (var_escola_1 <span class="sc">+</span> var_erro_1)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>icc_classe_1 <span class="ot">&lt;-</span> var_classe_1 <span class="sc">/</span> (var_classe_1 <span class="sc">+</span> var_erro_1)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Escola:"</span>, <span class="fu">round</span>(icc_escola_1, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_escola_1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>modelo_1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> Group <span class="sc">*</span> PreTHKS <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID), <span class="at">data =</span> dataset, <span class="at">REML =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>var_modelo_1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_1))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>var_classe_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">1</span>]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>var_escola_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">2</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>var_erro_1 <span class="ot">&lt;-</span> var_modelo_1<span class="sc">$</span>vcov[<span class="dv">3</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>icc_escola_1 <span class="ot">&lt;-</span> var_escola_1 <span class="sc">/</span> (var_escola_1 <span class="sc">+</span> var_erro_1)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>icc_classe_1 <span class="ot">&lt;-</span> var_classe_1 <span class="sc">/</span> (var_classe_1 <span class="sc">+</span> var_erro_1)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Escola:"</span>, <span class="fu">round</span>(icc_escola_1, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_escola_1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ICC Escola: 0.0235 = 2.35 %</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Classe:"</span>, <span class="fu">round</span>(icc_classe_1, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_classe_1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Classe:"</span>, <span class="fu">round</span>(icc_classe_1, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_classe_1 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ICC Classe: 0.0389 = 3.89 %</code></pre>
 </div>
@@ -451,17 +460,17 @@ Television, School and Family Smoking Prevention Project
 <section id="modelo-2-apenas-aleatórios" class="level3">
 <h3 class="anchored" data-anchor-id="modelo-2-apenas-aleatórios">Modelo 2: Apenas Aleatórios</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>modelo_2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID), <span class="at">data =</span> dataset, <span class="at">REML =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>var_modelo_2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_2))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>icc_escola_2 <span class="ot">&lt;-</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="sc">/</span> (var_modelo_2<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="sc">+</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">3</span>])</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>icc_classe_2 <span class="ot">&lt;-</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="sc">/</span> (var_modelo_2<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="sc">+</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">3</span>])</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Escola:"</span>, <span class="fu">round</span>(icc_escola_2, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_escola_2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>modelo_2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">:</span>ClassID) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SchoolID), <span class="at">data =</span> dataset, <span class="at">REML =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>var_modelo_2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(modelo_2))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>icc_escola_2 <span class="ot">&lt;-</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="sc">/</span> (var_modelo_2<span class="sc">$</span>vcov[<span class="dv">2</span>] <span class="sc">+</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">3</span>])</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>icc_classe_2 <span class="ot">&lt;-</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="sc">/</span> (var_modelo_2<span class="sc">$</span>vcov[<span class="dv">1</span>] <span class="sc">+</span> var_modelo_2<span class="sc">$</span>vcov[<span class="dv">3</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Escola:"</span>, <span class="fu">round</span>(icc_escola_2, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_escola_2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ICC Escola: 0.0634 = 6.34 %</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Classe:"</span>, <span class="fu">round</span>(icc_classe_2, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_classe_2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ICC Classe:"</span>, <span class="fu">round</span>(icc_classe_2, <span class="dv">4</span>), <span class="st">"="</span>, <span class="fu">round</span>(icc_classe_2 <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>ICC Classe: 0.047 = 4.7 %</code></pre>
 </div>
@@ -485,19 +494,19 @@ Note
 <section id="parte-e-modelo-final" class="level2">
 <h2 class="anchored" data-anchor-id="parte-e-modelo-final">🎯 Parte E: Modelo Final</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">relevel</span>(dataset<span class="sc">$</span>Group, <span class="at">ref =</span> <span class="st">"Neither"</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>modelo_final <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> PreTHKS <span class="sc">+</span> Group,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"REML"</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">relevel</span>(dataset<span class="sc">$</span>Group, <span class="at">ref =</span> <span class="st">"Neither"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>modelo_final <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> PosTHKS <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> PreTHKS <span class="sc">+</span> Group,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>SchoolID<span class="sc">/</span>ClassID,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dataset,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"REML"</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="diagnóstico" class="level3">
 <h3 class="anchored" data-anchor-id="diagnóstico">Diagnóstico</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(modelo_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Converting missing values (`NA`) into regular values currently not
   possible for variables of class `NULL`.</code></pre>
@@ -514,8 +523,8 @@ Note
 <section id="comparações" class="level3">
 <h3 class="anchored" data-anchor-id="comparações">Comparações</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>comparacoes <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo_final, pairwise <span class="sc">~</span> Group, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>comparacoes<span class="sc">$</span>contrasts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>comparacoes <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo_final, pairwise <span class="sc">~</span> Group, <span class="at">adjust =</span> <span class="st">"bonferroni"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>comparacoes<span class="sc">$</span>contrasts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast                     estimate    SE df t.ratio p.value
  Neither - Curriculum &amp; TV      -0.492 0.159 24  -3.104  0.0290
@@ -533,13 +542,13 @@ P value adjustment: bonferroni method for 6 tests </code></pre>
 <section id="visualização" class="level3">
 <h3 class="anchored" data-anchor-id="visualização">Visualização</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>means_plot <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(comparacoes<span class="sc">$</span>emmeans)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means_plot, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Group, <span class="sc">-</span>emmean), <span class="at">y =</span> emmean, <span class="at">fill =</span> Group)) <span class="sc">+</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"THKS Pós-Intervenção por Grupo"</span>, <span class="at">y =</span> <span class="st">"THKS Estimado"</span>) <span class="sc">+</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>means_plot <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(comparacoes<span class="sc">$</span>emmeans)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(means_plot, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Group, <span class="sc">-</span>emmean), <span class="at">y =</span> emmean, <span class="at">fill =</span> Group)) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"THKS Pós-Intervenção por Grupo"</span>, <span class="at">y =</span> <span class="st">"THKS Estimado"</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -556,18 +565,18 @@ P value adjustment: bonferroni method for 6 tests </code></pre>
 <section id="função-icc-personalizada" class="level3">
 <h3 class="anchored" data-anchor-id="função-icc-personalizada">Função ICC Personalizada</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>icc_lme_3nv <span class="ot">&lt;-</span> <span class="cf">function</span>(modelo) {</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  var_escola <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">2</span>, <span class="st">"Variance"</span>])</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  var_classe <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">4</span>, <span class="st">"Variance"</span>])</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  var_res <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">5</span>, <span class="st">"Variance"</span>])</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC_Escola =</span> var_escola <span class="sc">/</span> (var_escola <span class="sc">+</span> var_res),</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC_Classe =</span> var_classe <span class="sc">/</span> (var_classe <span class="sc">+</span> var_res)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">icc_lme_3nv</span>(modelo_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>icc_lme_3nv <span class="ot">&lt;-</span> <span class="cf">function</span>(modelo) {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  var_escola <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">2</span>, <span class="st">"Variance"</span>])</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  var_classe <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">4</span>, <span class="st">"Variance"</span>])</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  var_res <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">VarCorr</span>(modelo)[<span class="dv">5</span>, <span class="st">"Variance"</span>])</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC_Escola =</span> var_escola <span class="sc">/</span> (var_escola <span class="sc">+</span> var_res),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC_Classe =</span> var_classe <span class="sc">/</span> (var_classe <span class="sc">+</span> var_res)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="fu">icc_lme_3nv</span>(modelo_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$ICC_Escola
 [1] 0.02354758
@@ -580,7 +589,7 @@ $ICC_Classe
 <section id="comparação-modelos" class="level3">
 <h3 class="anchored" data-anchor-id="comparação-modelos">Comparação Modelos</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(modelo_1, modelo_2, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>), <span class="at">rank =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_performance</span>(modelo_1, modelo_2, <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">"AIC"</span>, <span class="st">"BIC"</span>), <span class="at">rank =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Comparison of Model Performance Indices
 
@@ -601,7 +610,7 @@ modelo_2 | lmerMod |    2.80e-30 |    4.19e-22 |             0.00%</code></pre>
 <section id="sessão" class="level2">
 <h2 class="anchored" data-anchor-id="sessão">🔧 Sessão</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(<span class="fu">sessionInfo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analyses were conducted using the R Statistical language (version 4.4.2; R Core
 Team, 2024) on Windows 11 x64 (build 26100), using the packages lme4 (version
@@ -1146,8 +1155,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lista_5.html" class="pagination-link" aria-label="Lista 5 - Generalized Linear Model Aula Prática">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lista 5 - Generalized Linear Model Aula Prática</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lista_5.html" class="pagination-link" aria-label="Lista 5: Modelos Lineares Generalizados (GzLM)">
+        <span class="nav-page-text">Lista 5: Modelos Lineares Generalizados (GzLM)</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

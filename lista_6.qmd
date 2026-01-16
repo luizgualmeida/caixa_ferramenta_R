@@ -1,957 +1,706 @@
-# Lista 6 - Kaplan-Meier e Cox Regression {#sec-lista-6}
+# Lista 6: Análise de Sobrevida {#sec-lista-6 .unnumbered}
 
-Temos os dados de 124 pacientes que estão na fila para um transplante de rim. Temos as variáveis:
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
 
--   T_seg -- tempo de seguimento (em meses);
+Aprenda técnicas de **análise de sobrevida**: construir curvas de **Kaplan-Meier**, comparar grupos com **testes log-rank** e modelar riscos com **Regressão de Cox**. Trabalharemos com dados reais de 124 pacientes na fila de transplante renal.
+:::
 
--   tx - fez transplante (sim, não);
+---
 
--   óbito - morte do paciente (sim, não);
+## 📖 Contexto do Estudo
 
--   t_tx - tempo até o transplante (em meses).
+::: {.callout-tip}
+## Dados: Fila de Transplante Renal
 
-Com base nos dados:
+**Amostra:** 124 pacientes aguardando transplante de rim
 
+**Variáveis:**
+- `t_seg`: Tempo de seguimento (meses)
+- `tx`: Realizou transplante? (sim/não)
+- `obito`: Óbito do paciente (sim/não) - **evento de interesse**
+- `t_tx`: Tempo até o transplante (meses)
 
+**Pergunta:** O transplante afeta a sobrevida dos pacientes?
+:::
 
-## Carregando pacotes
+---
+
+## 📦 Pacotes necessários
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-library(tidyverse)
-library(flexplot)
-library(foreign)
-library(dplyr)
-library(tm)
-library(ggplot2)
-library(forcats)
-library(rempsyc)
-library(easystats)
-library(kableExtra)
-library(gtsummary)
+pacotes <- c(
+  "tidyverse", "foreign", "ggplot2", "kableExtra",
+  "survival", "ggsurvfit", "survminer", "broom",
+  "gtsummary", "report", "coin"
+)
 
-#Específicos para survival
-library(survival)
-library(ggsurvfit)
-library(survminer)
-library(broom)
-library(survMisc)
-library(PHInfiniteEstimates)
-library(coin)
-library(condSURV)
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
 
-
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes de sobrevida carregados!\n")
 ```
 
-## Limpando o ambiente
+---
 
-Quando executamos diversos comandos no R muitas vezes acabamos deixando o ambiente meio "sujo". Cheio de variáveis que não estamos mais utilizando, ou pacotes que estão carregados e não serão utilizados no momento.
-
-Em longas sessões utilizando o R é sempre bom dar uma limpada no ambiente entre um projeto e outro. Para isso podemos executar o código abaixo:
+## 🧹 Boas Práticas: Ambiente Limpo
 
 ```{r}
+#| echo: true
 
-# Limpa o ambiente
-rm(list = ls(all.names = TRUE)) # will clear all objects including hidden objects
-gc() # free up memory and report the memory usage
-options(max.print = .Machine$integer.max, scipen = 999, stringsAsFactors = F, dplyr.summarise.inform = F) # avoid truncated output in R console and scientific notation
+# Limpar ambiente
+rm(list = ls(all.names = TRUE))
+gc()
 
-# Set seed
+# Configurações
+options(max.print = .Machine$integer.max, 
+        scipen = 999, 
+        stringsAsFactors = FALSE)
+
 set.seed(42)
 ```
 
-## Definindo um tema para os gráficos
+---
 
-Preenhcer todos os parâmetros da função ggplot() é uma tarefa morosa e repetitiva. Podemos criar um tema para todos os nossos gráficos e assim manter a consistência nas figuras e não precisar ficar escrevendo toda hora aquele parâmetro para mudar a espessura da linha do eixo X...
-
-Uma vez definido o tema, podemos apenas chamá-lo dentro da função ggplot para repetir o padrão. Vamos armazenar todas as informações da padronização em uma variável com o código a seguir:
+## 🎨 Tema Customizado (Opcional)
 
 ```{r}
-meu_tema <- theme(plot.title = element_text(size = rel(2)),
-                  panel.grid.major.y = element_line(colour = 'gray'),
-                  panel.grid.minor.y = element_line(colour = 'gray'),
-                  panel.grid.major.x = element_blank(),
-                  panel.grid.minor.x = element_blank(),
-                  plot.background = element_rect(fill = NULL, colour = 'white'),
-                  panel.background = element_rect(fill = 'white'),
-                  # Axis stuff
-                  axis.line = element_line(colour = 'black', linewidth = 1),
-                  axis.text = element_text(colour = "black", face = 'bold'),
-                  axis.text.x = element_text(size = rel(1)),
-                  axis.text.y = element_text(size = rel(1)),
-                  axis.title = element_text(size = rel(1.2)),
-                  axis.ticks = element_line(colour = 'black', linewidth = 1.2),
-                  # Legend stuff
-                  legend.position = "bottom",
-                  legend.margin = margin(6, 6, 6, 6),
-                  legend.title = element_text(face = 'bold'),
-                  legend.background = element_blank(),
-                  legend.box.background = element_rect(colour = "black"))
+#| echo: true
+
+meu_tema <- theme(
+  plot.title = element_text(size = rel(1.5), face = "bold"),
+  panel.grid.major.y = element_line(colour = 'gray90'),
+  panel.grid.minor.y = element_line(colour = 'gray95'),
+  panel.grid.major.x = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  plot.background = element_rect(fill = 'white', colour = 'white'),
+  panel.background = element_rect(fill = 'white'),
+  axis.line = element_line(colour = 'black', linewidth = 0.8),
+  axis.text = element_text(colour = "black", face = 'bold'),
+  axis.title = element_text(size = rel(1.2)),
+  axis.ticks = element_line(colour = 'black', linewidth = 0.8),
+  legend.position = "bottom",
+  legend.background = element_blank(),
+  legend.box.background = element_rect(colour = "black")
+)
 ```
 
-Vamos utilizar o tema em nossos gráficos mais adiante!
+---
 
-## Carregando os dados e modificando o tipo de variável {#sec-carrega_dados}
-
-Como de costume, vamos carregar os dados e ver os tipos das variáveis que temos no banco de dados.
+## 📥 Preparação dos Dados
 
 ```{r}
-original = read.spss("teste Cox tempo dep Tx.sav", to.data.frame=TRUE)
+#| echo: true
+#| message: false
+#| warning: false
+
+# Carregar
+original <- read.spss("teste Cox tempo dep Tx.sav", to.data.frame = TRUE)
+
 glimpse(original)
 ```
 
-::: callout-warning
-## Cuidado!
+---
 
-A variável do evento (`óbito` em nosso exemplo) PRECISA ser recodificada para uma variável numérica binária, ou seja, 1 e 0 caso queira realizar a análise de sobrevida.
+### ⚠️ Conversão Crítica: Evento Binário
+
+::: {.callout-important}
+## Regra Fundamental!
+
+A variável de **evento** DEVE ser **numérica binária** (0 = censura, 1 = evento).
+
+**Não use:** Fatores "sim"/"não"  
+**Use:** 0 = sem óbito (censurado), 1 = com óbito (evento)
 :::
 
-Na seção @sec-extrasVI, exploraremos as distinções entre conduzir as análises com os fatores "sim" e "não" versus os números 1 e 0.
-
-Inicialmente, ajustaremos a variável para aceitar os valores 1 e 0, representando a ocorrência do evento e a censura, respectivamente. Para isso, empregaremos o operador pipe %\>% para duplicar a base de dados original e efetuar a modificação no mesmo script. O operador pipe é útil para executar várias operações em uma única sequência de código.
-
 ```{r}
+#| echo: true
+
+# Criar versão corrigida
 db <- original %>%
-  mutate(
-    obito = as.integer(obito == "sim") # para transformar sim e não em 1 e 0, respectivamente
-  )
+  mutate(obito = as.integer(obito == "sim"))
 
-glimpse(db)
+# Verificar
+glimpse(db$obito)
+table(db$obito)
 ```
 
-Pronto, agora temos que óbito assumiu os valores de números 1 e 0.
+---
 
-Outra análise exploratória importante a fazer nos dados é observar se há dados faltantes (NA) e onde eles estão, caso estejam presentes. Se uma variável tiver muitos NAs, vamos precisar de cautela para inserir a variável na análise.
+### Análise Exploratória
 
 ```{r}
-# Verificando NAs
+#| echo: true
+
+# Verificar missing values
 data.frame(
-  nas_t_seg = sum(is.na(db$t_seg)),
-  nas_t_seg = sum(is.na(db$t_tx)),
-  nas_tx = sum(is.na(db$tx)),
-  nas_obito = sum(is.na(db$obito))
-)
+  NA_t_seg = sum(is.na(db$t_seg)),
+  NA_t_tx = sum(is.na(db$t_tx)),
+  NA_tx = sum(is.na(db$tx)),
+  NA_obito = sum(is.na(db$obito))
+) %>% kable(caption = "Dados Faltantes")
 ```
+
+::: {.callout-note collapse="true"}
+## 📊 Interpretando NAs em t_tx
+
+**51.6% de NAs** em `t_tx` é **esperado**! Representa pacientes que **não** fizeram transplante.
+
+**Verificação:** Nenhum paciente com tx="sim" deveria ter NA em t_tx.
 
 ```{r}
-#| column: page
-kable(report(db))
+#| echo: true
+
+# Verificar inconsistências
+db %>% filter(tx == "sim" & is.na(t_tx))
 ```
 
-O número de NAs na variável t_tx é alto (51.61%) pelo simples motivo de que pessoas que não fizeram transplante não possuem a marca do tempo que fizeram o transplante. Em todo caso podemos verificar se existem indivíduos que fizeram o transplante mas não possuem a marca do tempo em que fizeram o transplante.
-
-```{r}
-db %>%
-  filter(tx == "sim" & is.na(t_tx))
-```
-
-O código acima filtra os dados de pessoas que fizeram o transplante (tx sim) e que tenham NA na coluna t_tx. Como o resultado volta com zero elementos, podemos concluir que todas as pessoas que fizeram o transplante, possuem a marca do horário em que o transplante foi feito.
-
-Na tabela acima podemos perceber também que a porcentagem de pessoas que não fizeram o transplante (51.61) é a mesma porcentagem de dados faltantes (missing) da variável t_tx (51.61)
-
-Por fim, podemos ver quantas pessoas morreram pela causa de morte do desfecho durante o período de observação.
-
-```{r}
-#| column: body-inset
-kable(table(db$obito))
-```
-
-Lembrando que 1 é o evento, que no nosso exemplo é ocorrência do óbito
-
-Vamos agora às análises.
-
-
-## Criando a estrutura de dados
-
-Iniciamos especificando para a função `Surv()` as colunas referentes ao tempo observado e aos eventos de interesse, que, neste caso, são os óbitos.
-
-```{r}
-surv_obj <- Surv(time = db$t_seg, event = db$obito)
-```
-
-
-## a) Tábua de vida
-
-::: callout-note
-#### Exercício
-
-Faça duas tábuas de vida em função da variável óbito comparando grupos que fizeram ou não transplante: Ambas com período 0 até 99 meses. A primeira dividida em períodos de 20 meses e a segunda com períodos de 1 mês. Faça um parágrafo descrevendo as diferenças nos gráficos.
+Se retornar 0 linhas → OK!
 :::
 
-Agora vamos criar a tabela de vida. Por enquanto, não faremos a separação dos dados por grupos.
+---
+
+## 🎯 Estrutura de Dados de Sobrevida
 
 ```{r}
-fit1 <- survfit(surv_obj ~ 1, data = db)
+#| echo: true
+
+# Criar objeto Surv
+surv_obj <- Surv(time = db$t_seg, event = db$obito)
+
+# Visualizar primeiros casos
+head(surv_obj)
 ```
 
-A função `summary()` também pode ser utilizada para verificar os resultados dos modelos de sobrevida.
+::: {.callout-tip}
+## 🔍 Interpretando a Notação
+
+- **34:** Tempo 34, evento ocorreu
+- **58+:** Tempo 58, **censurado** (+ indica censura)
+
+**Censura** = paciente saiu do estudo sem evento (perdeu acompanhamento, fim do estudo, etc.)
+:::
+
+---
+
+## 📊 Parte A: Tábua de Vida
 
 ```{r}
+#| echo: true
+
+# Modelo geral (sem grupos)
+fit1 <- survfit(surv_obj ~ 1, data = db)
+
+# Resumo
 summary(fit1)
 ```
 
-E a função função `tidy_survfit()` nos oferece uma tabela bem mais completa.
+---
 
-```{r}
-tidy_survfit(fit1)
-```
-
-
-
-## b) Kaplan-Meier
-
-::: callout-note
-#### Exercício
-
-Faça uma curva de Kaplan-meyer comparando os grupos que fizeram vs não fizeram transplante em relação ao óbito. Analise o gráfico e as saídas do teste.
-:::
-
-Para produzir um gráfico Kaplan-Meier simples podemos utilizar a função `plot()`.
-
-```{r}
-plot(fit1)
-```
-
-Meio pobrezinho e sem cor ne?
-
-Podemos melhorar utilizando a função `ggsurvfit()`, do pacote com o mesmo nome.
-
-```{r}
-fit1_km = ggsurvfit(fit1, linewidth = 1) +
-  labs(x = 'Dias', y = 'Overall survival') +
-  add_confidence_interval() +
-  add_risktable() +
-  scale_ggsurvfit() 
-
-fit1_km
-
-```
-
-Até aqui estamos vendo o gráfico da sobrevida sem separar por grupos. A seguir vamos comparar entre os grupos que receberam ou não o transplante de rins.
-
-## Separando por transplante e nos tempos 0, 20, 40, 60, 80
-
-Queremos comparar a sobrevida entre quem fez e não fez o transplante. Para isso podemos especificar no modelo que o transplante (tx) será uma das variáveis independentes.
-
-```{r}
-fit2 = survfit(surv_obj ~ tx, # basta colocar tx como uma variável preditora no modelo
-               data = db) 
-
-
-summary(fit2)
-
-```
-
-A função `summary()` aceita um parâmetro com intervalos específicos para aparecer nos resultados. Vamos utilizar a função `seq()` para criar uma sequência de números que vai do 0 ao 100 com intervalos de 20 em 20.
-
-```{r}
-# Cria o intervalo de tempo
-
-tempos_específicos <- seq(0, 100, by = 20) # sequencia de 0 a 100 em intervalos de 20.
-```
-
-Aplicando o intervalo na função temos o seguinte script:
-
-```{r}
-
-summary(fit2, times = tempos_específicos)
-
-```
-
-Podemos nos perguntar também qual é a probabilidade de sobreviver após um certo tempo. Para obter a resposta basta ajustar o parâmetro `times` da função `summary()` para o tempo desejado.
-
-```{r}
-summary(fit2, times = 75)
-```
-
-Na análise do tempo de sobrevivência neste modelo, observamos o seguinte:
-
-Para o grupo que **realizou** o transplante (tx=sim):
-
--   Aos 75 meses, havia 14 indivíduos em risco.
-
--   10 eventos ocorreram até esse momento.
-
--   A taxa de sobrevivência foi de 0.779, com um desvio padrão de 0.067.
-
--   O intervalo de confiança de 95% para a taxa de sobrevivência variou de 0.658 a 0.922.
-
-Para o grupo que **não realizou** o transplante (tx=não):
-
--   Aos 75 meses, havia 4 indivíduos em risco.
-
--   23 eventos ocorreram até esse momento.
-
--   A taxa de sobrevivência foi de 0.5232, com um desvio padrão de 0.0841.
-
--   O intervalo de confiança de 95% para a taxa de sobrevivência variou de 0.3818 a 0.7169.
-
-Podemos ainda calcular quantas vezes a probabilidade de sobrevivência é maior no grupo que realizou o transplante em comparação com o grupo que não o fez.
-
-```{r}
-summary(fit2, times = 75)$surv[1] / summary(fit2, times = 75)$surv[2]
-
-```
-
-O resultado revela que a probabilidade de sobrevivência no grupo que fez o transplante é aproximadamente 1.5 vezes maior do que no grupo que não o realizou.
-
-### Kaplan-Meir do novo modelo
-
-Vamos salvar o plot padrão do segundo modelo para adicionar mais alguns parâmetros e incrementar a visualização dos resultados.
-
-```{r}
-fit2_km = ggsurvfit(fit2, linewidth = 1) +
-  labs(x = 'Tempo (meses)', y = '% Probabilidade de sobrevivência') +
-  add_confidence_interval() +
-  #add_risktable() + 
-  scale_ggsurvfit() 
-
-fit2_km
-
-```
-
-Com o plot salvo, podemos adicionar mais elementos aos poucos, como as linhas tracejadas para enfatizar diferenças.
+### Tabela Formatada
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
+
+tidy_survfit(fit1) %>%
+  head(10) %>%
+  kable(digits = 3, caption = "Primeiras 10 Linhas da Tábua de Vida")
+```
+
+---
+
+## 📈 Parte B: Curva de Kaplan-Meier
+
+### Curva Geral
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+ggsurvfit(fit1, linewidth = 1.2) +
+  labs(
+    title = "Curva de Sobrevida Geral",
+    x = "Tempo (meses)",
+    y = "Probabilidade de Sobrevida"
+  ) +
+  add_confidence_interval(alpha = 0.2) +
+  add_risktable() +
+  scale_ggsurvfit() +
+  theme_minimal()
+```
+
+---
+
+### Comparando Grupos: Transplante vs Não-Transplante
+
+```{r}
+#| echo: true
+
+# Modelo com grupos
+fit2 <- survfit(surv_obj ~ tx, data = db)
+
+# Resumo em tempos específicos
+tempos <- seq(0, 100, by = 20)
+summary(fit2, times = tempos)
+```
+
+---
+
+### Visualização Comparativa
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 7
+
+fit2_km <- ggsurvfit(fit2, linewidth = 1.2) +
+  labs(
+    title = "Sobrevida: Transplante vs Não-Transplante",
+    x = "Tempo (meses)",
+    y = "Probabilidade de Sobrevida (%)"
+  ) +
+  add_confidence_interval(alpha = 0.2) +
+  add_risktable() +
+  scale_ggsurvfit() +
+  theme_minimal()
+
+fit2_km
+```
+
+---
+
+### Análise em Tempo Específico
+
+```{r}
+#| echo: true
+
+# Sobrevida aos 75 meses
+surv_75 <- summary(fit2, times = 75)
+
+cat("═══ SOBREVIDA AOS 75 MESES ═══\n\n")
+cat("Transplante = SIM:\n")
+cat("  Sobrevida:", round(surv_75$surv[1], 3), "\n")
+cat("  IC 95%: [", round(surv_75$lower[1], 3), ",",
+    round(surv_75$upper[1], 3), "]\n\n")
+
+cat("Transplante = NÃO:\n")
+cat("  Sobrevida:", round(surv_75$surv[2], 3), "\n")
+cat("  IC 95%: [", round(surv_75$lower[2], 3), ",",
+    round(surv_75$upper[2], 3), "]\n\n")
+
+# Razão
+razao <- surv_75$surv[1] / surv_75$surv[2]
+cat("Razão (Sim/Não):", round(razao, 2), "×\n")
+cat("→ Grupo com transplante tem", round(razao, 2), 
+    "× mais chance de estar vivo aos 75 meses\n")
+```
+
+---
+
+### Gráfico com Marcação de Tempo
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
 
 fit2_km +
-  geom_vline(xintercept = 75, 
-             linetype = 'dashed', 
-             colour = 'red', 
-             size = 1) + # adiciona a linha vermelha vertical 
-  geom_hline(yintercept = summary(fit2, times = 75)$surv, 
-             linetype = 'dashed', 
-             colour = 'red', size = 1) # adiciona as linhas vermelhas horizontais.
+  geom_vline(xintercept = 75, linetype = 'dashed', 
+             colour = 'red', linewidth = 1) +
+  geom_hline(yintercept = surv_75$surv, linetype = 'dashed',
+             colour = 'red', linewidth = 1) +
+  annotate("text", x = 77, y = 0.9, label = "75 meses",
+           hjust = 0, color = "red", fontface = "bold")
 ```
 
-### Porcentagem fixa, tempos diferentes
+---
 
-A função ggsurvfit oferece vários parâmetros interessantes. Um deles, bastante útil, permite traçar uma linha para comparar o tempo em que a probabilidade de sobrevivência X ocorre entre grupos diferentes.
-
-Em quanto tempo será que a probabilidade de sobrevida chega a 75% nos dois grupos? Vamos utilizar o parâmetro `add_quantile()` para ter uma estimativa gráfica.
+### Percentil Fixo: Tempo para 75% de Sobrevida
 
 ```{r}
-fit2 %>% 
-  ggsurvfit(linewidth = 1) +
-  labs(x = 'Tempo (meses)', y = '% Probabilidade de sobrevivência') +
-  add_confidence_interval() +
-  #  add_risktable() +
-  add_quantile(y_value = 0.75, color = "gray50", linewidth = 0.75) +
-  scale_ggsurvfit()
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
 
+fit2 %>%
+  ggsurvfit(linewidth = 1.2) +
+  labs(
+    title = "Tempo até 75% de Sobrevida",
+    x = "Tempo (meses)",
+    y = "Probabilidade de Sobrevida"
+  ) +
+  add_confidence_interval(alpha = 0.2) +
+  add_quantile(y_value = 0.75, color = "gray30", linewidth = 0.8) +
+  scale_ggsurvfit() +
+  theme_minimal()
 ```
 
-Ao examinarmos a imagem, observamos que o grupo que não passou pelo transplante atinge uma probabilidade de sobrevida de 75% em aproximadamente 35 meses. Por outro lado, no grupo que se submeteu ao transplante, essa mesma probabilidade só ocorre por volta do 90º mês, sendo ainda maior antes desse período.
+::: {.callout-note}
+## 📊 Interpretação
 
-### Escolhendo um intervalo de tempo
+- **Sem transplante:** Atinge 75% de sobrevida ~35 meses
+- **Com transplante:** Atinge 75% de sobrevida ~90 meses
 
-Caso você queira apresentar apenas um período específico de tempo em sua análise, podemos fazer isso utilizando o parâmetro `coord_cartesian()`.
-
-```{r}
-
-ggsurvfit(fit2, linewidth = 1) +
-  labs(x = 'Tempo (meses)', y = '% Probabilidade de sobrevivência') +
-  add_confidence_interval() +
-  # add_risktable() +
-  scale_ggsurvfit() + 
-  coord_cartesian(xlim = c(0, 60)) # coloque os números que
-
-```
-
-Personalize os limites do intervalo de tempo em sua análise ajustando os valores "0" e "60", de acordo com suas necessidades específicas.
-
-## Comparando as curvas
-
--   Log-rank: utilizar para comparar o primeiro terço do gráfico
-
--   Gehan: utilizar para comparar o meio do gráfico
-
--   Tarone: utilizar para comparar o final do gráfico
-
--   Peto-Peto: parecido com o Log-rank, utilizar para comparar o primeiro terço do gráfico
-
-Pacote mais indicado para utilizar é o `coin`.
-
-### Tipos de testes possíveis
-
-"logrank", "Gehan-Breslow", "Tarone-Ware", "Peto-Peto", "Prentice", "Prentice-Marek", "Andersen-Borgan-Gill-Keiding", "Fleming-Harrington", "Gaugler-Kim-Liao", "Self"
-
-#### Log-rank
-
-```{r}
-coin::logrank_test(surv_obj ~ tx, data = db, type = "logrank" ) # padrão é o log-rank
-```
-
-#### Gehan-Breslow
-
-```{r}
-coin::logrank_test(surv_obj ~ tx ,data = db, type = "Gehan-Breslow")
-```
-
-#### Tarone-Ware
-
-```{r}
-coin::logrank_test(surv_obj ~ tx ,data = db, type = "Tarone-Ware")
-```
-
-#### Peto-Peto
-
-```{r}
-coin::logrank_test(surv_obj ~ tx ,data = db, type = "Peto-Peto")
-
-```
-
-Em todos os testes a hipótese alternativa sugere que o verdadeiro parâmetro theta não é igual a 1, indicando assim que há diferenças significativas nas curvas de sobrevida entre os dois grupos analisados. Em termos práticos, isso sugere que a probabilidade de sobrevivência varia de maneira estatisticamente significativa entre os grupos que fizeram ou não o transplante.
-
-## c) Cox Regression
-
-::: callout-note
-#### Exercício
-
-Reproduza a análise do item b) com uma Cox Regression. Descreva os resultados
+Transplante **mais que dobra** o tempo para atingir esse patamar!
 :::
 
-Compare com base no resultado da Cox, qual seria a diferença na sobrevida (HR) entre uma pessoa que fez e outra que não fez transplante com 50 meses de observação
+---
 
-A Regressão de Cox é uma técnica estatística utilizada para analisar a relação entre variáveis explicativas e o tempo até um evento ocorrer, como a morte. Ao contrário de modelos de regressão linear, a Regressão de Cox lida com dados de sobrevida, levando em consideração o tempo até o evento ou a censura. O código apresentado realiza uma Regressão de Cox com a função `coxph()`.
+## 🔬 Comparação de Curvas: Testes Estatísticos
+
+::: {.callout-tip}
+## Escolhendo o Teste Certo
+
+- **Log-rank:** Diferenças ao longo de **todo** o período (padrão)
+- **Gehan-Breslow:** Enfatiza diferenças **iniciais**
+- **Tarone-Ware:** Peso intermediário
+- **Peto-Peto:** Similar ao log-rank, robusto
+
+**Regra geral:** Use log-rank a menos que haja razão específica.
+:::
+
+---
+
+### Log-Rank (Mantel-Cox)
 
 ```{r}
-# Cox regression ======================================================
-# Fit the model
-cox_res <- coxph(Surv(time = db$t_seg, event = db$obito) ~ tx, data = db)
+#| echo: true
+
+logrank_test(surv_obj ~ tx, data = db, type = "logrank")
 ```
 
-O código acima ajusta o modelo de Regressão de Cox. A variável dependente é definida como o tempo (t_seg) até o evento (obito) ocorrer, e a variável independente é tx.
+---
 
-Notem que dentro da função `coxph()`, repetimos o código para gerar a tabela de vida.Durante a criação da estrutura dos dados, armazenamos a tabela de vida em uma variável chamada `surv_obj`. Podemos reutilizá-la na Regressão de Cox, evitando a necessidade de reescrever o código.
-
-Vamos fazer isso!
+### Gehan-Breslow
 
 ```{r}
-cox_res_2 = coxph(surv_obj ~ tx, data = db)
+#| echo: true
+
+logrank_test(surv_obj ~ tx, data = db, type = "Gehan-Breslow")
 ```
 
-Bem mais limpo, não? E como vamos escrever mais alguns modelos, é uma boa prática salvar o padrão que se repete em uma variável.
+---
 
-### Resultados dos modelos
-
-Sabe qual função vamos utilizar para verificar o resultado? Sim, a `summary()`.
-
-Primeiro vamos verificar se as duas formas que escrevemos os modelos geram os mesmos resultados.
+### Tarone-Ware
 
 ```{r}
+#| echo: true
+
+logrank_test(surv_obj ~ tx, data = db, type = "Tarone-Ware")
+```
+
+---
+
+::: {.callout-note}
+## 📊 Conclusão dos Testes
+
+Todos os testes indicam **p < 0.05**, rejeitando H₀.
+
+**Conclusão:** Há evidência significativa de que as curvas de sobrevida diferem entre grupos com e sem transplante.
+:::
+
+---
+
+## 🎯 Parte C: Regressão de Cox
+
+::: {.callout-tip}
+## O que é Regressão de Cox?
+
+Modelo **semi-paramétrico** que estima o **risco instantâneo** (hazard) de um evento ao longo do tempo.
+
+**Vantagens:**
+- Permite múltiplas covariáveis
+- Não assume distribuição específica do tempo
+- Estima **Hazard Ratios** (HR)
+
+**HR interpretação:**
+- HR = 1: Sem efeito
+- HR > 1: Aumenta risco
+- HR < 1: Diminui risco (proteção)
+:::
+
+---
+
+### Ajuste do Modelo
+
+```{r}
+#| echo: true
+
+# Modelo Cox
+cox_res <- coxph(surv_obj ~ tx, data = db)
+
+# Resumo
 summary(cox_res)
 ```
 
-------------------------------------------------------------------------
+---
 
-```{r}
-summary(cox_res_2)
-```
-
-------------------------------------------------------------------------
-
-Boa! Os resultados são idênticos, então podemos manter o padrão de escrevr o modelo utilizando a tábua de vida salva em uma variável.
-
-Embora o resultado da função summary() para modelos de Regressão de Cox possa não ser visualmente atraente, ele oferece informações detalhadas sobre como o modelo se ajusta aos dados. Vamos analisar cada componente separadamente:
-
-1.  **Sumário do Modelo:**
-
-    -   **Call**: Indica a chamada da função utilizada para ajustar o modelo.
-
-    -   **n= 124, number of events= 34:** Informa o número total de observações (n) e o número de eventos ocorridos (number of events).
-
-2.  **Coeficientes:**
-
-    -   **coef:** O coeficiente estimado para a variável tx.
-
-    -   **exp(coef):** A interpretação deste valor é que, para pessoas do grupo que não fizeram o transplante (txnão), o risco de o evento (morte) ocorrer aumenta em 2.941 vezes.
-
-    -   **se(coef):** O erro padrão do coeficiente.
-
-3.  **Teste de Hipótese para Coeficientes:**
-
-    -   **z:** O valor z do teste de Wald, indicando quão longe o coeficiente está da média em termos de erros padrão.
-
-    -   **Pr(\>\|z\|):** O p-valor associado ao teste de Wald. No exemplo, 0.00405 sugere que o efeito da variável tx é estatisticamente significativo.
-
-    -   **Significância codes:** \*\* indica significância a 0.01.
-
-4.  **Intervalo de Confiança para Exp(Coef):**
-
-    -   **exp(coef) exp(-coef) lower .95 upper .95:** O intervalo de confiança de 95% para o efeito da variável tx.
-
-5.  **Medidas de Desempenho do Modelo:**
-
-    -   **Concordance= 0.638:** A concordância é uma medida de quão bem o modelo prevê a ordem de eventos.
-
-    -   **Likelihood ratio test= 8.99, p=0.003:** O teste de razão de verossimilhança avalia se o modelo é significativamente melhor do que um modelo nulo. O p-valor sugere que o modelo é estatisticamente significativo.
-
-    -   **Wald test= 8.26, p=0.004:** O teste de Wald também avalia a significância global do modelo.
-
-    -   **Score (logrank) test= 9.01, p=0.003:** O teste de log-rank compara as curvas de sobrevivência entre os grupos.
-
-E claro que temos formas melhores de visualizar e mostrar os dados mais importantes. Vamos utilizar a função `tbl_regression()` do pacote `gtsummary`, que pega um objeto de modelo de regressão e retorna uma tabela formatada pronta para publicação.
-
-```{r}
-tbl_regression(cox_res, exponentiate = TRUE)
-```
-
-Pra fazer isso aí no word demoraria uns 30 minutos hein? E ficaria feia ainda. Com uma linha de código fizemos miséria!
-
-### Plots do modelo e do resultado
-
-Tendo ajustado um modelo de Cox aos dados, é possível visualizar a proporção de sobrevivência prevista em qualquer momento para um determinado grupo de risco.
-
-Neste caso, construímos um novo banco de dados com duas linhas, uma para cada valor de tx.
-
-```{r}
-tx_df <- with(db,
-              data.frame(tx = c("sim", "não")
-              )
-)
-kable(tx_df)
-```
-
-Agora podemos utilizar o nosso modelo para prever os valores de sobrevida e criar um gráfico da Regressão de Cox.
+### Tabela Formatada para Publicação
 
 ```{r}
 #| echo: true
-#| message: false
-#| warning: false
 
-cox_graph <- survfit(cox_res, newdata = tx_df)
-
-ggsurvplot(cox_graph, conf.int = TRUE, legend.labs=c("tx=sim", "tx=não"),
-           ggtheme = theme_minimal(),
-           data = db)
+tbl_regression(
+  cox_res,
+  exponentiate = TRUE,
+  label = list(tx ~ "Transplante")
+) %>%
+  bold_p() %>%
+  add_global_p()
 ```
 
-::: callout-caution
-## Cuidado!
+::: {.callout-note}
+## 📊 Interpretação
 
-O gráfico do modelo da Regressão de Cox é diferente do gráfico da Kaplan-Meir! O cálculo da regressão distorce os valores e encaixa o modelo aos dados. Observe a diferença!
+**HR = 2.94** para tx="não"
+
+"Pacientes **sem transplante** têm **2.94× mais risco** de óbito comparado aos que fizeram transplante"
+
+Equivalente: Transplante **reduz risco em 66%** [(1 - 1/2.94) × 100]
 :::
 
+---
+
+### Curvas Ajustadas pelo Modelo
+
 ```{r}
-# Gráfico da Kaplan-Meir
-fit2_km
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+# Prever para ambos os grupos
+tx_df <- data.frame(tx = c("sim", "não"))
+cox_pred <- survfit(cox_res, newdata = tx_df)
+
+ggsurvplot(
+  cox_pred,
+  data = db,
+  conf.int = TRUE,
+  legend.labs = c("Transplante = Sim", "Transplante = Não"),
+  ggtheme = theme_minimal(),
+  title = "Curvas de Sobrevida Ajustadas (Modelo Cox)"
+)
 ```
 
-Não podemos deixar e fora o gráfico do modelo. Com pouca tinta (e pouco código) vamos mostrar tudo o que a função `summary()` nos proporcionou. Para isso vamos utilizar a função `ggforest()` do pacote `survminer`.
+::: {.callout-warning}
+## ⚠️ Cox vs Kaplan-Meier
+
+As curvas do **modelo Cox** são **ajustadas** e podem diferir ligeiramente das curvas Kaplan-Meier **empíricas**. Isso é normal!
+
+- **K-M:** Dados brutos, não-paramétrico
+- **Cox:** Modelo ajustado, assume proporcionalidade
+:::
+
+---
+
+### Forest Plot do Modelo
 
 ```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 4
+
 ggforest(cox_res, data = db)
 ```
 
-Se não escorreu uma lágrima aí do outro lado da tela agora, eu desisto. E olha que utilizamos apenas uma variável independente no modelo!
+---
 
-## Hazard ratio e risco relativo (CONFIRMAR O CONTEÚDO)
-
-Vocês repararam que tanto na tabela quanto no gráfico com os resultados no modelo aparece o resultado como "Hazard Ratio"... pois bem, isso está errado!
-
-::: callout-warning
-#### Atenção!
-
-O risco relativo compara a probabilidade **cumulativa** de um evento ocorrer entre dois grupos ao longo de um período específico, enquanto o hazard ratio avalia a **razão instantânea** de riscos proporcionais entre os grupos, considerando a variação no risco ao longo do tempo. Enquanto o risco relativo se concentra em eventos cumulativos, o hazard ratio destaca as diferenças nas taxas instantâneas de falha, sendo especialmente útil em análises de sobrevida e estudos onde a dinâmica temporal do risco é crucial.
-:::
-
-## d) Hazard Ratio
-
-::: callout-note
-#### Exercício
-
-Compare com base no resultado da Cox, qual seria a diferença na sobrevida (HR) entre uma pessoa que fez e outra que não fez transplante com 50 meses de observação
-:::
-
-Para de fato calcular o Hazard Ratio precisamos utilizar nosso modelo para prever a sobrevida em um tempo específico de nosso interesse.
-
-Vamos começar salvando nosso modelo em uma variável
+## 📐 Parte D: Calculando Hazard Ratio em Tempo Específico
 
 ```{r}
-# Ajuste do modelo de regressão de Cox
+#| echo: true
+
+# Especificando o modelo 
+
 cox_res <- coxph(Surv(time = t_seg, event = obito) ~ tx, data = db)
-```
 
-Agora vamos criar um conjunto de dados com informações simuladas sobre tempo de seguimento, ocorrência de evento (óbito), e uma variável indicadora de tratamento. Como queremos comparar o tempo de sobrevida entre quem fez ou não o transplante, a única variável que terá valores diferentes será a tx.
-
-```{r}
-pred_dat <- data.frame(t_seg = c(41,41),
+# Criar dados para predição (tempo 50 meses)
+pred_dat <- data.frame(t_seg = c(50,50),
                        obito = c(0,0), 
                        tx = c("sim","não")
                        )
+
 kable(pred_dat)
 ```
 
-A seguir vamos utiliza a função `predict()` para fazer previsões com base em nosso modelo previamente ajustado (cox_res).
 
 ```{r}
-preds <- predict(cox_res, newdata = pred_dat, type = "survival", se.fit = TRUE)
-```
+#| echo: true
 
-Salvamos o resultado da função em uma variável para poder adicionar os resultados das predições em nosso dataframe criado anteriormente (pred_dat). Queremos os resultados da média e do Intervalo de Confiança. Para isso executamos o código a seguir:
+# Prever sobrevida
+preds <- predict(cox_res,
+                 pred_dat, 
+                 type = "survival", 
+                 se.fit = TRUE)
 
-```{r}
+# Adicionar ao dataframe
 pred_dat$prob <- preds$fit
-pred_dat$lcl <- preds$fit - 1.96*preds$se.fit
-pred_dat$ucl <- preds$fit + 1.96*preds$se.fit
-kable(pred_dat)
+pred_dat$lcl <- preds$fit - 1.96 * preds$se.fit
+pred_dat$ucl <- preds$fit + 1.96 * preds$se.fit
+
+# Exibir
+kable(pred_dat, digits = 3, caption = "Sobrevida Predita aos 50 meses")
+
+# HR
+HR_50 <- pred_dat$prob[1] / pred_dat$prob[2]
+cat("\nHR aos 50 meses:", round(HR_50, 3), "\n")
+cat("→ Grupo com transplante tem", round(HR_50, 2), 
+    "× mais sobrevida que grupo sem transplante\n")
 ```
 
-Por fim, podemos finalmente verificar o Hazard Ratio no tempo de 41 meses, dividindo a probabilidade de sobrevida do grupo que fez o transplante pela probabilidade de sobrevida do grupo que não fez o transplante.
+---
+
+### HR em Múltiplos Tempos
 
 ```{r}
-HR_41 = pred_dat$prob[1] / pred_dat$prob[2] # Diferença na sobrevida (HR) no tempo 41 meses 
-HR_41
+#| echo: true
+
+# Múltiplos tempos
+tempos_interesse <- c(30, 50, 75, 90)
+resultados_hr <- data.frame()
+
+for (t in tempos_interesse) {
+  pred_temp <- data.frame(
+    t_seg = c(t, t),
+    obito = c(0, 0),
+    tx = c("sim", "não")
+  )
+  
+  preds_temp <- predict(cox_res, newdata = pred_temp, 
+                        type = "survival", se.fit = TRUE)
+  
+  hr <- preds_temp$fit[1] / preds_temp$fit[2]
+  
+  resultados_hr <- rbind(resultados_hr, data.frame(
+    Tempo = t,
+    Sobrevida_Sim = round(preds_temp$fit[1], 3),
+    Sobrevida_Não = round(preds_temp$fit[2], 3),
+    HR = round(hr, 3)
+  ))
+}
+
+kable(resultados_hr, caption = "Hazard Ratios ao Longo do Tempo")
 ```
 
-------------------------------------------------------------------------
+---
 
-Temos que no tempo de 41 meses a probabilidade de sobrevida de quem não fez o transplante é 1.33 menor do que quem fez o transplante.
+## ✅ Verificação de Pressupostos
 
-Caso tenha interesse em mais pontos, podemos criar vários tempos de interesse em um único dataframe e repetir o código.
+::: {.callout-important}
+## Pressuposto Principal: Proporcionalidade dos Riscos
 
-```{r}
-multi_pred_dat <- data.frame(t_seg = c(41,41, 50, 50, 80, 80),
-                       obito = c(0,0,0,0,0,0), 
-                       tx = c("sim","não","sim","não","sim","não")
-                       )
+O modelo Cox assume que o **hazard ratio é constante** ao longo do tempo.
 
-preds <- predict(cox_res, newdata = multi_pred_dat, type = "survival", se.fit = TRUE)
-
-multi_pred_dat$prob <- preds$fit
-multi_pred_dat$lcl <- preds$fit - 1.96*preds$se.fit
-multi_pred_dat$ucl <- preds$fit + 1.96*preds$se.fit
-
-HR_41 = multi_pred_dat$prob[1] / multi_pred_dat$prob[2] # 41 
-HR_50 = multi_pred_dat$prob[3] / multi_pred_dat$prob[4] # 50 
-HR_80 = multi_pred_dat$prob[5] / multi_pred_dat$prob[6] # 80 
-
-tabela_HR = data.frame(Tempo = c(41, 50, 80),
-                       HR_Não = c(HR_41, HR_50, HR_80))
-kable(tabela_HR)
-
-```
-
-## Verificando os pressupostos da Cox regression
-
-A Regressão de Cox é uma técnica robusta, mas, como qualquer método estatístico, possui alguns pressupostos importantes. Os principais pressupostos da Regressão de Cox são:
-
-1.  **Proporcionalidade dos Riscos:**
-
-    -   O pressuposto fundamental é que os riscos relativos entre dois grupos são constantes ao longo do tempo. Em outras palavras, a razão instantânea de riscos (hazard ratio) entre grupos não muda com o tempo. Este é o pressuposto de proporcionalidade dos riscos.
-
-2.  **Independência Censura:**
-
-    -   A censura dos dados deve ser independente da probabilidade de falha. Isso significa que a probabilidade de um evento censurado (ocorrido após o fim do acompanhamento) deve ser a mesma para todos os grupos.
-
-3.  **Linearidade no Logaritmo dos Riscos:**
-
-    -   A relação entre as variáveis independentes e o logaritmo do risco deve ser linear. Isso é crucial para a interpretação dos coeficientes como log-riscos instantâneos.
-
-4.  **Auscência de Colinearidade:**
-
-    -   As variáveis independentes no modelo não devem estar altamente correlacionadas (colinearidade). A colinearidade pode levar a estimativas imprecisas dos coeficientes.
-
-5.  **Ausência de Efeito de Interferência:**
-
-    -   Não deve haver efeito de interferência entre indivíduos, o que significa que o status de um indivíduo não deve influenciar diretamente o tempo de falha de outro indivíduo.
-
-6.  **Adequação do Modelo:**
-
-    -   O modelo escolhido deve ser apropriado para os dados. Avaliações de adequação, como testes de resíduos, podem ser úteis para verificar a qualidade do ajuste do modelo aos dados.
-
-Os pressupostos de 2 a 6 são inerentes ao desenho do experimento e do acompanhamento durante as observações. O único que vamos abordar aqui no tutorial é o de proporcionalidade dos riscos.
-
-### Proporcionalidade dos riscos
-
-Temos duas formas de avaliar a proporcionalidade dos riscos
-
-#### **1) Análise do gráfico da Kaplan-Meier**
-
-Ao analisar o gráfico de Kaplan-Meier para diferentes grupos, é crucial observar se as curvas de sobrevivência são aproximadamente paralelas ou se cruzam entre si. Se as curvas são paralelas, isso sugere proporcionalidade dos riscos, indicando que as diferenças nas taxas de falha entre os grupos são constantes ao longo do tempo. No entanto, se as curvas se cruzam, isso indica uma possível violação da proporcionalidade dos riscos.
-
-Cruzamentos nas curvas podem indicar mudanças na relação de risco entre os grupos ao longo do tempo. Essa mudança pode ser devido a diferentes dinâmicas de risco em períodos distintos do estudo. Se as curvas se cruzarem, a aplicação da Regressão de Cox não deve ser feita para não gerar interpretações erradas!
-
-```{r}
-fit2_km
-```
-
-Podemos observar que em nosso exemplo as linhas de sobrevida não cruzam, portanto podemos assumir que os riscos são proporcionais pela análise gráfica.
-
-#### **2) Resíduos de Schoenfeld**
-
-A segunda forma para se avaliar a suposição de proporcionalidade dos riscos na Regressão de Cox vamos utilizar o teste de Schoenfeld, que verifica se há uma relação sistemática entre os resíduos de Schoenfeld e o tempo, o que indicaria uma violação dessa suposição.
-
-A ideia central é que, se os resíduos de Schoenfeld não apresentarem uma relação significativa com o tempo, isso sugere que a proporcionalidade dos riscos é razoável. Logo, a hipótese nula é que não há relação entre os resíduos e o tempo, o que indicaria proporcionalidade dos riscos. O teste estatístico avalia se é razoável rejeitar essa hipótese nula.
-
-::: callout-important
-## Importante!
-
-Vamos torcer para o valor de p ser **MAIOR** que 0.05!
+**Violação:** Se HR muda com o tempo, use modelo estratificado ou tempo-dependente.
 :::
 
-Utilizando a função `cox.zph()` do pacote `survival` temos o seguinte código:
+---
+
+### 1. Inspeção Visual: Curvas Paralelas?
 
 ```{r}
-test <- survival::cox.zph(cox_res)
-test
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+fit2_km +
+  labs(subtitle = "Curvas paralelas? → Riscos proporcionais ✓")
 ```
 
-Ok! Temos riscos proporcionais!
+::: {.callout-note}
+Se curvas **cruzam**, há violação! Neste caso, são aproximadamente paralelas → OK.
+:::
 
-Outra forma de verificar a proporcionalidade dos riscos é com o gráfico dos resíduos de Schoenfeld.
+---
+
+### 2. Teste de Schoenfeld
 
 ```{r}
-# Plot the Schoenfeld residuals over time for each covariate
-survminer::ggcoxzph(test, point.size = 0.1)[1]
+#| echo: true
 
-
+# Teste formal
+test_schoenfeld <- cox.zph(cox_res)
+print(test_schoenfeld)
 ```
 
-Se os resíduos mostrarem um padrão claro ao longo do tempo, isso pode indicar uma violação da suposição de riscos proporcionais.
+::: {.callout-tip}
+## Interpretando o Teste
 
-Algumas dicas para ajudar na interpretação:
+**H₀:** Riscos são proporcionais  
+**p > 0.05:** Não rejeitamos H₀ → Proporcionalidade mantida ✓
 
--   Sem Padrão (Resíduos Constantes): Se os resíduos aparecerem aleatoriamente espalhados em torno de zero, sem nenhuma tendência ou padrão claro, isso sugere que a suposição de riscos proporcionais é razoável.
+**Neste caso:** p = 0.43 → Pressuposto atendido!
+:::
 
--   Tendência Linear: Uma tendência linear (aumentando ou diminuindo) nos resíduos ao longo do tempo pode sugerir uma violação da suposição de riscos proporcionais. Por exemplo, se os resíduos forem consistentemente positivos ou negativos ao longo do tempo, isso indica um efeito dependente do tempo.
+---
 
--   Padrão Não Linear: Se os resíduos exibirem um padrão não linear ou formatos específicos (por exemplo, formato de U, formato de V), isso pode indicar desvios dos riscos proporcionais.
-
--   Paralelismo: Paralelismo significa que a propagação e distribuição dos resíduos são relativamente constantes ao longo do tempo. Se os resíduos aumentarem ou diminuirem ao longo do tempo, isso pode sugerir uma violação da suposição.
-
-## Conlcusões
-
-Muito bacana a análise de sobrevida e a Regressão de Cox! Na seção Extras! vamos ver mais algumas formas de plotar os gráficos e avaliar a proporcionalidade dos riscos caso a Variável Independente seja contínua!
-
-Próximo capitulo: Cox tempo-dependente!
-
-## Lista 6 resolvida no SPSS
-
-{{< video https://www.youtube.com/watch?v=oyhA4EiE1eM title='Análise Sobrevida I - Kaplan-Meier e Cox Regression - Aula Prática #6' >}}
-
-## Extras! {#sec-extrasVI}
-
-### Evento como fator ou como número
-
-Como mencionado na seção @sec-carrega_dados, o tipo da variável do evento (morte) afeta os resultados tanto da Kaplan-Meir quanto na Regressão de Cox.
-
-Vamos criar alguns modelos utilizando o banco de dados `original` (variável óbito é um fator) e também o `db` (variável óbito é binária, 1 e 0).
-
-Vamos começar observando a diferença do tipo da variável nos bancos utilizando a função `glimpse()`:
+### Gráfico de Resíduos
 
 ```{r}
-glimpse(original$obito)
+#| echo: true
+#| fig-width: 10
+#| fig-height: 6
+
+ggcoxzph(test_schoenfeld, point.size = 0.5)
 ```
 
-```{r}
-glimpse(db$obito)
-```
+::: {.callout-note collapse="true"}
+## 🔍 Interpretando Resíduos de Schoenfeld
 
-E tem mais! Temos que lembrar que quando deixamos as variáveis como fatores elas sempre possuem um nível de referência. Já verificamos isso em outros exercícios utilizando a função `levels()`.
+**O que procurar:**
+- **Sem padrão:** Resíduos aleatórios ao redor de zero → Bom!
+- **Tendência linear:** Violação da proporcionalidade
+- **Padrão não-linear:** Violação severa
 
-```{r}
-levels(original$obito)
-```
+**Linha de suavização:**
+- Aproximadamente horizontal → Proporcionalidade OK
+- Inclinação clara → Problema!
+:::
 
-Veja só! A referência para a variável óbito é o "não". Para fins didáditcos vamos criar três modelos:
+---
 
-Óbito como variável binária (banco `db`) Óbito como fator com nível de referência "não" (banco `original`) Óbito como fator com nível de referência "sim" (banco `original_sim`)
+## 📚 Material Complementar
 
-```{r}
-original_sim = original
-original_sim$obito = relevel(original_sim$obito, ref = "sim")
-```
+{{< video https://www.youtube.com/watch?v=oyhA4EiE1eM title='Análise Sobrevida I - Kaplan-Meier e Cox - Aula Prática #6' >}}
 
-Agora vamos repetir todo o procedimento já demonstrado no início das análises, utilizando os três bancos de dados.
+---
 
-```{r}
-surv_db <- Surv(time = db$t_seg, event = db$obito)
-surv_oiriginal_não <- Surv(time = original$t_seg, event = original$obito)
-surv_oiriginal_sim <- Surv(time = original_sim$t_seg, event = original_sim$obito)
-
-
-```
-
-```{r}
-fit_db <- survfit(surv_db ~ 1, data = db)
-fit_original_não <- survfit(surv_oiriginal_não ~ 1, data = original)
-fit_original_sim <- survfit(surv_oiriginal_sim ~ 1, data = original_sim)
-
-```
-
-```{r}
-plot(fit_db)
-plot(fit_original_não)
-plot(fit_original_sim)
-
-
-```
-
-```{r}
-ggsurvfit(fit_db, linewidth = 1) +
-  ggtitle("Binário") +
-  labs(x = 'Dias', y = 'Overall survival') +
-  add_confidence_interval() +
-    add_risktable() +
-  scale_ggsurvfit() 
-
-ggcuminc(fit_original_não, linewidth = 1, type = "survival" ) +
-  ggtitle("Fator - Lelvel = Não") +
-  labs(x = 'Dias', y = 'Overall survival') +
-  add_confidence_interval() +
-  add_risktable() +
-  scale_ggsurvfit() 
-
-ggcuminc(fit_original_sim, linewidth = 1) +
-  ggtitle("Fator - Lelvel = Sim") +
-  labs(x = 'Dias', y = 'Overall survival') +
-  add_confidence_interval() +
-  add_risktable() +
-  scale_ggsurvfit() 
-
-
-
-```
-
-Como podemos observar, quando utilizamos a variável de evento como um fator, acabamos analisando o risco cumulativo e não a sobrevida.
-
-### Mais gráficos!
-
-Com o ggplot2
-
-```{r}
-km_plot = survfit2(surv_obj ~ tx, data = db) %>%
-  tidy_survfit() %>%
-  ggplot(aes(x = time, y = estimate,
-             min = conf.low, ymax = conf.low,
-             color = strata, fill = strata)) +
-  geom_step()
-
-km_plot
-```
-
-Com a função `ggsurvplot()` do pacote `survminer`.
-
-```{r}
-ggsurvplot(fit2, data = db,
-           size = 1,
-           palette = c('#E7B800', '#2e9fdf'),
-           censor.shape = '|', censor.size = 4,
-           conf.int = TRUE,
-           pval = TRUE,
-           risk.table = TRUE,
-           risk.table.col = 'strata',
-           legend.labs = list('0' = 'Transplante = sim', '1' = 'Transplante = não'),
-           risk.table.height = 0.25,
-           ggtheme = theme_bw())
-```
-
-Gráficos de proporcionalidade com outras funções
-
-```{r}
-ggcoxdiagnostics(cox_res, type = "dfbeta", linear.predictions = FALSE)
-```
-
-E um específico para variáveis contínuas.
-
-```{r}
-# Não é importante para variáveis categóricas, mas fica o código para eventual consulta.
-ggcoxdiagnostics(cox_res, type = "deviance", linear.predictions = FALSE)
-```
-
-### Pacots alternativos para comparar curvas
-
-```{r}
-gehan.wilcoxon.test(surv_obj ~ tx ,data=db)
-```
-
-`survdiff` Com rho = 0 este é o teste log-rank ou Mantel-Haenszel, e com rho = 1 é equivalente à modificação Peto & Peto do teste Gehan-Wilcoxon.
-
-```{r}
-survdiff(surv_obj ~ tx, data=db, rho = 2)
-
-```
-
-### Tabela completa do modelo 2
-
-```{r}
-#| column: page
-#| 
-life_table2 = survfit2(Surv(time = t_seg, event = obito) ~ tx, data = db) %>%
-  tidy_survfit() 
-
-kable(life_table2)
-
-summary(life_table2)
-summary(life_table2, times = tempos_específicos)
-head(life_table2)
-
-```
-
-### Código não usado
-
-```{r}
-# Create the new data  
-new_df <- with(db,
-               data.frame(tx = c("sim", "não")
-               )
-)
-glimpse(new_df)
-new_df$tx = as.factor(new_df$tx)
-
-
-# Survival curves with new data
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fit_cox <- survfit(cox_res, newdata = new_df)
-
-
-ggsurvplot(fit_cox, data = db,
-           size = 1,
-           palette = c('#E7B800', '#2e9fdf'),
-           censor.shape = '|', censor.size = 4,
-           conf.int = TRUE,
-           pval = TRUE,
-          # risk.table = TRUE,
-         #  risk.table.col = 'strata',
-           legend.labs = list('0' = 'Transplante = sim', '1' = 'Transplante = não'),
-           risk.table.height = 0.25,
-           ggtheme = theme_bw())
-```
-
-### Para salvar os valores de sobrevida
-
-```{r}
-surv_fit_cox = survfit(cox_res)
-
-# Extrai os tempos de sobrevida e as estimativas de sobrevida
-surv_df_cox <- data.frame(time = surv_fit_cox$time, surv = surv_fit_cox$surv)
-surv_df_cox
-
-
-```
-
-## Referências
-
-<https://bookdown.org/mpfoley1973/survival/semiparametric.html#fitting-the-model-1>
-
-<https://biostatsquid.com/easy-survival-analysis-r-tutorial/>
-
-<https://www.youtube.com/watch?v=XrvCCFQRCZE>
-
-<https://www.youtube.com/watch?v=vX3l36ptrTU&list=PLqzoL9-eJTNDdnKvep_YHIwk2AMqHhuJ0>
-
-<http://www.sthda.com/english/wiki/cox-proportional-hazards-model>
-
-## Versões dos pacotes
+## 🔧 Informações de Sessão
 
 ```{r}
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 6
+
+Nesta lista você:
+
+✅ Construiu **tábuas de vida** e curvas **Kaplan-Meier**  
+✅ Comparou grupos com **testes log-rank**  
+✅ Ajustou **Regressão de Cox** e interpretou **Hazard Ratios**  
+✅ Calculou HR em **tempos específicos**  
+✅ Verificou **proporcionalidade dos riscos**  
+
+**Conceitos-chave:**
+- Censura: dado incompleto (não é perda de dados!)
+- K-M: método não-paramétrico para sobrevida
+- Cox: modelo semi-paramétrico para riscos
+- HR: razão de riscos instantâneos
+- Proporcionalidade: HR constante ao longo do tempo
+
+**Próximos passos:**
+- Lista 7: Cox com covariáveis **tempo-dependentes**
+- Explorar modelos com múltiplas covariáveis
+- Análises estratificadas para violações de proporcionalidade
+:::

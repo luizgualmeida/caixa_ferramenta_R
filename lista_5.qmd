@@ -1,455 +1,669 @@
-# Lista 5 - Generalized Linear Model Aula Prática
+# Lista 5: Modelos Lineares Generalizados (GzLM) {.unnumbered}
 
-Esta é uma lista focada em GLzM independente. Vamos realizar testes baseados no banco de dados Dados Amostra.
+::: {.callout-note appearance="simple" icon=false}
+## Objetivo da Lista
 
-```{r}
-#| echo: true
-#| message: false
-#| warning: false
+Explore **Generalized Linear Models (GzLM)** para variáveis resposta não-normais: **regressão logística** (binária) e **regressão de Poisson** (contagem). Aprenda a interpretar Odds Ratios e Razões de Prevalência.
+:::
 
-library(emmeans)
-library(tidyverse)
-library(lme4)
-library(nlme)
-library(flexplot)
-library(foreign)
-library(dplyr)
-library(multcomp)
-library(effects)
-library(sjstats)
-library(sjPlot)
-library(tm)
-library(report)
-library(ggplot2)
-library(forcats)
-library(performance)
-library(rempsyc)
-library(easystats)
-library(kableExtra)
-library(fitdistrplus)
-library(AER)
-library(gtsummary)
-library(broom)
+---
 
-```
-
-## Carregando os dados e modificando o tipo de variável
+## 📦 Pacotes Necessários
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
 
-original = read.spss("Dados Amostra.sav", to.data.frame=TRUE)
+pacotes <- c(
+  "emmeans", "tidyverse", "lme4", "nlme", "flexplot",
+  "foreign", "dplyr", "multcomp", "effects", "sjstats",
+  "sjPlot", "ggplot2", "forcats", "performance",
+  "easystats", "kableExtra", "fitdistrplus", "AER",
+  "gtsummary", "broom"
+)
+
+pacotes_faltantes <- pacotes[!pacotes %in% installed.packages()[, "Package"]]
+if (length(pacotes_faltantes) > 0) {
+  install.packages(pacotes_faltantes, dependencies = TRUE)
+}
+
+invisible(lapply(pacotes, library, character.only = TRUE))
+cat("✓ Pacotes carregados!\n")
 ```
 
-## Boas práticas
+---
 
-Ter um clone do banco de dados e manter ele no formato original. Podemos ir comparando todas as mudanças de maneira ágil. Vamos também já verificar os tipos de variáveis que temos no banco de dados e realizar mudanças, caso necessário.
+## 📥 Preparação dos Dados
+
+::: {.callout-important}
+## Download Necessário
+
+Baixe o banco **"[Dados Amostra](https://drive.google.com/file/d/XXXXX)"** e salve na pasta do projeto.
+:::
 
 ```{r}
-db = original
-kable(head(db))
+#| echo: true
+#| message: false
+#| warning: false
+
+# Carregar dados originais
+original <- read.spss("Dados Amostra.sav", to.data.frame = TRUE)
+
+# Criar cópia de trabalho (boa prática!)
+db <- original
 ```
 
-Não queremos que o número de filhos (childs), idade (age), nível escolaridade (educ) e horas de TV (tvhours) sejam categóricas. Vamos alterar para que sejam numéricas com a função `as.numeric()`.
+---
+
+### Correção de Tipos
 
 ```{r}
-# Modificando o tipo das variáveis. Apenas Life, Sex, attsprts e aderencia devem ser categóricas.
-db$childs = as.integer(db$childs)
-db$age = as.numeric(db$age)
-db$educ = as.numeric(db$educ)
-db$tvhours = as.numeric(db$tvhours)
-```
+#| echo: true
 
-Observando como elas estão agora, podemos também utilizar a função `glimpse()`.
+# Verificar estrutura
+glimpse(db)
 
-```{r}
+# Converter variáveis numéricas
+db$childs <- as.integer(db$childs)
+db$age <- as.numeric(db$age)
+db$educ <- as.numeric(db$educ)
+db$tvhours <- as.numeric(db$tvhours)
+
+# Confirmar mudanças
 glimpse(db)
 ```
 
-## Verificando a representatividade dos dados
+::: {.callout-tip}
+## 💡 Boa Prática
+
+Mantenha sempre uma cópia do banco original! Facilita comparações e evita perda de dados.
+:::
+
+---
+
+### Verificar Representatividade
 
 ```{r}
+#| echo: true
+
+# Tabelas de contingência
 xtabs(~ attsprts + sex, data = db)
 xtabs(~ attsprts + life, data = db)
-xtabs(~ attsprts + aderencia , data = db)
-
-
+xtabs(~ attsprts + aderencia, data = db)
 ```
 
-## a) e b) GLzM - Praticar ou não esportes
-
-::: callout-note
-#### Exercício
-
-Verifique qual o efeito do sexo, o que as pessoas acham da vida (life), número de filhos, idade, anos de escolaridade e horas de tv sobre o fato dela praticar ou não esportes (Attsports). Faça um GLzM e descreva os resultados adequadamente.
+::: {.callout-note}
+Verifique se há células vazias ou com poucos casos. Isso pode afetar a estabilidade dos modelos.
 :::
 
-Verificando quais os níveis de referência.
+---
 
-```{r}
-levels(db$attsprts)
-levels(db$sex)
-levels(db$life)
-levels(db$aderencia)
-```
+## 🎯 Parte A: Regressão Logística
 
-Para os resultados ficarem similares aos da aula prática, vamos modificar o nível de referência da variável attsprts para "No"
+::: {.callout-tip}
+## Quando Usar?
 
-```{r}
-db$attsprts =  relevel(db$attsprts, ref = "No")
-levels(db$attsprts)
+**Regressão Logística** é adequada para:
+- **VD binária:** Sim/Não, Sucesso/Fracasso
+- Modelar probabilidade de pertencer a uma categoria
+- Estimar **Odds Ratios** (razão de chances)
 
-```
-
-## Criando o modelo
-
-```{r}
-modelo_1 <- glm(attsprts ~ 1 + sex + life + childs + educ + tvhours +  age,
-                data = db,
-                family = "binomial")
-                #na.action = na.exclude -> para remover os NAs
-
-```
-
-## Resultados do modelo
-
-Vamos começar mais uma vez vendo o resultado que a função `summary()` nos oferece.
-
-```{r}
-summary(modelo_1)
-```
-
-Novamente não é o melhor dos mundos mas temos os valores de p e podemos observar quais variáveis deram resultados significativos.
-
-Para melhorar a visualização e trazer os resultados em Odds Ratio podemos utilizar a função `tab_model()` do pacote `sjPlot`.
-
-```{r}
-tab_model(modelo_1, 
-          show.se = TRUE,
-          show.aic = TRUE, 
-          show.loglik=TRUE,
-          show.ci = FALSE)
-```
-
-Bem melhor!
-
-::: callout-tip
-#### Dica!
-
-Veja a seção @sec-extrasV para uma explicação sobre correções para os valores de p, como Bonferroni, Holm, Hochberg e Hommel.
+**Exemplo:** Praticar esportes (Sim vs Não)
 :::
 
-Para não precisar ficar mudando a referência e conseguir interpretar valores menores que 1, podemos utilizar a função `estimates()` do pacote `flexplot`.
+---
 
-```{r}
+### Pergunta de Pesquisa
 
-estimates(modelo_1)
-```
+::: {.callout-note}
+## Exercício A
 
-Na coluna "inverse.OR" temos os valores invertendo a ordem das referências. No caso da variável sexo, podemos observar que o valor de odds ratio para "Female" quando comparado com "Male" (Female - Male) é de 0,636. O Inverse.OR nos mostra o valor caso o nível de referência fosse invertido (Male - Female).
-
-A interpretação do resultado, levando em conta o inverse.OR, também será invertida. Lembrando sempre que o valor de referência para a VD é "Não fazer esportes" (sedentarismo). Portanto podemos escrever um parágrafo de resultados assim:
-
-"Pessoas do sexo feminino tem 1,57 mais chance de pertencer ao grupo que **faz** exercícios em relação à pessoas do sexo masculino."
-
-Caso fique na dúvida, podemos sempre mudar o nível de referência da variável independente de interesse, rodar novamente o modelo e comparar os resultados.
-
-```{r}
-# Alterando o nível de referência
-
-db$sex = relevel(db$sex, ref =  "Female")
-```
-
-```{r}
-# Verificando se a troca ocorreu
-
-levels(db$sex)
-```
-
-```{r}
-# Rodando novamente o modelo
-
-modelo_1b <- glm(attsprts ~ 1 + sex + life + childs + educ + tvhours +  age,
-                data = db,
-                family = "binomial")
-                #na.action = na.exclude -> para remover os NAs
-
-```
-
-```{r}
-estimates(modelo_1b)
-```
-
-Podemos observar que o valor de OR para "Male" quando comparado com "Female" (Male - Female) é idêntico ao inverse.OR quando a referência era "Male".
-
-Agora temos que interpretar de forma direta os resultados e ficaria assim:
-
-"Pessoas do sexo masculino tem 1,57 mais chance de pertencer ao grupo que **não faz** exercícios em relação à pessoas do sexo feminino"
-
-::: callout-warning
-#### Cuidado!
-
-Percebam que é fácil se enrolar com a descrição dos resultados. Faça da maneira que se sentir mais a vontade dentre as duas apresentadas e verifique sempre o nível de referência das variáveis.
+Qual o efeito de **sexo, opinião sobre vida, número de filhos, idade, escolaridade e horas de TV** sobre a **prática de esportes**?
 :::
 
-## c) Comparando modelos
+---
 
-::: callout-note
-#### Exercício
+### Preparação: Níveis de Referência
 
-Os resultados das questões A e B são similares? Se sim, porque? Se não, qual dos modelos é mais adequado?
+```{r}
+#| echo: true
+
+# Verificar níveis atuais
+cat("Níveis originais:\n")
+print(levels(db$attsprts))
+print(levels(db$sex))
+print(levels(db$life))
+
+# Ajustar referência para "No" (não pratica)
+db$attsprts <- relevel(db$attsprts, ref = "No")
+
+cat("\nNovo nível de referência:\n")
+print(levels(db$attsprts))
+```
+
+::: {.callout-important}
+## Por que isso importa?
+
+Com "No" como referência, OR > 1 indica **maior chance de praticar esportes**.
 :::
 
-Aqui no R vamos apenas criar o modelo com a função do GzLM. Você pode criar um modelo com o módulo de regressão logística no Jamovi e comparar os resultados apresentados anteriormente.
+---
 
-## d) e e) Número de filhos (VD)
+### Ajuste do Modelo
 
-::: callout-note
-#### Exercício
+```{r}
+#| echo: true
 
-Verifique o efeito do sexo, opinião sobre a vida (life) e prática de exercícios (attsports) sobre o número de filhos. Controle os resultados para idade e anos de escolaridade. Faça um GLM Univariado e um GLzM para a mesma pergunta
+modelo_logistico <- glm(
+  attsprts ~ sex + life + childs + educ + tvhours + age,
+  data = db,
+  family = "binomial"
+)
+```
+
+::: {.callout-note collapse="true"}
+## 🔍 Anatomia do Modelo Logístico
+
+**Função:** `glm()` (Generalized Linear Model)
+
+**Family:** `binomial` com link logit (padrão)
+$$
+\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \ldots
+$$
+
+**Interpretação:**
+- Coeficientes: mudança no log-odds
+- exp(coeficiente): Odds Ratio (OR)
 :::
 
-Podemos utilizar a mesma função `glm()` para criar os dois modelos.
+---
 
-### Modelo GLM
-
-```{r}
-modelo_2 <- glm(childs ~ 1 + sex + life + attsprts + age + educ,
-                data = db)
-```
-
-Como estamos analisando um modelo linear univariado assumindo que a distribuição da VD é normal, podemos interpretar diretamente os estimadores que são retornados pela função summary.
+### Resultados: Saída Básica
 
 ```{r}
-kable(summary(modelo_2)$coef)
+#| echo: true
+
+summary(modelo_logistico)
 ```
 
-E chamar a função `report()` para gerar os resultados.
-
-```{r}
-report(modelo_2)
-```
-
-### Modelo Poisson
-
-```{r}
-modelo_3 <- glm(childs ~ 1 + sex + life + attsprts + age + educ,
-                data = db,
-                family = "poisson")
-```
-
-### Comparando AIC os modelos
-
-Podemos comparar os índices de aderência dos dois modelos para verificar qual se ajusta melhor aos dados.
-
-```{r}
-AIC(modelo_2, modelo_3)
-```
-
-```{r}
-BIC(modelo_2, modelo_3)
-```
-
-Podemos observar que tanto o AIC quanto o BIC favorecem o modelo_3 com distribuição Poisson.
-
-### Resultados
-
-Sempre começando com a boa e velha função `summary()`.
-
-```{r}
-summary(modelo_3)
-```
-
-Temos que idade (age), nível de educação (educ) e praticar esportes (attsportsYes) são significativos.
-
-E agora podemos utilizando mais uma vez a função estimates`()` para ver os valores de de cada variável exp(B). Reparem que aqui não teremos as Odds Ratio, mas sim uma coluna chamada **multiplicative.coef**, que no caso de modelos Poisson de desenho transversal é a **razão de prevalência**. A maneira de interpretar é a mesma da regressão logística.
-
-```{r}
-estimates(modelo_3)
-```
-
-```{r}
-exp(modelo_3$coefficients)
-```
-
-Escrevendo o parágrafo de um dos resultados temos algo como:
-
-"Pessoas que pertencem ao grupo que fazem esportes tem 10% a mais de chance de terem um filho quando comparadas com pessoas que são sedentárias.
-
-No caso do nível educacional precisamos calcular o exp(B) inverso e ter cuidado na interpretação do resultado.
-
-```{r}
-kable(exp(-coef(modelo_3)))
-```
-
-Temos que para cada nível a mais de educação a chance de ter filhos **diminui** em aproximadamente 3%.
-
-::: callout-caution
-## Cuidado!
-
-Não recomendamos utilizar a função `report()` para modelos Poisson e de regressão logística. Os resultados apresenta
+::: {.callout-warning}
+Coeficientes estão em **log-odds**. Precisamos exponenciar para obter ORs interpretáveis!
 :::
 
+---
+
+### Resultados: Tabela Formatada
+
 ```{r}
-report(modelo_3)
+#| echo: true
+
+tab_model(
+  modelo_logistico,
+  show.se = TRUE,
+  show.aic = TRUE,
+  show.loglik = TRUE,
+  show.ci = TRUE,
+  transform = "exp",
+  title = "Regressão Logística: Prática de Esportes"
+)
 ```
 
-Crie mais modelos com interações entre as variáveis para praticar. Compare os índices de aderência dos modelos e depois descreva o que melhor se adequa aos dados.
+::: {.callout-tip}
+## 📊 Interpretando Odds Ratios
 
-## Lista 5 resolvida no SPSS
+**OR = 1:** Nenhum efeito  
+**OR > 1:** Aumenta chance de praticar esportes  
+**OR < 1:** Diminui chance de praticar esportes
 
-{{< video https://www.youtube.com/watch?v=IHhhsXYZ-1A title='GLzM - Generalized Linear Model Aula Prática #5 (SPSS)' >}}
+**Exemplo:** OR = 1.50 → 50% mais chance
+:::
 
-## Extras! {#sec-extrasV}
+---
 
-### Resultados dos modelos na unha
+### Resultados: Função `summary()`
 
 ```{r}
-modelo_4 <- glm(childs ~ sex * life * attsprts + age + educ,
-                data = db,
-                family = "poisson")
+#| echo: true
+
+summary(modelo_logistico)
 ```
 
+::: {.callout-note collapse="true"}
+## 🔍 Interpretando a Tabela
+
+**Colunas importantes:**
+- **OR:** Odds Ratio direta
+- **inverse.OR:** OR com referência invertida
+- **p.value:** Significância estatística
+
+**Uso do inverse.OR:**
+Quando OR < 1, use inverse.OR para facilitar interpretação.
+
+**Exemplo com sexo:**
+- OR = 0.636 (Female vs Male)
+- inverse.OR = 1.57 (Male vs Female)
+
+**Interpretação (usando inverse.OR):**
+"Mulheres têm 1.57× mais chance de praticar esportes que homens"
+:::
+
+---
+
+### Mudando Referência: Demonstração
+
 ```{r}
-# Obter o resumo estatístico do modelo
-resumo_modelo <- summary(modelo_4)
+#| echo: true
 
-# Extrair os valores de p e os coeficientes
-valores_p <- resumo_modelo$coefficients[, "Pr(>|z|)"]
-coeficientes <- resumo_modelo$coefficients[, "Estimate"]
+# Mudar referência de sexo
+db$sex <- relevel(db$sex, ref = "Female")
 
-# Calcular os asteriscos para os níveis de significância
-asteriscos <- ifelse(valores_p < 0.001, "***", 
-            ifelse(valores_p < 0.01, "**", 
-            ifelse(valores_p < 0.05, "*", "")))
+# Re-ajustar modelo
+modelo_logistico_v2 <- glm(
+  attsprts ~ sex + life + childs + educ + tvhours + age,
+  data = db,
+  family = "binomial"
+)
+summary(modelo_logistico_v2)
+```
 
-# Calcular as estimativas de RR e intervalos de confiança
-RP <- exp(coef(modelo_4))
-IC <- exp(confint(modelo_4))
+::: {.callout-note}
+Note que OR do Modelo 2 = inverse.OR do Modelo 1! A escolha da referência afeta apenas a **direção** da comparação, não o resultado estatístico.
+:::
 
-# Criar o dataframe parametros_modelo_2
-parametros_modelo_4 <- data.frame(
-  RP = round(RP, 2),
-  IC_Lower = round(IC[, 1], 2),
-  IC_Upper = round(IC[, 2], 2),
-  Valores_p = round(valores_p, 4),
-  Significância = asteriscos
+---
+
+## 🎯 Parte D: Regressão de Poisson
+
+::: {.callout-tip}
+## Quando Usar?
+
+**Regressão de Poisson** é adequada para:
+- **VD de contagem:** 0, 1, 2, 3, ...
+- Eventos raros
+- Estimar **Razões de Prevalência** (RP) ou Taxas
+
+**Exemplo:** Número de filhos
+:::
+
+---
+
+### Pergunta de Pesquisa
+
+::: {.callout-note}
+## Exercício D
+
+Qual o efeito de **sexo, opinião sobre vida e prática de esportes** sobre **número de filhos**, controlando por **idade e escolaridade**?
+:::
+
+---
+
+### Modelo 1: GLM Normal (Baseline)
+
+```{r}
+#| echo: true
+
+modelo_glm_normal <- glm(
+  childs ~ sex + life + attsprts + age + educ,
+  data = db,
+  family = "gaussian"  # Assume normalidade
 )
 
-parametros_modelo_4
-
+summary(modelo_glm_normal)
 ```
 
-### Pressupostos dos modelos Poisson
+---
+
+### Modelo 2: GLM Poisson
 
 ```{r}
-plot(modelo_3, which = 1:6)
+#| echo: true
+
+modelo_poisson <- glm(
+  childs ~ sex + life + attsprts + age + educ,
+  data = db,
+  family = "poisson"
+)
+
+summary(modelo_poisson)
 ```
 
-#### Overdispersion
+---
+
+### Comparação de Modelos
 
 ```{r}
-dispersiontest(modelo_3, trafo = 1)
+#| echo: true
+
+# Critérios de informação
+criterios <- data.frame(
+  Modelo = c("Normal", "Poisson"),
+  AIC = c(AIC(modelo_glm_normal), AIC(modelo_poisson)),
+  BIC = c(BIC(modelo_glm_normal), BIC(modelo_poisson))
+)
+
+criterios$AIC <- round(criterios$AIC, 2)
+criterios$BIC <- round(criterios$BIC, 2)
+
+# Marcar melhor
+criterios$AIC <- ifelse(
+  criterios$AIC == min(criterios$AIC),
+  paste0(criterios$AIC, " ★"),
+  criterios$AIC
+)
+
+criterios$BIC <- ifelse(
+  criterios$BIC == min(criterios$BIC),
+  paste0(criterios$BIC, " ★"),
+  criterios$BIC
+)
+
+knitr::kable(criterios, caption = "Comparação: Normal vs Poisson")
 ```
 
-Podemos também chamar a correção de Bonferroni para sermos mais conservadores com nossos resutlados.
+::: {.callout-note}
+## 📊 Resultado
+
+Modelo Poisson apresenta **melhor ajuste** (menor AIC/BIC).
+:::
+
+---
+
+### Interpretação: Razões de Prevalência
 
 ```{r}
-tab_model(modelo_1, 
-          show.se = TRUE,
-          show.aic = TRUE, 
-          show.loglik=TRUE,
-          show.ci = FALSE, 
-          p.adjust = "bonferroni")
+#| echo: true
+
+# Usando estimates()
+est_poisson <- summary(modelo_poisson)
+print(est_poisson)
 ```
 
-A correção de Bonferroni é um método utilizado para controlar o erro tipo I (falso positivo) em testes de hipóteses múltiplos. Quando você realiza vários testes simultaneamente, há um aumento no risco de obter resultados significativos simplesmente devido ao acaso (erro tipo I).
+::: {.callout-tip}
+## 📊 Interpretando Razões de Prevalência
 
-O método de Bonferroni ajusta os valores-p obtidos nos testes individuais para reduzir a probabilidade global de cometer um erro tipo I. A correção é feita dividindo o nível de significância (geralmente 0,05) pelo número total de testes realizados. Cada teste individual deve, então, ter um valor de significância ajustado para compensar o número de comparações.
+**multiplicative.coef** = exp(β) = Razão de Prevalência (RP)
 
-A fórmula para a correção de Bonferroni é:
+**RP = 1:** Nenhum efeito  
+**RP > 1:** Aumenta contagem esperada  
+**RP < 1:** Diminui contagem esperada
 
-$$
-Valor_-p_-Ajustado = Valor_-de_-Significância_-Original/ Número_-Total_-de_-Testes
-$$ Por exemplo, suponha que você esteja conduzindo 5 testes de hipóteses e deseje manter um nível global de significância de 0,05. A correção de Bonferroni ajustaria o valor de significância para cada teste individual, resultando em 0,05/5=0,010,05/5=0,01.
+**Exemplo:**
+- RP = 1.10 → 10% mais filhos esperados
+- RP = 0.97 → 3% menos filhos esperados
+:::
 
-Contudo, é importante destacar que a correção de Bonferroni tende a ser conservadora, o que significa que pode aumentar a probabilidade de erro tipo II (falso negativo), dificultando a detecção de diferenças ou efeitos reais. Existem alternativas menos conservadoras, como as correções de Holm ou Hochberg, que buscam um equilíbrio entre controle de erro e poder estatístico. A escolha da correção a ser utilizada depende do contexto específico da análise.
+---
+
+### Exemplo de Interpretação
 
 ```{r}
-tidy(modelo_1, exponentiate = TRUE, 
-                       conf.int = TRUE)
+#| echo: true
+
+# Extrair coeficientes exponenciados
+rp_table <- data.frame(
+  Variavel = names(coef(modelo_poisson)),
+  RP = round(exp(coef(modelo_poisson)), 3),
+  RP_Inversa = round(exp(-coef(modelo_poisson)), 3)
+)
+
+knitr::kable(
+  rp_table[c("attsprtsYes", "educ"), ],
+  caption = "Razões de Prevalência Selecionadas"
+)
 ```
+
+**Interpretações:**
+
+**Prática de Esportes (attsprtsYes):**
+"Pessoas que praticam esportes têm 10% mais chance de ter um filho adicional comparado a sedentários"
+
+**Educação (educ):**
+"Para cada ano adicional de educação, a chance de ter um filho diminui ~3%"
+
+---
+
+## 🔧 Diagnósticos e Pressupostos
+
+### Sobredispersão em Poisson
+
+::: {.callout-warning}
+## ⚠️ Sobredispersão
+
+**Problema:** Variância > Média (viola pressuposto de Poisson)
+
+**Consequência:** Erros-padrão subestimados, p-valores muito otimistas
+
+**Solução:** Usar **Binomial Negativa** ou correção quasi-Poisson
+:::
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+# Teste formal de sobredispersão
+dispersiontest(modelo_poisson, trafo = 1)
+```
+
+::: {.callout-note}
+## Interpretação
+
+**H₀:** Não há sobredispersão  
+**p < 0.05:** Sobredispersão detectada → Considerar Binomial Negativa
+:::
+
+---
+
+### Gráficos Diagnósticos
+
+```{r}
+#| echo: true
+#| fig-width: 12
+#| fig-height: 10
+
+par(mfrow = c(2, 3))
+plot(modelo_poisson, which = 1:6)
+par(mfrow = c(1, 1))
+```
+
+---
+
+## 🔧 Extras Avançados
 
 ### Pseudo R²
 
-Função para calcular todos os três R2
+::: {.callout-tip}
+## O que é Pseudo R²?
 
-Comentando cada linha temos:
+Análogo ao R² para modelos logísticos/Poisson. Indica "proporção de verossimilhança explicada".
 
--   dev\<-LogModel\$deviance extrai o desvio do modelo (−2LL(new)) do modelo inserido na função
-
-    e chama isso de dev.
-
--   nullDev\<-LogModel\$null.deviance extrai o desvio da linha de base (−2LL(linha de base)) do modelo inserido a função e as chamadas são nullDev.
-
--   modelN\<-length(LogModel\$fitted.values) usa a função length() no valor ajustado para calcular a amostra size, que ele chama de modelN.
-
--   R.l \<- 1 - dev/nullDev calcula a medida de Hosmer e Lemeshow (R2L) usando os valores extraídos do
-
-    modelo e o chama de R.l.
-
--   R.cs\<- 1- exp ( -(nullDev - dev)/modelN): calcula a medida de Cox e Snell (R2CS) usando os valores extraídos do modelo e o chama de R.cs.
-
--   R.n \<- R.cs / ( 1 - ( exp (-(nullDev / modelN)))) calcula a medida de Nagelkerke (R2N) usando os valores extraídos do modelo e o chama de R.n.
+**Métodos comuns:**
+- **Hosmer-Lemeshow:** Baseado em deviance
+- **Cox-Snell:** Ajustado pelo tamanho amostral
+- **Nagelkerke:** Normalizado para variar 0-1
+:::
 
 ```{r}
+#| echo: true
 
+# Função personalizada
 logisticPseudoR2s <- function(LogModel) {
   dev <- LogModel$deviance
   nullDev <- LogModel$null.deviance
   modelN <- length(LogModel$fitted.values)
+  
   R.l <- 1 - dev / nullDev
-  R.cs <- 1- exp ( -(nullDev - dev) / modelN)
-  R.n <- R.cs / ( 1 - ( exp (-(nullDev / modelN))))
-  resultados <- data.frame(
-  Metodo = c("Hosmer-Lemeshow", "Cox-Snell", "Nagelkerke"),
-  Pseudo_R2 = c(round(R.l, 3), round(R.cs, 3), round(R.n, 3)))
-  return(resultados)
+  R.cs <- 1 - exp(-(nullDev - dev) / modelN)
+  R.n <- R.cs / (1 - (exp(-(nullDev / modelN))))
+  
+  data.frame(
+    Metodo = c("Hosmer-Lemeshow", "Cox-Snell", "Nagelkerke"),
+    Pseudo_R2 = c(round(R.l, 3), round(R.cs, 3), round(R.n, 3))
+  )
 }
 
-logisticPseudoR2s(modelo_3)
-
-#exp(modelo_1$coefficients)
-
-
-
+# Aplicar ao modelo logístico
+logisticPseudoR2s(modelo_logistico)
 ```
 
-O R² (R-squared) em modelos de regressão linear é uma métrica que representa a proporção da variabilidade da variável dependente que é explicada pelo modelo. No entanto, ao lidar com modelos de regressão logística ou outros modelos generalizados, a interpretação direta do R² torna-se mais complexa devido à natureza da função de ligação utilizada.
+---
 
-Por isso, foi desenvolvido o Pseudo R² como uma medida análoga ao R², mas adaptada para modelos logísticos. Existem várias versões de Pseudo R², e a interpretação pode variar dependendo da versão específica utilizada. Aqui, abordarei uma interpretação geral.
+### Correção de Bonferroni
 
-### Diferenças principais entre R² e Pseudo R²:
+::: {.callout-tip collapse="true"}
+## Quando Usar Correções?
 
-**Interpretação Direta:** R² (em modelos lineares): Representa a proporção da variância explicada pela variável independente(s). Pseudo R² (em modelos logísticos): Oferece uma medida análoga, mas a interpretação é menos direta, pois está relacionada à verossimilhança e à diferença entre a verossimilhança do modelo ajustado e a verossimilhança de um modelo nulo.
+**Problema:** Múltiplas comparações inflam erro Tipo I
 
-**Intervalo de Valores:** R² (em modelos lineares): Pode variar de 0 a 1, indicando a porcentagem da variabilidade explicada pela variável independente. Pseudo R² (em modelos logísticos): Pode variar de 0 a 1, mas o significado exato depende da versão específica. Em alguns casos, um Pseudo R² mais alto indica um melhor ajuste, mas a interpretação exata pode variar.
+**Correções disponíveis:**
+- **Bonferroni:** Mais conservadora (divide α por nº de testes)
+- **Holm:** Menos conservadora, sequencial
+- **Hochberg:** Similar a Holm
+- **FDR (Benjamini-Hochberg):** Controla taxa de falsas descobertas
 
-### Quando usar poisson e bin negativa?
-
-Comparar AIC/BIC Variância maior que a média -\> Usar bin negativa Poisson overdisperssion = Evento muito raro, com muitos zeros no banco.
-
-## Referências
-
-<https://www.youtube.com/watch?v=QPY4zuxs1W0>
-
-<https://bookdown.org/drki_musa/dataanalysis/poisson-regression.html#prepare-r-environment-for-analysis-1>
-
-## Versões dos pacotes
+**Trade-off:** Proteção contra falsos positivos ↔ Poder estatístico
+:::
 
 ```{r}
+#| echo: true
+
+tab_model(
+  modelo_logistico,
+  show.se = TRUE,
+  show.ci = TRUE,
+  transform = "exp",
+  p.adjust = "bonferroni",
+  title = "Regressão Logística com Correção de Bonferroni"
+)
+```
+
+---
+
+### Tabela de Resultados Completa
+
+```{r}
+#| echo: true
+
+# Extrair tudo em uma tabela
+resultados_completos <- tidy(
+  modelo_logistico,
+  exponentiate = TRUE,
+  conf.int = TRUE
+)
+
+knitr::kable(
+  resultados_completos,
+  digits = 3,
+  caption = "Resultados Completos: Regressão Logística"
+)
+```
+
+---
+
+### Modelo com Interações
+
+```{r}
+#| echo: true
+
+modelo_interacao <- glm(
+  childs ~ sex * life * attsprts + age + educ,
+  data = db,
+  family = "poisson"
+)
+
+# Tabela formatada
+tab_model(
+  modelo_interacao,
+  show.se = TRUE,
+  show.ci = TRUE,
+  title = "Modelo Poisson com Interações"
+)
+```
+
+::: {.callout-tip}
+## 💡 Pratique!
+
+Crie modelos com diferentes interações e compare AICs. Qual combinação explica melhor os dados?
+:::
+
+---
+
+## 📚 Material Complementar
+
+### Aula em Vídeo (SPSS)
+
+{{< video https://www.youtube.com/watch?v=IHhhsXYZ-1A title='GLzM - Generalized Linear Model - Aula Prática #5 (SPSS)' >}}
+
+---
+
+### Recursos Adicionais
+
+::: {.callout-note collapse="true"}
+## 📖 Leituras Recomendadas
+
+**Regressão Logística:**
+- Hosmer & Lemeshow (2013). *Applied Logistic Regression*
+- [UCLA Stats Guide - Logistic Regression](https://stats.oarc.ucla.edu/r/dae/logit-regression/)
+
+**Regressão de Poisson:**
+- [Bookdown: Poisson Regression](https://bookdown.org/drki_musa/dataanalysis/poisson-regression.html)
+- Agresti (2015). *Foundations of Linear and Generalized Linear Models*
+
+**Vídeos:**
+- [StatQuest: Logistic Regression](https://www.youtube.com/watch?v=QPY4zuxs1W0)
+:::
+
+---
+
+### Decisão: Poisson vs Binomial Negativa
+
+::: {.callout-tip}
+## Guia Rápido
+
+| Situação | Modelo Recomendado |
+|----------|-------------------|
+| Variância ≈ Média | Poisson |
+| Variância >> Média | Binomial Negativa |
+| Muitos zeros | Zero-Inflated Poisson/NB |
+| Eventos raros | Poisson |
+
+**Testar sobredispersão:** Use `dispersiontest()` ou compare AIC de Poisson vs NB
+:::
+
+---
+
+## 🔧 Informações de Sessão
+
+```{r}
+#| echo: true
 report(sessionInfo())
 ```
+
+---
+
+::: {.callout-note appearance="simple"}
+## 🎓 Resumo da Lista 5
+
+Nesta lista você:
+
+✅ Dominou **regressão logística** para variáveis binárias  
+✅ Aprendeu a interpretar **Odds Ratios**  
+✅ Explorou **regressão de Poisson** para contagens  
+✅ Calculou e interpretou **Razões de Prevalência**  
+✅ Comparou modelos via **AIC/BIC**  
+✅ Testou **sobredispersão** em Poisson  
+✅ Aplicou **correções para comparações múltiplas**  
+
+**Conceitos-chave:**
+- GzLM estende GLM para distribuições não-normais
+- Logística: OR interpreta mudanças em chances
+- Poisson: RP interpreta mudanças em contagens
+- Sobredispersão: problema comum que requer atenção
+
+**Próximos passos:**
+- Explore interações complexas
+- Teste modelos Zero-Inflated para excesso de zeros
+- Pratique interpretação de ORs e RPs
+- Compare com Binomial Negativa quando apropriado
+:::

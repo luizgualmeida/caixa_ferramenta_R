@@ -31,7 +31,7 @@ Aprenda a trabalhar com **modelos hierárquicos de 3 níveis** (alunos → class
 ## 📦 Pacotes
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
 #| warning: false
 

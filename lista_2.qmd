@@ -11,7 +11,7 @@ Nesta lista, você explorará a flexibilidade dos modelos GEE testando **diferen
 ## 📦 Pacotes Necessários
 
 ```{r}
-#| echo: false
+#| echo: true
 #| message: false
 #| warning: false
 
